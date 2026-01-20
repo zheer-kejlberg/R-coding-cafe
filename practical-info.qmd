@@ -1,6 +1,6 @@
 ---
 about:
-  template: trestles
+  template: marquee
   image: img/rcc_gif3.gif
 ---
 

@@ -3,7 +3,6 @@ title: "General info"
 about:
   template: marquee
   image: img/rcc_gif.gif
-  image-width: 50%
 ---
 
 Welcome to the Coding Café at the Steno Diabetes Center Aarhus (SDCA).
@@ -12,8 +11,7 @@ We're a bi-weekly open “café” for anyone working at SDCA, Aarhus University
 
 The sessions are open and anyone can join in and out at anytime during the allotted time. There will be a 10-15 minue presentation at the beginning, tackling a concept in R or specific packages and workflows that are nice to know, and 1-2 experience instructors will subsequently help with specific challenges and questions. We also highly encourage the participants to interact with each other - maybe there is someone in the group that has the solution to your problem.
 
-The latest schedule will always be on this website.
-
+## Schedule and themes
 
 ```{r}
 #| echo: false
