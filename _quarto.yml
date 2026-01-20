@@ -1,0 +1,34 @@
+project:
+  type: website
+  output-dir: "."
+
+website:
+  title: "ZKA"
+  navbar: 
+    title: " "
+    id: rcc
+    style: "docked"
+    background: "dark"
+    left: 
+      - text: "R Coding Café"
+        href: index.html
+      - text: "Practical info"
+        href: practical-info.html
+      - text: "Notes"
+        href: notes.html
+    right:
+      - text: "{{< iconify fa6-solid at title='E-mail' width=19px >}} <span id='hide-nav-item'>E-mail</span>"
+        href: mailto:contact@zheer.dk
+      - text: "{{< iconify fa6-brands square-github title='GitHub' width=19px >}} <span id='hide-nav-item'>GitHub</span>"
+        href: https://github.com/zheer-kejlberg
+      - text: "{{< iconify fa6-brands google-scholar title='Google Scholar' width=19px >}} <span id='hide-nav-item'>Google Scholar</span>"
+        href: https://scholar.google.com/citations?user=Pr1jGNwAAAAJ&hl=en
+      - text: "{{< iconify fa6-brands orcid title='Orcid' width=19px >}} <span id='hide-nav-item'>Orcid</span>"
+        href: https://orcid.org/0000-0003-1201-199X
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    toc: true
+    css: css/style.css

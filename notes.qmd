@@ -1,0 +1,7 @@
+---
+title: "Notes"
+about:
+  template: jolla
+  image: img/rcc_gif2.gif
+---
+
