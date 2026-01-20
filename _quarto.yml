@@ -24,6 +24,4 @@ website:
       - text: "Notes"
         href: notes.html
 
-format: 
-  sdca-theme-html:
-    toc: true
+format: sdca-theme-html

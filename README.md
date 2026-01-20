@@ -1,2 +1,3 @@
 # R-coding-cafe
-R coding café @ SDCA
+
+Website for the [R coding café](r-coding-cafe.zheer.dk) @ SDCA
