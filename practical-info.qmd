@@ -1,8 +1,9 @@
 ---
-about:
-  template: marquee
-  image: img/rcc_gif3.gif
+title: ""
+page-layout: full
 ---
+
+![](img/rcc_gif3.gif)
 
 ### Things to do before asking for help
 

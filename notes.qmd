@@ -1,7 +1,5 @@
 ---
 title: "Notes"
-about:
-  template: marquee
-  image: img/rcc_gif2.gif
 ---
 
+![](img/rcc_gif2.gif)

@@ -1,11 +1,18 @@
 project:
-  type: website
+  type: sdca-theme
   output-dir: "."
 
+toc: true
 website:
   title: "ZKA"
   navbar: 
     title: " "
+    pinned: true
+    tools:
+      - icon: github
+        href: https://github.com/steno-aarhus/
+      - icon: envelope-arrow-up-fill
+        href: mailto:contact@zheer.dk
     id: rcc
     style: "docked"
     background: "#990032"
@@ -16,15 +23,7 @@ website:
         href: practical-info.html
       - text: "Notes"
         href: notes.html
-    right:
-      - text: "{{< iconify fa6-solid at title='E-mail' width=19px >}} <span id='hide-nav-item'>E-mail</span>"
-        href: mailto:contact@zheer.dk
-      - text: "{{< iconify fa6-brands square-github title='GitHub' width=19px >}} <span id='hide-nav-item'>GitHub</span>"
-        href: https://github.com/steno-aarhus
-format:
-  html:
-    theme: 
-      light: flatly
-      dark: darkly
+
+format: 
+  sdca-theme-html:
     toc: true
-    css: css/style.css

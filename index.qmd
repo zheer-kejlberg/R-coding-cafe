@@ -1,9 +1,9 @@
 ---
 title: "General info"
-about:
-  template: marquee
-  image: img/rcc_gif.gif
+page-layout: full
 ---
+
+![](img/rcc_gif.gif)
 
 Welcome to the Coding Café at the Steno Diabetes Center Aarhus (SDCA).
 
