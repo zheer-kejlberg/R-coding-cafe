@@ -93,7 +93,7 @@
     "href": "notes/minimal-reproducible-example.html#setting-the-random-seed",
     "title": "Minimal, reproducible example",
     "section": "Setting the random seed",
-    "text": "Setting the random seed\n\n# Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
     "crumbs": [
       "R Coding Café",
       " ",

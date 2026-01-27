@@ -252,11 +252,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Here are some good functions to know when creating a mock dataset.</p>
 <section id="setting-the-random-seed" class="level2">
 <h2 class="anchored" data-anchor-id="setting-the-random-seed">Setting the random seed</h2>
+<p>Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rpois</span>(<span class="dv">5</span>, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rpois</span>(<span class="dv">5</span>, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11 12  9  8 11</code></pre>
 </div>
@@ -315,7 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="and-whatever-else" class="level3">
 <h3 class="anchored" data-anchor-id="and-whatever-else">And whatever else</h3>
-<p>Read about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).</p>
+<p>Read about other distributions using e.g., <code>?rnorm</code>, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>?rweibull</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>?rcauchy</span>
