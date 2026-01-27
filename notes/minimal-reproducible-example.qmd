@@ -27,9 +27,9 @@ Here are some good functions to know when creating a mock dataset.
 
 ## Setting the random seed
 
-```{r}
-# Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:
+Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:
 
+```{r}
 set.seed(12345)
 rpois(5, 10)
 
@@ -69,7 +69,7 @@ rpois(n = N, lambda = 15)
 
 ### And whatever else
 
-Read about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).
+Read about other distributions using e.g., `?rnorm`, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).
 
 ```{r}
 ?rweibull
@@ -95,7 +95,6 @@ Tibbles allow you to build up columns sequentially; i.e. use info from one colum
 
 ```{r}
 #| output: false
-
 library(tibble)
 ```
 
