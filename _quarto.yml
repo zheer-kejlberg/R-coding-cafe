@@ -15,7 +15,6 @@ website:
         href: mailto:contact@zheer.dk
     id: rcc
     style: "docked"
-    background: "#990032"
     left: 
       - text: "R Coding Café"
         href: index.html
@@ -23,5 +22,11 @@ website:
         href: practical-info.html
       - text: "Notes"
         href: notes.html
+  sidebar:
+      style: "docked"
+      contents: 
+        - notes.qmd
+        - section: " "
+          contents: notes/*
 
 format: sdca-theme-html

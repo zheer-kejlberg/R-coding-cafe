@@ -1,6 +1,7 @@
 ---
 title: "General info"
 page-layout: full
+sidebar: false
 ---
 
 ![](img/rcc_gif.gif)
@@ -20,8 +21,8 @@ library(gt)
 timeline <- tibble::tribble(
   ~Week, ~Date, ~Time, ~Location, ~Presenter, ~`Lesson subject`, ~Helpers, ~Passed,
   3,"2026-01-13", "10:00-12:00", "Hjørnerummet, A401-109", "Zheer", "Introduction and planning of format", "-", TRUE,
-  5,"2026-01-27", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-", FALSE,
-  7,"2026-02-10", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Prevention and diagnosis of errors in R", "-", FALSE,
+  5,"2026-01-27", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-", TRUE,
+  7,"2026-02-18", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Prevention and diagnosis of errors in R", "-", FALSE,
   9,"2026-02-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Types of data (object, classes)", "-", FALSE,
   11,"2026-03-10", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Writing functions instead of copy/paste", "-", FALSE,
   13,"2026-03-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Loops, recursion, parallelisation", "-", FALSE,

@@ -39,6 +39,101 @@
     "href": "index.html#schedule-and-themes",
     "title": "General info",
     "section": "Schedule and themes",
-    "text": "Schedule and themes\n\n\n\n\n\n\nTable 1: Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.\n\n\n\nWeek\nTime\nLocation\nPresenter\nLesson subject\nHelpers\n\n\n\n\nPrevious\n\n\nTue, Jan 13, 2026\n3\n10:00-12:00\nHjørnerummet, A401-109\nZheer\nIntroduction and planning of format\n-\n\n\nPlanned\n\n\nTue, Jan 27, 2026\n5\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHow to ask for help: The minimal reproducible example and making simulated data\n-\n\n\nTue, Feb 10, 2026\n7\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nPrevention and diagnosis of errors in R\n-\n\n\nTue, Feb 24, 2026\n9\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nTypes of data (object, classes)\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nWriting functions instead of copy/paste\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nLoops, recursion, parallelisation\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nParadigms: Base R vs. Tidyverse vs. data.table\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMore tidyverse\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHandling many packages—and cross-package workflows\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMoving between R and Stata\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMarkdown basics: Using Quarto and Rmarkdown\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nDatabase formats (parquet and more)\n-\n\n\n\n\n\n\n\n\nOther planned themes are:\n\nNice to know packages (e.g., {gtsummary} {Epi} {Hmisc})\nMatching and Weighting (using MatchIt and WeightIt)\nMissing data: different options and packages for it, including combining MICE with MatchThem/WeightThem\nPreregistration as a means to improved workflows in R"
+    "text": "Schedule and themes\n\n\n\n\n\n\nTable 1: Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.\n\n\n\nWeek\nTime\nLocation\nPresenter\nLesson subject\nHelpers\n\n\n\n\nPrevious\n\n\nTue, Jan 13, 2026\n3\n10:00-12:00\nHjørnerummet, A401-109\nZheer\nIntroduction and planning of format\n-\n\n\nTue, Jan 27, 2026\n5\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHow to ask for help: The minimal reproducible example and making simulated data\n-\n\n\nPlanned\n\n\nWed, Feb 18, 2026\n7\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nPrevention and diagnosis of errors in R\n-\n\n\nTue, Feb 24, 2026\n9\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nTypes of data (object, classes)\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nWriting functions instead of copy/paste\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nLoops, recursion, parallelisation\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nParadigms: Base R vs. Tidyverse vs. data.table\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMore tidyverse\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHandling many packages—and cross-package workflows\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMoving between R and Stata\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMarkdown basics: Using Quarto and Rmarkdown\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nDatabase formats (parquet and more)\n-\n\n\n\n\n\n\n\n\nOther planned themes are:\n\nNice to know packages (e.g., {gtsummary} {Epi} {Hmisc})\nMatching and Weighting (using MatchIt and WeightIt)\nMissing data: different options and packages for it, including combining MICE with MatchThem/WeightThem\nPreregistration as a means to improved workflows in R"
+  },
+  {
+    "objectID": "minimal-reproducible-example.html",
+    "href": "minimal-reproducible-example.html",
+    "title": "Notes: Minimal, reproducible example",
+    "section": "",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question."
+  },
+  {
+    "objectID": "minimal-reproducible-example.html#setting-the-random-seed",
+    "href": "minimal-reproducible-example.html#setting-the-random-seed",
+    "title": "Notes: Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\n\n# Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13"
+  },
+  {
+    "objectID": "minimal-reproducible-example.html#sampling-from-a-distribution",
+    "href": "minimal-reproducible-example.html#sampling-from-a-distribution",
+    "title": "Notes: Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatevers else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ..."
+  },
+  {
+    "objectID": "minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "href": "minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "title": "Notes: Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1"
+  },
+  {
+    "objectID": "minimal-reproducible-example.html#an-example-dataset",
+    "href": "minimal-reproducible-example.html#an-example-dataset",
+    "title": "Notes: Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(5, 1, 0.5),\n  age = rnorm(5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\nWarning: package 'tibble' was built under R version 4.4.3\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(5, 1, 0.5),\n  age = rnorm(5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(5, 15+trt),\n  tte_censor = rpois(5, 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0"
+  },
+  {
+    "objectID": "notes/minimal-reproducible-example.html",
+    "href": "notes/minimal-reproducible-example.html",
+    "title": "Minimal, reproducible example",
+    "section": "",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
+    "crumbs": [
+      "R Coding Café",
+      " ",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/minimal-reproducible-example.html#setting-the-random-seed",
+    "href": "notes/minimal-reproducible-example.html#setting-the-random-seed",
+    "title": "Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\n\n# Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "crumbs": [
+      "R Coding Café",
+      " ",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/minimal-reproducible-example.html#sampling-from-a-distribution",
+    "href": "notes/minimal-reproducible-example.html#sampling-from-a-distribution",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
+    "crumbs": [
+      "R Coding Café",
+      " ",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/minimal-reproducible-example.html#an-example-dataset",
+    "href": "notes/minimal-reproducible-example.html#an-example-dataset",
+    "title": "Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "crumbs": [
+      "R Coding Café",
+      " ",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "href": "notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "crumbs": [
+      "R Coding Café",
+      " ",
+      "Minimal, reproducible example"
+    ]
   }
 ]
