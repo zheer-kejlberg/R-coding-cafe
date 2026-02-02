@@ -7,6 +7,8 @@ title: "Example pipeline"
 Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.
 
 ```{r}
+#| output: false
+
 set.seed(123456)
 library(dplyr)
 ```
@@ -21,6 +23,11 @@ bef <- data.frame(
   koen = rbinom(n, size = 1, prob = 0.49) + 1,
   FOED_DAG = runif(n, as.Date("1950-01-01"), as.Date("1989-12-31")) |> floor()  |> as.Date()
 )
+```
+
+Preview:
+```{r}
+bef |> head(3) |> gt::gt()
 ```
 
 ### LMDB
@@ -53,6 +60,11 @@ lmdb <- sample_n(ATC_select_glucose_lowering,
          VOLUME = PACKSIZE * APK)
 ```
 
+Preview:
+```{r}
+lmdb |> head(3) |> gt::gt()
+```
+
 ### LPR2
 ```{r}
 n_lpr <- n * 30
@@ -76,8 +88,14 @@ lpr_diag <- lpr_adm |>
       C_DIAGTYPE = "B"
     )
   )
+```
 
-#lpr_diag |> group_by(RECNUM) |> mutate(ctype = paste(C_DIAGTYPE, collapse = "+")) |> reframe(n = n(), ctype = max(ctype)) |> summarise(n = n(), .by=ctype)
+Previews:
+```{r}
+lpr_subset <- lpr_adm$RECNUM |> head(3)
+lpr_adm |> filter(RECNUM %in% lpr_subset) |> gt::gt()
+lpr_diag |> filter(RECNUM %in% lpr_subset) |> gt::gt()
+
 ```
 
 ### LAB
@@ -90,6 +108,11 @@ lab_dm_forsker <- data.frame(
   ANALYSISCODE = rep("eGFR", n_lab),
   VALUE = rnorm(n_lab, mean = 70, sd = 10) |> round()
 )
+```
+
+Preview:
+```{r}
+lab_dm_forsker |> head(3) |> gt::gt()
 ```
 
 ## Putting things together
@@ -109,12 +132,23 @@ lpr <- left_join(lpr_adm, lpr_diag, by = "RECNUM") |>
   ungroup() # Always best to ungroup in the end
 ```
 
+Preview:
+```{r}
+lpr |> head(3) |> gt::gt()
+```
+
 ### Add background info
 ```{r}
 pop <- left_join(lpr, bef, by = "PNR") |>
   # calculate age in days, divide into years, round to two decimals
   mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |> as.numeric() |> round(2)) |>
-  select(c(PNR, D_INDDTO, FOED_DAG, koen, age))
+  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |>
+  rename(index_date = D_INDDTO)
+```
+
+Preview:
+```{r}
+pop |> head(3) |> gt::gt()
 ```
 
 ### Get last eGFR before fracture
@@ -124,7 +158,7 @@ last_eGFR <- left_join(pop, lab_dm_forsker, by = "PNR")
 
 last_eGFR <- last_eGFR |>
   # Get eGFRs prior to fracture
-  filter(SAMPLINGDATE <= D_INDDTO) |>
+  filter(SAMPLINGDATE <= index_date) |>
   # keep only last eGFR for each person
   group_by(PNR) |>
   filter(SAMPLINGDATE == max(SAMPLINGDATE)) |>
@@ -132,9 +166,15 @@ last_eGFR <- last_eGFR |>
   ungroup() |>
   # keep only necessary columns to add back onto the full pop
   select(c(PNR, SAMPLINGDATE, VALUE)) |>
-  rename(last_eGFR = VALUE, eGFR_date = SAMPLINGDATE)
+  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)
 
 pop <- left_join(pop, last_eGFR, by ="PNR")
+```
+
+Previews:
+```{r}
+last_eGFR |> head(3) |> gt::gt()
+pop |> head(3) |> gt::gt()
 ```
 
 ### Get first glucose-lowering drug prescription
@@ -149,14 +189,24 @@ lmdb_first_gld <- lmdb |>
   select(c(PNR, EKSD))
 ```
 
+Preview:
+```{r}
+lmdb_first_gld |> head(3) |> gt::gt()
+```
+
 ### Add in medication data and remove individuals with prior drug exposure
 ```{r}
 pop <- left_join(pop, lmdb_first_gld, by ="PNR")
 
 # Only keep people with no prior glucose-lowering drug use before hip fracture
 pop <- pop |>
-  filter(is.na(EKSD) | D_INDDTO <= EKSD) |>
+  filter(is.na(EKSD) | index_date <= EKSD) |>
   select(-c(EKSD))
+```
+
+Preview:
+```{r}
+pop |> head(3) |> gt::gt()
 ```
 
 ### Get first metformin prescription
@@ -169,12 +219,20 @@ lmdb_metformin <- lmdb_metformin |>
   group_by(PNR) |>
   filter(EKSD == min(EKSD)) |>
   # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total
-  mutate(daily_doses = sum(APK * PACKSIZE),
+  mutate(no_of_pills = sum(APK * PACKSIZE),
          total_dose = sum(APK * PACKSIZE * STRNUM)) |>
   # keep one line per person
   slice(1) |>
   ungroup() |>
-  select(c(PNR, EKSD, daily_doses, total_dose))
+  select(c(PNR, EKSD, no_of_pills, total_dose)) |>
+  rename(metf_date = EKSD,
+         metf_no_of_pills = no_of_pills,
+         metf_total_dose = total_dose)
+```
+
+Preview:
+```{r}
+lmdb_metformin |> head(3) |> gt::gt()
 ```
 
 ### Add in metformin data
@@ -182,16 +240,25 @@ lmdb_metformin <- lmdb_metformin |>
 pop <- left_join(pop, lmdb_metformin, by ="PNR")
 ```
 
+Preview:
+```{r}
+pop |> head(3) |> gt::gt()
+```
+
 ### Calculate time to metformin
 ```{r}
 pop <- pop |>
-  mutate(tte_metformin = difftime(EKSD, D_INDDTO))
-         
+  mutate(tte_metf = difftime(metf_date, index_date))
+```
+
+Preview:
+```{r}        
+pop |> head(3) |> gt::gt()
 ```
 
 ## Now you can start analysing the data...
 ```{r}
-plot(pop$last_eGFR, pop$tte_metformin)
+plot(pop$eGFR_val, pop$tte_metf)
 ```
 
 
