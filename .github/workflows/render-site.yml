@@ -30,9 +30,18 @@ jobs:
           version: "1.8.27"
 
       - name: Install R packages
-        run: |
-          Rscript -e 'install.packages(c("knitr", "quarto", "dplyr", "gt", "httr2", "lubridate", "tibble"))'
-
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            knitr
+            quarto
+            dplyr
+            gt
+            juicyjuice
+            httr2
+            lubridate
+            tibble
+      
       - name: Render site
         run: Rscript scripts/render-site.R
 
