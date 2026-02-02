@@ -9,9 +9,6 @@ jobs:
   render:
     runs-on: ubuntu-latest
 
-    env:
-      R_LIBS_USER: ~/.local/R/library
-      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,26 +21,20 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: "pre-release"  # or a specific version like "1.4.550"
+          version: "1.8.27"  # or a specific version like "1.4.550"
 
       - name: Cache R packages
         uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-${{ hashFiles('**/DESCRIPTION', 'scripts/render-site.R') }}
+          key: ${{ runner.os }}-r-v1
           restore-keys: ${{ runner.os }}-r-
-
-      - name: Cache TinyTeX
-        uses: actions/cache@v4
-        with:
-          path: ~/.TinyTeX
-          key: ${{ runner.os }}-tinytex-v1
           
       - name: Install R packages
         env:
           GITHUB_PAT: ${{ secrets.RENDER_WORKFLOW_PAT }}
         run: |
-          Rscript -e 'install.packages(c("quarto", "rmarkdown", "knitr"))'
+          Rscript -e 'install.packages(c("knitr"))'
 
       - name: Render Quarto site
         run: Rscript scripts/render-site.R
