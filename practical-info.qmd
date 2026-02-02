@@ -8,7 +8,7 @@ sidebar: false
 
 ### Things to do before asking for help
 
-Being a good coder in R does not necessarily mean that one just sits down and writes a lot of code like writing a piece of text. Even experienced R users search online for code. The great thing about R is that there is often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user know what to search for, where to search and understand the replies.
+Being a good coder in R does not mean that one just sits down and writes a bunch of code free-hand. Even experienced R users search online and ask LLMs. The great thing about R is that there is often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user know what to search for, where to search and understand the replies.
 We suggest that you try to search on either Google or directly in Stackoverflow.
 
 ::: {.callout-caution collapse="true"}

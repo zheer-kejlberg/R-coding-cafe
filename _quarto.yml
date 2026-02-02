@@ -21,12 +21,13 @@ website:
       - text: "Practical info"
         href: practical-info.html
       - text: "Notes"
-        href: notes.html
+        href: notes/lesson-notes/index.html
   sidebar:
       style: "docked"
       contents: 
-        - notes.qmd
-        - section: " "
-          contents: notes/*
+        - section: "Lesson notes"
+          contents: notes/lesson-notes/*
+        - section: "Extra notes and tutorials"
+          contents: notes/extra/*
 
 format: sdca-theme-html

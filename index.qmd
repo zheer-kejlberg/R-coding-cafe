@@ -6,11 +6,26 @@ sidebar: false
 
 ![](img/rcc_gif.gif)
 
-Welcome to the Coding Café at the Steno Diabetes Center Aarhus (SDCA).
+We're a bi-weekly open “café” for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine.
 
-We're a bi-weekly open “café” for anyone working at SDCA, Aarhus University Hospital, Department of Public Health, Department of Clinical Medicine and Department of Biomedicine, Aarhus University to go and get assistance with coding in R. The only prerequisite so far is that you have had some type of introduction to R, preferably through a course such as <a href="https://r-cubed-intro.rostools.org/">this</a> offered by the Danish Diabetes and Endocrinology Academy or similar introductory courses.
+::: {.callout-tip collapse="true"}
+## Prerequisites
 
-The sessions are open and anyone can join in and out at anytime during the allotted time. There will be a 10-15 minue presentation at the beginning, tackling a concept in R or specific packages and workflows that are nice to know, and 1-2 experience instructors will subsequently help with specific challenges and questions. We also highly encourage the participants to interact with each other - maybe there is someone in the group that has the solution to your problem.
+You should have had some type of introduction to R; consider 
+
+- a course such as <a href="https://r-cubed-intro.rostools.org/">this</a> offered by the Danish Diabetes and Endocrinology Academy
+- an online course such as <a href="https://www.datacamp.com/courses/free-introduction-to-r">this one at Datacamp.com</a>
+- the fantastic online book <a href="https://r4ds.hadley.nz/intro.html">R for Data Science</a>
+
+:::
+
+## Format
+
+Below are the planned dates; you can arrive and leave at any time. There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)
+
+Subsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe there is someone in the group that has the solution to your problem.
+
+
 
 ## Schedule and themes
 
@@ -19,21 +34,24 @@ The sessions are open and anyone can join in and out at anytime during the allot
  
 library(gt)
 timeline <- tibble::tribble(
-  ~Week, ~Date, ~Time, ~Location, ~Presenter, ~`Lesson subject`, ~Helpers, ~Passed,
-  3,"2026-01-13", "10:00-12:00", "Hjørnerummet, A401-109", "Zheer", "Introduction and planning of format", "-", TRUE,
-  5,"2026-01-27", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-", TRUE,
-  7,"2026-02-18", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Prevention and diagnosis of errors in R", "-", FALSE,
-  9,"2026-02-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Types of data (object, classes)", "-", FALSE,
-  11,"2026-03-10", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Writing functions instead of copy/paste", "-", FALSE,
-  13,"2026-03-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Loops, recursion, parallelisation", "-", FALSE,
-  15,"2026-04-07", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "-", FALSE,
-  17,"2026-04-21", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "More tidyverse", "-", FALSE,
-  19,"2026-05-05", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Handling many packages—and cross-package workflows", "-", FALSE,
-  21,"2026-05-19", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Moving between R and Stata", "-", FALSE,
-  23,"2026-06-02", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", "-", FALSE,
-  25,"2026-06-16", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Database formats (parquet and more)", "-", FALSE,
+  ~Week, ~Date, ~Time, ~Location, ~Presenter, ~Topic, ~Helpers,
+  3,"2026-01-13", "10:00-12:00", "Hjørnerummet, A401-109", "Zheer", "Introduction and planning of format", "-",
+  5,"2026-01-27", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-",
+  8,"2026-02-18", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Prevention and diagnosis of errors in R", "-", 
+  9,"2026-02-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Types of data (object, classes)", "-", 
+  11,"2026-03-10", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Writing functions instead of copy/paste", "-", 
+  13,"2026-03-24", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Loops, recursion, parallelisation", "-", 
+  15,"2026-04-07", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "-", 
+  17,"2026-04-21", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "More tidyverse", "-", 
+  19,"2026-05-05", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Handling many packages—and cross-package workflows", "-", 
+  21,"2026-05-19", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Moving between R and Stata", "-", 
+  23,"2026-06-02", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", "-", 
+  25,"2026-06-16", "10:00-11:30", "Hjørnerummet, A401-109", "Zheer", "Database formats (parquet and more)", "-"
 ) |>
-  dplyr::mutate(Passed = ifelse(Passed == T, "Previous", "Planned"))
+  dplyr::mutate(Date = as.Date(Date),
+                Passed = dplyr::case_when(Date > lubridate::today() ~ "Planned", 
+                                   Date == lubridate::today() ~ "Today",
+                                   Date < lubridate::today() ~ "Previous"))
   
 
 gt(timeline, 
@@ -45,13 +63,18 @@ gt(timeline,
     format = "EEE, MMM d, y",
     locale = "en"
   ) |> 
-  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels())
+  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels()) |>
+  tab_style(style = cell_fill(color = "lightsteelblue2"), 
+            locations = cells_body(
+              rows = Date == min(Date[Date >= lubridate::today()])
+            )
+  )
 
 ```
 
 ### Other planned themes are:
 
-- Nice to know packages (e.g., {gtsummary} {Epi} {Hmisc})
+- Nice to know packages (e.g., {gtsummary}, {Epi}, and {Hmisc})
 - Matching and Weighting (using MatchIt and WeightIt)
-- Missing data: different options and packages for it, including combining MICE with MatchThem/WeightThem
+- Missing data: different options and packages for it, including combining {mice} with {MatchThem}/{WeightThem}
 - Preregistration as a means to improved workflows in R
