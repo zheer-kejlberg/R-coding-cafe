@@ -1,0 +1,20 @@
+---
+title: "Working with many packages"
+---
+
+::: {.content-visible when-format="pdf"}
+
+### Dependencies and cross-package workflows
+
+-   Order of loading
+    -   Masking of functions
+-   Feeding one package's output into another; common workflows
+    -   Compatibility
+    -   Classes
+    -   Generic functions and methods
+
+```{r}
+
+```
+
+:::

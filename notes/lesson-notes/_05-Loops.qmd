@@ -1,0 +1,50 @@
+---
+title: "Loops, parallelisation and recursion"
+---
+
+::: {.content-visible when-format="pdf"}
+
+
+### Iteration, paralellisation (and recursion?)
+
+For and while loops
+
+```{r}
+for (i in 1:10) {
+  print(i)
+}
+# Finite length vector
+
+i <- 2
+while (i < 20) {
+  i <- i^2
+  print(i)
+}
+# BEWARE, here be infinity
+
+```
+
+Functional programming
+
+```{r}
+# apply(), sapply(), lapply(), ...
+# purrr::map()
+```
+
+Parallel compute
+
+```{r}
+#| eval: false
+
+# purrr::in_parallel() [mirai]
+
+# doParallel:
+library(doParallel)
+cl <- makeCluster(2)
+registerDoParallel(cl)
+foreach(x = 1:10) %dopar% { x^2 }
+stopCluster(cl)
+closeAllConnections()
+```
+
+:::

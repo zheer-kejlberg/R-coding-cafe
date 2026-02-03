@@ -72,6 +72,8 @@ rpois(n = N, lambda = 15)
 Read about other distributions using e.g., `?rnorm`, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).
 
 ```{r}
+#| eval: false
+
 ?rweibull
 ?rcauchy
 ?rchisq

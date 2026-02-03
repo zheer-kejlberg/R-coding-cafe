@@ -1,0 +1,18 @@
+---
+title: "Functions"
+---
+
+::: {.content-visible when-format="pdf"}
+### Functions
+
+```{r}
+#| eval: false
+
+myFunction <- function(input) {
+  output <- input + ...
+  return(output)
+}
+
+
+```
+:::

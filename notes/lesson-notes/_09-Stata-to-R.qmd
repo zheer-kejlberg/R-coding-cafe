@@ -1,0 +1,13 @@
+---
+title: "Working across languages"
+---
+
+::: {.content-visible when-format="pdf"}
+
+STATA to R:
+
+-   Factors as numeric
+    -   Labels
+-   Reading and writing data
+
+:::

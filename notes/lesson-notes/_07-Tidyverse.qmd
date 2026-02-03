@@ -1,0 +1,17 @@
+---
+title: "More Tidyverse"
+---
+::: {.content-visible when-format="pdf"}
+
+
+### More Tidyverse
+
+-   dplyr
+-   tidyr
+-   lubridate
+-   ggplot2
+-   stringr
+-   forcats
+-   ...
+
+:::

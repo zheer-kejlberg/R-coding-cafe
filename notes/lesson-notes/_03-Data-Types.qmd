@@ -1,0 +1,27 @@
+---
+title: "Data types"
+---
+  \
+  \
+...To be written
+
+
+::: {.content-visible when-format="pdf"}
+
+```{r}
+#| echo: false 
+#| eval: false
+
+c(0,1,2,5,1,2,0,5) |> factor(levels = c(0,1,2,5), labels = c("zero", "one", "two", "five")) |> as.numeric()
+```
+
+### Data structures
+
+Variable classes
+
+Singular: - Numeric: float (double) v. integer - Character - Factor
+
+Multiple: - Vectors v. lists - Matrices - Tables, data.frames, tibbles v. data.table
+
+Objects
+:::

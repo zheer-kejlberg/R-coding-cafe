@@ -1,0 +1,54 @@
+---
+title: "Tidyverse vs. data.table—paradigms"
+---
+::: {.content-visible when-format="pdf"}
+### Paradigms: Base R, data.table, and Tidyverse (dplyr)
+
+Base R
+
+```{r}
+#| eval: false
+
+# Explicit indexing, standard evaluation, (note logical vectors), wysiwyg
+df[df$age >= 18, ]
+
+df$bmi <- df$weight / df$height^2
+
+aggregate(income ~ sex, data = df, mean)
+```
+
+-   R intro: https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
+
+Tidyverse
+
+```{r}
+#| eval: false
+
+# Declarative, non-standard evaluation, very readable, piping as a way of life
+df <- df |> dplyr::filter(age >= 18)
+
+df <- df |> mutate(
+  bmi = weight / height^2
+)
+
+df |> group_by(sex) |> summarise(mean_inc = mean(income))
+```
+
+-   Tidyverse intro: https://cran.r-project.org/web/packages/tidyverse/vignettes/paper.html
+-   Dplyr intro: https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html
+
+Data.table
+
+```{r}
+#| eval: false
+
+# Concise, fast
+DT[age >= 18,,]
+
+DT[, bmi := weight/height^2]
+
+DT[, .(mean_inc = mean(income)), by = sex]
+```
+
+-   DT intro: https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
+:::

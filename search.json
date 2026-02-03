@@ -4,14 +4,95 @@
     "href": "practical-info.html",
     "title": "ZKA",
     "section": "",
-    "text": "Things to do before asking for help\nBeing a good coder in R does not mean that one just sits down and writes a bunch of code free-hand. Even experienced R users search online and ask LLMs. The great thing about R is that there is often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user know what to search for, where to search and understand the replies. We suggest that you try to search on either Google or directly in Stackoverflow.\n\n\n\n\n\n\nAI-tools\n\n\n\n\n\nAs a next step, it can be useful to use AI-tools like ChatGPT; however, beware that it can make up functions, and that it does not always work.\n\n\n\n\n\nAsking a clear coding question\nSome issues are simple such as I cannot download this package. Other times what you want to do is more complex and needs a bit of background for a person outside your project to understand what you want to do. Therefore, you need to prepare and provide the context to the person you are asking for help. This could be in the form of showing the structure of your dataset, which functions you used, and what you have tried so far.\n\n\n\n\n\n\nMinimal, reproducible examples\n\n\n\n\n\nThe first lesson in the coding café is specifically about preparing a good question (read about Minimal, Reproducible Examples).\n\n\n\n\n\nNote about sensitive data\n\n\n\n\n\n\nIf you are working on DST\n\n\n\n\n\nyou are not allowed to show the data to anyone else!\n\n\n\nYou may need to prepare your question a bit more. We recommend that you find an example dataset that looks similar to the dataset you work with and write down a coding example."
+    "text": "Things to do before asking for help\nBeing proficient in R does not equate to sitting down and writing everything free-hand. Experienced R users search online and ask LLMs. The great thing about R is that there are often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user knows what to search for and where. We suggest you search on StackOverflow; this can be daunting at first but is extremely helpful once you’ve learned to find your way around.\n\n\n\n\n\n\nAI-tools\n\n\n\n\n\nAs a next step, it can be useful to use AI-tools like ChatGPT; however, beware that these can make up functions, that it often still requires debugging, and that even working solutions (especially to more complex questions) can be unstable over time or datasets.\n\n\n\n\n\nAsking a clear coding question\nSome issues are simple; e.g., “I cannot download this package”. Other times what you want to do is more complex and needs context to explain to someone on the outside. Therefore, you need to prepare and provide the context to the person you are asking for help. This includes showing the structure of your dataset, presenting the functions you’ve used, and describing what you have tried so far.\n\n\n\n\n\n\nMinimal, reproducible examples\n\n\n\n\n\nThe first lesson in the coding café was specifically about preparing a good question (read the notes about minimal, reproducible examples).\n\n\n\n\n\nNote about sensitive data\n\n\n\n\n\n\nIf you are working on DST\n\n\n\n\n\nyou are not allowed to show the data to anyone else! This is your own responsibility, and the helpers will not check what platform you’re working on.\n\n\n\nYou may need to prepare your question a bit more. Still, the principles of the minimal, reproducible example apply."
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html",
+    "href": "notes/extra/1-example-pipeline.html",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#lets-construct-some-fake-data",
+    "href": "notes/extra/1-example-pipeline.html#lets-construct-some-fake-data",
+    "title": "Example pipeline",
+    "section": "Let’s construct some fake data",
+    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1950-01-01\"), as.Date(\"1989-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1981-06-09\n\n\n7782085\n2\n1964-12-10\n\n\n4521300\n1\n1988-07-21\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_glucose_lowering &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 10\nlmdb &lt;- sample_n(ATC_select_glucose_lowering,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA10BB12\nGlimepiride\n8913161\n2010-04-16\n2\n20\n12\n40\n\n\nA10BJ06\nSemaglutide\n7155623\n2005-01-23\n3\n10\n19\n30\n\n\nA10BJ02\nLiraglutide\n2448276\n2005-03-13\n2\n20\n23\n40\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n7465102\n7161939417\n2003-03-07\nS72.4\n\n\n4352898\n3238130082\n2005-04-19\nS72.4\n\n\n3752898\n3030336058\n2009-03-18\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n7161939417\nS72.4\nA\n\n\n3238130082\nS72.4\nA\n\n\n3030336058\nS72.1\nA\n\n\n3030336058\nS72.8\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab),\n  VALUE = rnorm(n_lab, mean = 70, sd = 10) |&gt; round()\n)\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n8172410\n2006-12-10\neGFR\n72\n\n\n2697955\n2004-02-22\neGFR\n64\n\n\n1088015\n2009-09-23\neGFR\n69",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#putting-things-together",
+    "href": "notes/extra/1-example-pipeline.html#putting-things-together",
+    "title": "Example pipeline",
+    "section": "Putting things together",
+    "text": "Putting things together\n\nIdentify first hip fracture\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n5843620927\n2000-05-07\nS72.0\nS72.0\nA\n\n\n1006023\n7507439271\n2000-01-03\nS72.1\nS72.1\nA\n\n\n1006164\n1399413324\n2000-04-04\nS72.0\nS72.0\nA\n\n\n\n\n\n\n\n\n\nAdd background info\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\n\n\n\n\n\n\n\n\n\nGet last eGFR before fracture\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n# Note, approx 10% of individuals have never had an eGFR measured; they now have NAs\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-04-19\n66\n\n\n1010815\n2000-01-17\n90\n\n\n1019932\n2001-03-12\n78\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\n\n\n\n\n\n\n\n\n\nGet first glucose-lowering drug prescription\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2000-12-27\n\n\n1006023\n2000-07-12\n\n\n1006164\n2000-11-09\n\n\n\n\n\n\n\n\n\nAdd in medication data and remove individuals with prior drug exposure\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\n\n\n\n\n\n\n\n\n\nGet first metformin prescription\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1010815\n2005-07-08\n30\n360\n\n\n1019932\n2001-02-20\n60\n840\n\n\n1024746\n2019-11-14\n30\n540\n\n\n\n\n\n\n\n\n\nAdd in metformin data\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\nNA\nNA\nNA\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\nCalculate time to metformin\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\nNA\nNA\nNA\nNA\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\nNA\nNA\nNA\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "title": "Example pipeline",
+    "section": "Now you can start analysing the data…",
+    "text": "Now you can start analysing the data…\n\nplot(pop$eGFR_val, pop$tte_metf)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "General info",
+    "section": "",
+    "text": "We’re a bi-weekly open “café” for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine."
+  },
+  {
+    "objectID": "index.html#format",
+    "href": "index.html#format",
+    "title": "General info",
+    "section": "Format",
+    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time. There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe there is someone in the group that has the solution to your problem."
+  },
+  {
+    "objectID": "index.html#schedule-and-themes",
+    "href": "index.html#schedule-and-themes",
+    "title": "General info",
+    "section": "Schedule and themes",
+    "text": "Schedule and themes\n\n\n\n\n\n\nPrior dates and subjects\n\n\n\n\n\n\n\n\n\n\n\nPrior dates, times, locations, and lesson subjects for the Café sessions.\n\n\n\nWeek\nTime\nLocation\nPresenter\nTopic\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n3\n10:00-12:00\nHjørnerummet, A401-109\nZheer\nIntroduction and planning of format\n-\n\n\nTue, Jan 27, 2026\n5\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHow to ask for help: The minimal reproducible example and making simulated data\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.\n\n\n\nWeek\nTime\nLocation\nPresenter\nTopic\nHelpers\n\n\n\n\nWed, Feb 18, 2026\n8\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nPrevention and diagnosis of errors in R\n-\n\n\nTue, Feb 24, 2026\n9\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nTypes of data (object, classes)\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nWriting functions instead of copy/paste\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nLoops, recursion, parallelisation\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nParadigms: Base R vs. Tidyverse vs. data.table\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMore tidyverse\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHandling many packages—and cross-package workflows\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMoving between R and Stata\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMarkdown basics: Using Quarto and Rmarkdown\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nDatabase formats (parquet and more)\n-\n\n\n\n\n\n\n\n\nOther planned themes are:\n\nNice to know packages (e.g., {gtsummary}, {Epi}, and {Hmisc})\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: different options and packages for it, including combining {mice} with {MatchThem}/{WeightThem}\nPreregistration as a means to improved workflows in R"
   },
   {
     "objectID": "Misc/Plan.html",
     "href": "Misc/Plan.html",
     "title": "R Coding Café - Plan",
     "section": "",
-    "text": "library(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nlibrary(data.table)\n\n\nAttaching package: 'data.table'\n\n\nThe following objects are masked from 'package:dplyr':\n\n    between, first, last\n\nn &lt;- 1000\ndata &lt;- tibble(\n  x = sample(c(\"Treatment A\", \"Treatment B\"), size = n, replace =T),\n  sex = rbinom(n, 1, 0.5) |&gt; factor(labels = c(\"Male\", \"Female\")) |&gt; factor(levels = c(\"Male\", \"Female\")),\n  age = runif(n, 15,87) |&gt; round(),\n  height = rnorm(n, 183 - as.numeric(sex)*5, 10),\n  weight = (rnorm(n,24,2)+age/45+1.5*as.numeric(sex)) * (height/100)^2,\n  bmi = weight/(height/100)^2\n)"
+    "text": "Matching, weighting and statistical adjustment\nWeightIt / WeightThem MatchIt / MatchThem\n\n\nMissing data\nAssumptions: - MAR/MNAR/MCAR - Changing the missingness mechanism\nMethods: - MICE (Multiple imp.) - Pooling: Ruben’s rules - FIML (Full-information max. likelihood) - IPMW (Inv. prob. weighting) - CCA (Complete case analysis) - Posterior predictive sampling (And other Bayesian ideas)\n\n\nQuarto / RMD\nUsing markdown-based tools for - presentations - papers - analyses - dynamic content - R shiny\n\n\nWorking with database(-like) formats and tools\n\nSQL\nParquet\nDuckDB\nduckplyr/dbplyr\narrow\n\nWhy you should want to\nWhen it works\nWhen it doesn’t work"
   },
   {
     "objectID": "Misc/Plan.html#plan-for-r-coding-café",
@@ -28,318 +109,19 @@
     "text": "Subjects for presentation\n\nThe minimal reproducible example - and simulation basics\n\nWhat to include\n\n\nMinimal code\nMinimal data\nPrevious attempts\n\n\nWhat not to include\nSimulating the data\n\n\nSampling from a distribution - random deviates in R\nSampling from a set\n\n\n\nData structures\nVariable classes\nSingular: - Numeric: float (double) v. integer - Character - Factor\nMultiple: - Vectors v. lists - Matrices - Tables, data.frames, tibbles v. data.table\nObjects\n\n\nDebugging and sanity checks\nPrinting\nTry\nDebugger moder\nEvaluating output line by line\nSummary functions\n\nis.na(data$age) # The NA cemetery: where half the victims of data management errors go to rest\n\n# General summary functions\nsummary(data$age)\ntable(data$age) # Only for categorical variables\nHmisc::describe(data$age)\n\n# dplyr::summarise()\nlibrary(dplyr)\ndata |&gt; group_by(PNR) |&gt; summarise(n()) # also useful with custom functions\n\n# Make a \"Table 1\" for thorough stratified overviews\ngtsummary::tbl_summary(data, by = sex, include = c(x, age, sex, height, weight, bmi))\n\n\n\nFunctions\n\nmyFunction &lt;- function(input) {\n  output &lt;- input + ...\n  return(output)\n}\n\n\n\nIteration, paralellisation (and recursion?)\nFor and while loops\n\nfor (i in 1:10) {\n  print(i)\n}\n\n[1] 1\n[1] 2\n[1] 3\n[1] 4\n[1] 5\n[1] 6\n[1] 7\n[1] 8\n[1] 9\n[1] 10\n\n# Finite length vector\n\ni &lt;- 2\nwhile (i &lt; 20) {\n  i &lt;- i^2\n  print(i)\n}\n\n[1] 4\n[1] 16\n[1] 256\n\n# BEWARE, here be infinity\n\nFunctional programming\n\n# apply(), sapply(), lapply(), ...\n# purrr::map()\n\nParallel compute\n\n# purrr::in_parallel() [mirai]\n\n# doParallel:\nlibrary(doParallel)\ncl &lt;- makeCluster(2)\nregisterDoParallel(cl)\nforeach(x = 1:10) %dopar% { x^2 }\nstopCluster(cl)\ncloseAllConnections()\n\n\n\nParadigms: Base R, data.table, and Tidyverse (dplyr)\nBase R\n\n# Explicit indexing, standard evaluation, (note logical vectors), wysiwyg\ndf[df$age &gt;= 18, ]\n\ndf$bmi &lt;- df$weight / df$height^2\n\naggregate(income ~ sex, data = df, mean)\n\n\nR intro: https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf\n\nTidyverse\n\n# Declarative, non-standard evaluation, very readable, piping as a way of life\ndf &lt;- df |&gt; dplyr::filter(age &gt;= 18)\n\ndf &lt;- df |&gt; mutate(\n  bmi = weight / height^2\n)\n\ndf |&gt; group_by(sex) |&gt; summarise(mean_inc = mean(income))\n\n\nTidyverse intro: https://cran.r-project.org/web/packages/tidyverse/vignettes/paper.html\nDplyr intro: https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html\n\nData.table\n\n# Concise, fast\nDT[age &gt;= 18,,]\n\nDT[, bmi := weight/height^2]\n\nDT[, .(mean_inc = mean(income)), by = sex]\n\n\nDT intro: https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html\n\n\n\nMore Tidyverse\n\ndplyr\ntidyr\nlubridate\nggplot2\nstringr\nforcats\n…\n\n\n\nDependencies and cross-package workflows\n\nOrder of loading\n\nMasking of functions\n\nFeeding one package’s output into another; common workflows\n\nCompatibility\nClasses\nGeneric functions and methods\n\n\n\n\nWorking across languages\nSTATA to R:\n\nFactors as numeric\n\nLabels\n\nReading and writing data\n\n\n\nPre-registration and non-statistical variance\n\nOpen science and reproducibility\nResearcher degrees of freedom\nA language for data management\n\n\n\nMatching, weighting and statistical adjustment\nWeightIt / WeightThem MatchIt / MatchThem\n\n\nMissing data\nAssumptions: - MAR/MNAR/MCAR - Changing the missingness mechanism\nMethods: - MICE (Multiple imp.) - Pooling: Ruben’s rules - FIML (Full-information max. likelihood) - IPMW (Inv. prob. weighting) - CCA (Complete case analysis) - Posterior predictive sampling (And other Bayesian ideas)\n\n\nPackages\n{gtsummary} {Epi} {Hmisc}\n\n\nQuarto / RMD\nUsing markdown-based tools for - presentations - papers - analyses - dynamic content - R shiny\n\n\nWorking with database(-like) formats and tools\n\nSQL\nParquet\nDuckDB\nduckplyr/dbplyr\narrow\n\nWhy you should want to\nWhen it works\nWhen it doesn’t work"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "General info",
+    "objectID": "notes/extra/index.html",
+    "href": "notes/extra/index.html",
+    "title": "Extra notes and tutorials",
     "section": "",
-    "text": "We’re a bi-weekly open “café” for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine."
-  },
-  {
-    "objectID": "index.html#schedule-and-themes",
-    "href": "index.html#schedule-and-themes",
-    "title": "General info",
-    "section": "Schedule and themes",
-    "text": "Schedule and themes\n\n\n\n\n\n\nTable 1: Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.\n\n\n\nWeek\nTime\nLocation\nPresenter\nTopic\nHelpers\n\n\n\n\nPrevious\n\n\nTue, Jan 13, 2026\n3\n10:00-12:00\nHjørnerummet, A401-109\nZheer\nIntroduction and planning of format\n-\n\n\nTue, Jan 27, 2026\n5\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHow to ask for help: The minimal reproducible example and making simulated data\n-\n\n\nPlanned\n\n\nWed, Feb 18, 2026\n8\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nPrevention and diagnosis of errors in R\n-\n\n\nTue, Feb 24, 2026\n9\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nTypes of data (object, classes)\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nWriting functions instead of copy/paste\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nLoops, recursion, parallelisation\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nParadigms: Base R vs. Tidyverse vs. data.table\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMore tidyverse\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nHandling many packages—and cross-package workflows\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMoving between R and Stata\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nMarkdown basics: Using Quarto and Rmarkdown\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet, A401-109\nZheer\nDatabase formats (parquet and more)\n-\n\n\n\n\n\n\n\n\nOther planned themes are:\n\nNice to know packages (e.g., {gtsummary}, {Epi}, and {Hmisc})\nMatching and Weighting (using MatchIt and WeightIt)\nMissing data: different options and packages for it, including combining {mice} with {MatchThem}/{WeightThem}\nPreregistration as a means to improved workflows in R"
-  },
-  {
-    "objectID": "minimal-reproducible-example.html",
-    "href": "minimal-reproducible-example.html",
-    "title": "Notes: Minimal, reproducible example",
-    "section": "",
-    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question."
-  },
-  {
-    "objectID": "minimal-reproducible-example.html#setting-the-random-seed",
-    "href": "minimal-reproducible-example.html#setting-the-random-seed",
-    "title": "Notes: Minimal, reproducible example",
-    "section": "Setting the random seed",
-    "text": "Setting the random seed\n\n# Before doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13"
-  },
-  {
-    "objectID": "minimal-reproducible-example.html#sampling-from-a-distribution",
-    "href": "minimal-reproducible-example.html#sampling-from-a-distribution",
-    "title": "Notes: Minimal, reproducible example",
-    "section": "Sampling from a distribution",
-    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatevers else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ..."
-  },
-  {
-    "objectID": "minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "href": "minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "title": "Notes: Minimal, reproducible example",
-    "section": "Sampling from a set of values",
-    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1"
-  },
-  {
-    "objectID": "minimal-reproducible-example.html#an-example-dataset",
-    "href": "minimal-reproducible-example.html#an-example-dataset",
-    "title": "Notes: Minimal, reproducible example",
-    "section": "An example dataset",
-    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(5, 1, 0.5),\n  age = rnorm(5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\nWarning: package 'tibble' was built under R version 4.4.3\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(5, 1, 0.5),\n  age = rnorm(5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(5, 15+trt),\n  tte_censor = rpois(5, 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0"
-  },
-  {
-    "objectID": "notes/minimal-reproducible-example.html",
-    "href": "notes/minimal-reproducible-example.html",
-    "title": "Minimal, reproducible example",
-    "section": "",
-    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
+    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
     "crumbs": [
       "R Coding Café",
-      " ",
-      "Minimal, reproducible example"
+      "Extra notes and tutorials"
     ]
   },
   {
-    "objectID": "notes/minimal-reproducible-example.html#setting-the-random-seed",
-    "href": "notes/minimal-reproducible-example.html#setting-the-random-seed",
-    "title": "Minimal, reproducible example",
-    "section": "Setting the random seed",
-    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
-    "crumbs": [
-      "R Coding Café",
-      " ",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/minimal-reproducible-example.html#sampling-from-a-distribution",
-    "href": "notes/minimal-reproducible-example.html#sampling-from-a-distribution",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a distribution",
-    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
-    "crumbs": [
-      "R Coding Café",
-      " ",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/minimal-reproducible-example.html#an-example-dataset",
-    "href": "notes/minimal-reproducible-example.html#an-example-dataset",
-    "title": "Minimal, reproducible example",
-    "section": "An example dataset",
-    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
-    "crumbs": [
-      "R Coding Café",
-      " ",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "href": "notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a set of values",
-    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
-    "crumbs": [
-      "R Coding Café",
-      " ",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "index.html#prerequisites",
-    "href": "index.html#prerequisites",
-    "title": "General info",
-    "section": "Prerequisites",
-    "text": "Prerequisites\n\n\n\n\n\n\nTip\n\n\n\n\n\nYou should have had some type of introduction to R; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
-  },
-  {
-    "objectID": "index.html#format",
-    "href": "index.html#format",
-    "title": "General info",
-    "section": "Format",
-    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time. There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe there is someone in the group that has the solution to your problem."
-  },
-  {
-    "objectID": "data-types.html",
-    "href": "data-types.html",
-    "title": "Data types",
-    "section": "",
-    "text": "[1] 1 2 3 4 2 3 1 4"
-  },
-  {
-    "objectID": "notes/example-pipeline.html",
-    "href": "notes/example-pipeline.html",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/example-pipeline.html#lets-construct-some-fake-data",
-    "href": "notes/example-pipeline.html#lets-construct-some-fake-data",
-    "title": "Example pipeline",
-    "section": "Let’s construct some fake data",
-    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1950-01-01\"), as.Date(\"1989-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_glucose_lowering &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 10\nlmdb &lt;- sample_n(ATC_select_glucose_lowering,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\n#lpr_diag |&gt; group_by(RECNUM) |&gt; mutate(ctype = paste(C_DIAGTYPE, collapse = \"+\")) |&gt; reframe(n = n(), ctype = max(ctype)) |&gt; summarise(n = n(), .by=ctype)\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab),\n  VALUE = rnorm(n_lab, mean = 70, sd = 10) |&gt; round()\n)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/example-pipeline.html#putting-things-together",
-    "href": "notes/example-pipeline.html#putting-things-together",
-    "title": "Example pipeline",
-    "section": "Putting things together",
-    "text": "Putting things together\n\nIdentify first hip fracture\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\n\n\nAdd background info\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age))\n\n\n\nGet last eGFR before fracture\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n# Note, approx 10% of individuals have never had an eGFR measured; they now have NAs\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= D_INDDTO) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(last_eGFR = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\n\n\nGet first glucose-lowering drug prescription\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\n\n\nAdd in medication data and remove individuals with prior drug exposure\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | D_INDDTO &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\n\n\nGet first metformin prescription\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(daily_doses = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, daily_doses, total_dose))\n\n\n\nAdd in metformin data\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\n\n\nCalculate time to metformin\n\npop &lt;- pop |&gt;\n  mutate(tte_metformin = difftime(EKSD, D_INDDTO))",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/example-pipeline.html#now-you-can-start-analysing-the-data",
-    "href": "notes/example-pipeline.html#now-you-can-start-analysing-the-data",
-    "title": "Example pipeline",
-    "section": "Now you can start analysing the data…",
-    "text": "Now you can start analysing the data…\n\nplot(pop$last_eGFR, pop$tte_metformin)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "href": "notes/example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/example-pipeline.html",
-    "href": "notes/extra/example-pipeline.html",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "href": "notes/extra/example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/example-pipeline.html#lets-construct-some-fake-data",
-    "href": "notes/extra/example-pipeline.html#lets-construct-some-fake-data",
-    "title": "Example pipeline",
-    "section": "Let’s construct some fake data",
-    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1950-01-01\"), as.Date(\"1989-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_glucose_lowering &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 10\nlmdb &lt;- sample_n(ATC_select_glucose_lowering,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\n#lpr_diag |&gt; group_by(RECNUM) |&gt; mutate(ctype = paste(C_DIAGTYPE, collapse = \"+\")) |&gt; reframe(n = n(), ctype = max(ctype)) |&gt; summarise(n = n(), .by=ctype)\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab),\n  VALUE = rnorm(n_lab, mean = 70, sd = 10) |&gt; round()\n)",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/example-pipeline.html#putting-things-together",
-    "href": "notes/extra/example-pipeline.html#putting-things-together",
-    "title": "Example pipeline",
-    "section": "Putting things together",
-    "text": "Putting things together\n\nIdentify first hip fracture\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\n\n\nAdd background info\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age))\n\n\n\nGet last eGFR before fracture\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n# Note, approx 10% of individuals have never had an eGFR measured; they now have NAs\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= D_INDDTO) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(last_eGFR = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\n\n\nGet first glucose-lowering drug prescription\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\n\n\nAdd in medication data and remove individuals with prior drug exposure\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | D_INDDTO &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\n\n\nGet first metformin prescription\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(daily_doses = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, daily_doses, total_dose))\n\n\n\nAdd in metformin data\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\n\n\nCalculate time to metformin\n\npop &lt;- pop |&gt;\n  mutate(tte_metformin = difftime(EKSD, D_INDDTO))",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/example-pipeline.html#now-you-can-start-analysing-the-data",
-    "href": "notes/extra/example-pipeline.html#now-you-can-start-analysing-the-data",
-    "title": "Example pipeline",
-    "section": "Now you can start analysing the data…",
-    "text": "Now you can start analysing the data…\n\nplot(pop$last_eGFR, pop$tte_metformin)",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/minimal-reproducible-example.html",
-    "href": "notes/lesson-notes/minimal-reproducible-example.html",
-    "title": "Minimal, reproducible example",
-    "section": "",
-    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/minimal-reproducible-example.html#setting-the-random-seed",
-    "href": "notes/lesson-notes/minimal-reproducible-example.html#setting-the-random-seed",
-    "title": "Minimal, reproducible example",
-    "section": "Setting the random seed",
-    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/minimal-reproducible-example.html#sampling-from-a-distribution",
-    "href": "notes/lesson-notes/minimal-reproducible-example.html#sampling-from-a-distribution",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a distribution",
-    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/minimal-reproducible-example.html#an-example-dataset",
-    "href": "notes/lesson-notes/minimal-reproducible-example.html#an-example-dataset",
-    "title": "Minimal, reproducible example",
-    "section": "An example dataset",
-    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "href": "notes/lesson-notes/minimal-reproducible-example.html#sampling-from-a-set-of-values",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a set of values",
-    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/data-types.html",
-    "href": "notes/lesson-notes/data-types.html",
+    "objectID": "notes/lesson-notes/3-data-types.html",
+    "href": "notes/lesson-notes/3-data-types.html",
     "title": "Data types",
     "section": "",
     "text": "…To be written",
@@ -347,17 +129,6 @@
       "R Coding Café",
       "Lesson notes",
       "Data types"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/index.html",
-    "href": "notes/lesson-notes/index.html",
-    "title": "Lesson notes",
-    "section": "",
-    "text": "just a collection of notes from each lesson",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes"
     ]
   },
   {
@@ -421,86 +192,226 @@
     ]
   },
   {
-    "objectID": "notes/lesson-notes/3-data-types.html",
-    "href": "notes/lesson-notes/3-data-types.html",
-    "title": "Data types",
+    "objectID": "notes/lesson-notes/2-debugging.html",
+    "href": "notes/lesson-notes/2-debugging.html",
+    "title": "Writing working code—and debugging it",
     "section": "",
     "text": "…To be written",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Data types"
+      "Writing working code—and debugging it"
     ]
   },
   {
-    "objectID": "notes/extra/index.html",
-    "href": "notes/extra/index.html",
-    "title": "Extra notes and tutorials",
+    "objectID": "notes/lesson-notes/03-data-types.html",
+    "href": "notes/lesson-notes/03-data-types.html",
+    "title": "Data types",
     "section": "",
-    "text": "This section will be used to miscellaneous notes either curated or written for other causes but which may be useful here as well.",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials"
-    ]
+    "text": "…To be written"
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html",
-    "href": "notes/extra/1-example-pipeline.html",
-    "title": "Example pipeline",
+    "objectID": "notes/lesson-notes/01-minimal-reproducible-example.html",
+    "href": "notes/lesson-notes/01-minimal-reproducible-example.html",
+    "title": "Minimal, reproducible example",
     "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "Minimal, reproducible example"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "title": "Example pipeline",
+    "objectID": "notes/lesson-notes/01-minimal-reproducible-example.html#setting-the-random-seed",
+    "href": "notes/lesson-notes/01-minimal-reproducible-example.html#setting-the-random-seed",
+    "title": "Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-minimal-reproducible-example.html#sampling-from-a-distribution",
+    "href": "notes/lesson-notes/01-minimal-reproducible-example.html#sampling-from-a-distribution",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-minimal-reproducible-example.html#an-example-dataset",
+    "href": "notes/lesson-notes/01-minimal-reproducible-example.html#an-example-dataset",
+    "title": "Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "href": "notes/lesson-notes/01-minimal-reproducible-example.html#sampling-from-a-set-of-values",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-debugging.html",
+    "href": "notes/lesson-notes/02-debugging.html",
+    "title": "Writing working code—and debugging it",
     "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\n\nset.seed(123456)\nlibrary(dplyr)",
+    "text": "…To be written",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "Writing working code—and debugging it"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#lets-construct-some-fake-data",
-    "href": "notes/extra/1-example-pipeline.html#lets-construct-some-fake-data",
-    "title": "Example pipeline",
-    "section": "Let’s construct some fake data",
-    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1950-01-01\"), as.Date(\"1989-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1981-06-09\n\n\n7782085\n2\n1964-12-10\n\n\n4521300\n1\n1988-07-21\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_glucose_lowering &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 10\nlmdb &lt;- sample_n(ATC_select_glucose_lowering,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA10BB12\nGlimepiride\n8913161\n2010-04-16\n2\n20\n12\n40\n\n\nA10BJ06\nSemaglutide\n7155623\n2005-01-23\n3\n10\n19\n30\n\n\nA10BJ02\nLiraglutide\n2448276\n2005-03-13\n2\n20\n23\n40\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n7465102\n7161939417\n2003-03-07\nS72.4\n\n\n4352898\n3238130082\n2005-04-19\nS72.4\n\n\n3752898\n3030336058\n2009-03-18\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n7161939417\nS72.4\nA\n\n\n3238130082\nS72.4\nA\n\n\n3030336058\nS72.1\nA\n\n\n3030336058\nS72.8\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab),\n  VALUE = rnorm(n_lab, mean = 70, sd = 10) |&gt; round()\n)\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n8172410\n2006-12-10\neGFR\n72\n\n\n2697955\n2004-02-22\neGFR\n64\n\n\n1088015\n2009-09-23\neGFR\n69",
+    "objectID": "notes/lesson-notes/01 Minimal Reproducible Example.html",
+    "href": "notes/lesson-notes/01 Minimal Reproducible Example.html",
+    "title": "Minimal, reproducible example",
+    "section": "",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "Minimal, reproducible example"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#putting-things-together",
-    "href": "notes/extra/1-example-pipeline.html#putting-things-together",
-    "title": "Example pipeline",
-    "section": "Putting things together",
-    "text": "Putting things together\n\nIdentify first hip fracture\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n5843620927\n2000-05-07\nS72.0\nS72.0\nA\n\n\n1006023\n7507439271\n2000-01-03\nS72.1\nS72.1\nA\n\n\n1006164\n1399413324\n2000-04-04\nS72.0\nS72.0\nA\n\n\n\n\n\n\n\n\n\nAdd background info\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\n\n\n\n\n\n\n\n\n\nGet last eGFR before fracture\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n# Note, approx 10% of individuals have never had an eGFR measured; they now have NAs\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-04-19\n66\n\n\n1010815\n2000-01-17\n90\n\n\n1019932\n2001-03-12\n78\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\n\n\n\n\n\n\n\n\n\nGet first glucose-lowering drug prescription\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2000-12-27\n\n\n1006023\n2000-07-12\n\n\n1006164\n2000-11-09\n\n\n\n\n\n\n\n\n\nAdd in medication data and remove individuals with prior drug exposure\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\n\n\n\n\n\n\n\n\n\nGet first metformin prescription\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1010815\n2005-07-08\n30\n360\n\n\n1019932\n2001-02-20\n60\n840\n\n\n1024746\n2019-11-14\n30\n540\n\n\n\n\n\n\n\n\n\nAdd in metformin data\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\nNA\nNA\nNA\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\nCalculate time to metformin\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-05-07\n1964-08-09\n1\n35.74\n2000-04-19\n66\nNA\nNA\nNA\nNA\n\n\n1006023\n2000-01-03\n1984-03-17\n1\n15.80\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-04-04\n1964-08-05\n2\n35.66\nNA\nNA\nNA\nNA\nNA\nNA",
+    "objectID": "notes/lesson-notes/01 Minimal Reproducible Example.html#setting-the-random-seed",
+    "href": "notes/lesson-notes/01 Minimal Reproducible Example.html#setting-the-random-seed",
+    "title": "Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "Minimal, reproducible example"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "title": "Example pipeline",
-    "section": "Now you can start analysing the data…",
-    "text": "Now you can start analysing the data…\n\nplot(pop$eGFR_val, pop$tte_metf)",
+    "objectID": "notes/lesson-notes/01 Minimal Reproducible Example.html#sampling-from-a-distribution",
+    "href": "notes/lesson-notes/01 Minimal Reproducible Example.html#sampling-from-a-distribution",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01 Minimal Reproducible Example.html#an-example-dataset",
+    "href": "notes/lesson-notes/01 Minimal Reproducible Example.html#an-example-dataset",
+    "title": "Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01 Minimal Reproducible Example.html#sampling-from-a-set-of-values",
+    "href": "notes/lesson-notes/01 Minimal Reproducible Example.html#sampling-from-a-set-of-values",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/99-other-planned.html",
+    "href": "notes/lesson-notes/99-other-planned.html",
+    "title": "R Coding Café - Plan",
+    "section": "",
+    "text": "Matching, weighting and statistical adjustment\nWeightIt / WeightThem MatchIt / MatchThem\n\n\nMissing data\nAssumptions: - MAR/MNAR/MCAR - Changing the missingness mechanism\nMethods: - MICE (Multiple imp.) - Pooling: Ruben’s rules - FIML (Full-information max. likelihood) - IPMW (Inv. prob. weighting) - CCA (Complete case analysis) - Posterior predictive sampling (And other Bayesian ideas)\n\n\nQuarto / RMD\nUsing markdown-based tools for - presentations - papers - analyses - dynamic content - R shiny\n\n\nWorking with database(-like) formats and tools\n\nSQL\nParquet\nDuckDB\nduckplyr/dbplyr\narrow\n\nWhy you should want to\nWhen it works\nWhen it doesn’t work",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "R Coding Café - Plan"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
+    "title": "Minimal, reproducible example",
+    "section": "",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
+    "title": "Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
+    "title": "Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
     ]
   }
 ]

@@ -4,11 +4,20 @@ page-layout: full
 sidebar: false
 ---
 
+```{r}
+#| echo: false
+#| output: false
+
+library(gt)
+library(dplyr)
+```
+
+
 ![](img/rcc_gif.gif)
 
 We're a bi-weekly open “café” for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine.
 
-::: {.callout-tip collapse="true"}
+::: {.callout-tip collapse="true" appearance="simple"}
 ## Prerequisites
 
 You should have had some type of introduction to R; consider 
@@ -31,8 +40,7 @@ Subsequently, 1-2 experienced instructors will help with your specific challenge
 
 ```{r}
 #| echo: false
- 
-library(gt)
+
 timeline <- tibble::tribble(
   ~Week, ~Date, ~Time, ~Location, ~Presenter, ~Topic, ~Helpers,
   3,"2026-01-13", "10:00-12:00", "Hjørnerummet, A401-109", "Zheer", "Introduction and planning of format", "-",
@@ -52,10 +60,37 @@ timeline <- tibble::tribble(
                 Passed = dplyr::case_when(Date > lubridate::today() ~ "Planned", 
                                    Date == lubridate::today() ~ "Today",
                                    Date < lubridate::today() ~ "Previous"))
-  
+previous <- timeline |> filter(Passed == "Previous") |> select(-c(Passed))
+upcoming <- timeline |> filter(Passed != "Previous") |> {\(x) {
+  if(x$Passed |> unique() |> length() > 1) return(x)
+  else return(x |> select(-c(Passed)))
+}}()
+```
 
-gt(timeline, 
-       caption = "Table 1: Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.", 
+::: {.callout-note collapse="true" appearance="minimal" icon="false"}
+## Prior dates and subjects
+
+```{r}
+#| echo: false
+
+gt(previous, 
+       caption = "Prior dates, times, locations, and lesson subjects for the Café sessions.",
+       rowname_col = "Date")|>
+  fmt_datetime(
+    columns = Date,
+    format = "EEE, MMM d, y",
+    locale = "en"
+  ) |> 
+  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels())
+```
+:::
+
+
+```{r}
+#| echo: false
+
+gt(upcoming, 
+       caption = "Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.", 
        rowname_col = "Date", 
        groupname_col="Passed")|>
   fmt_datetime(
@@ -75,6 +110,6 @@ gt(timeline,
 ### Other planned themes are:
 
 - Nice to know packages (e.g., {gtsummary}, {Epi}, and {Hmisc})
-- Matching and Weighting (using MatchIt and WeightIt)
+- Matching and Weighting (using {MatchIt} and {WeightIt} packages)
 - Missing data: different options and packages for it, including combining {mice} with {MatchThem}/{WeightThem}
 - Preregistration as a means to improved workflows in R

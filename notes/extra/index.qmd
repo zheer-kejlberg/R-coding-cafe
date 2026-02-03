@@ -2,4 +2,4 @@
 title: "Extra notes and tutorials"
 ---
 
-This section will be used to miscellaneous notes either curated or written for other causes but which may be useful here as well.
+This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.

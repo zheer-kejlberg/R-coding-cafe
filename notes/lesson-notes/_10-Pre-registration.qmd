@@ -1,0 +1,13 @@
+---
+title: "Pre-registration as guide rails"
+---
+
+::: {.content-visible when-format="pdf"}
+
+### Pre-registration and non-statistical variance
+
+-   Open science and reproducibility
+-   Researcher degrees of freedom
+-   A language for data management
+
+:::
