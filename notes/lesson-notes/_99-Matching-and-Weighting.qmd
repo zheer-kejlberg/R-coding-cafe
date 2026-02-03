@@ -1,0 +1,9 @@
+---
+title: "R Coding Café - Plan"
+---
+
+
+### Matching, weighting and statistical adjustment
+
+WeightIt / WeightThem 
+MatchIt / MatchThem

@@ -1,0 +1,22 @@
+---
+title: "Pre-registration as guide rails"
+---
+
+::: {.content-visible when-format="pdf"}
+
+### Working with database(-like) formats and tools
+
+-   SQL
+-   Parquet
+-   DuckDB
+-   duckplyr/dbplyr
+-   arrow
+
+Why you should want to
+
+When it works
+
+When it doesn't work
+
+
+:::

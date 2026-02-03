@@ -15,7 +15,13 @@ library(dplyr)
 
 ![](img/rcc_gif.gif)
 
-We're a bi-weekly open “café” for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine.
+We're a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code.
+
+## Format
+
+Below are the planned dates; you can arrive and leave at any time. There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)
+
+Subsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe there is someone in the group that has the solution to your problem.
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Prerequisites
@@ -27,14 +33,6 @@ You should have had some type of introduction to R; consider
 - the fantastic online book <a href="https://r4ds.hadley.nz/intro.html">R for Data Science</a>
 
 :::
-
-## Format
-
-Below are the planned dates; you can arrive and leave at any time. There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)
-
-Subsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe there is someone in the group that has the solution to your problem.
-
-
 
 ## Schedule and themes
 
@@ -113,3 +111,5 @@ gt(upcoming,
 - Matching and Weighting (using {MatchIt} and {WeightIt} packages)
 - Missing data: different options and packages for it, including combining {mice} with {MatchThem}/{WeightThem}
 - Preregistration as a means to improved workflows in R
+
+Reach out to me if you want anything added to the list.

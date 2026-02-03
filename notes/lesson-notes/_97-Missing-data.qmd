@@ -1,0 +1,17 @@
+---
+title: "Missing data and how to handle it"
+---
+
+
+### Missing data
+
+Assumptions: - MAR/MNAR/MCAR - Changing the missingness mechanism
+
+Methods: 
+
+- MICE (Multiple imp.) 
+  - Pooling: Ruben's rules 
+- FIML (Full-information max. likelihood) 
+- IPMW (Inv. prob. weighting) 
+- CCA (Complete case analysis) 
+- Posterior predictive sampling (And other Bayesian ideas)
