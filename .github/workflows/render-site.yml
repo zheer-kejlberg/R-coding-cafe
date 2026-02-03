@@ -51,20 +51,24 @@ jobs:
       - name: Render site
         run: Rscript scripts/render-site.R
 
+      - name: Prepare Pages artifact
+        run: |
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='*.qmd' \
+            --exclude='*.R' \
+            --exclude='scripts' \
+            --exclude='renv' \
+            --exclude='renv.lock' \
+            --exclude='*.Rproj' \
+            --exclude='*.Rproj.user' \
+            ./ ./pages-artifact/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
-          exclude: |
-            **/.git/**
-            **/.github/**
-            **/*.qmd
-            **/*.R
-            **/scripts/**
-            **/renv/**
-            **/renv.lock
-            **/*.Rproj
-            **/*.Rproj.user/**
+          path: pages-artifact
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
