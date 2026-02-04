@@ -48,18 +48,18 @@ You're expected to have an introductory knowledge of R and RStudio; consider
 
 timeline_raw <- tibble::tribble(
   ~Week, ~Date, ~T_start, ~T_end, ~Location, ~Presenter, ~Topic, ~Helpers,
-  3,"2026-01-13", "10:00:00 AM", "12:00:00 PM", "Hjørnerummet, A401-109", "Zheer", "Introduction and planning of format", "-",
-  5,"2026-01-27", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-",
-  8,"2026-02-18", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Prevention and diagnosis of errors in R", "-", 
-  9,"2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Types of data (object, classes)", "-", 
-  11,"2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Writing functions instead of copy/paste", "-", 
-  13,"2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Loops, recursion, parallelisation", "-", 
-  15,"2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "-", 
-  17,"2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "More tidyverse", "-", 
-  19,"2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Handling many packages—and cross-package workflows", "-", 
-  21,"2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Moving between R and Stata", "-", 
-  23,"2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", "-", 
-  25,"2026-06-16", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet, A401-109", "Zheer", "Database formats (parquet and more)", "-"
+  3,"2026-01-13", "10:00:00 AM", "12:00:00 PM", "Hjørnerummet (A401-109)", "Zheer", "Introduction and planning of format", "-",
+  5,"2026-01-27", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-",
+  8,"2026-02-18", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Prevention and diagnosis of errors in R", "-", 
+  9,"2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Types of data (object, classes)", "-", 
+  11,"2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Writing functions instead of copy/paste", "-", 
+  13,"2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Loops, recursion, parallelisation", "-", 
+  15,"2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "-", 
+  17,"2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "More tidyverse", "-", 
+  19,"2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Handling many packages—and cross-package workflows", "-", 
+  21,"2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Moving between R and Stata", "-", 
+  23,"2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", "-", 
+  25,"2026-06-16", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Database formats (parquet and more)", "-"
 ) |>
   dplyr::mutate(Date = as.Date(Date),
                 Passed = dplyr::case_when(Date > lubridate::today() ~ "Planned", 
@@ -139,7 +139,7 @@ gt(upcoming,
 Reach out to me if you want anything added to the list.
 
 ```{r}
-create_event <- function(start, end, description, location) {
+create_event <- function(start, end, date, description, location) {
   reps <- length(start)
   events <- sprintf(
     "BEGIN:VEVENT
@@ -147,16 +147,18 @@ UID:%s@%s
 DTSTAMP:%s
 DTSTART:%s
 DTEND:%s
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:%s
+DESCRIPTION:Topic: %s
 LOCATION:%s
 END:VEVENT", 
-    uuid::UUIDgenerate(),rep("r-coding-cafe", reps), 
+    uuid::UUIDgenerate(n = reps),rep("r-coding-cafe", reps), 
     Sys.time() |> format("%Y%m%dT%H%M%SZ", tz="Europe/Copenhagen") |> rep(reps),
     start |> format("%Y%m%dT%H%M%SZ", tz = "Europe/Copenhagen"),
     end |> format("%Y%m%dT%H%M%SZ", tz = "Europe/Copenhagen"),
     description,
+    #paste0("\"", location, "\"")
     location
 ) |> paste0(collapse="\n")
   paste0("BEGIN:VCALENDAR
@@ -170,7 +172,7 @@ METHOD:PUBLISH
 END:VCALENDAR")
 }
 
-with(timeline_raw, create_event(T_start, T_end, Topic, Location)) |>
+with(timeline_raw, create_event(T_start, T_end, Date, Topic, Location)) |>
   writeLines("r-coding-cafe.ics")
 ```
 

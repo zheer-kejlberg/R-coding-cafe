@@ -4,123 +4,135 @@ PRODID:-//rstats//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:249d5575-3f6c-40a0-8216-621fa2070bc4@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260113T100000Z
 DTEND:20260113T120000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Introduction and planning of format
+DESCRIPTION:Topic: Introduction and planning of format
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:39984584-44ff-4da0-8fc1-ad8279eec876@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260127T100000Z
 DTEND:20260127T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:How to ask for help: The minimal reproducible example and making simulated data
+DESCRIPTION:Topic: How to ask for help: The minimal reproducible example and making simulated data
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:4e7fdd45-13f6-4e14-9dac-c15e97dafd69@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260218T100000Z
 DTEND:20260218T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Prevention and diagnosis of errors in R
+DESCRIPTION:Topic: Prevention and diagnosis of errors in R
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:3da1d1dc-a8cf-4f9a-a653-dbcbef9aeb02@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260224T100000Z
 DTEND:20260224T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Types of data (object, classes)
+DESCRIPTION:Topic: Types of data (object, classes)
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:1762c060-f9e9-40de-becc-a5f83044ba57@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260310T100000Z
 DTEND:20260310T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Writing functions instead of copy/paste
+DESCRIPTION:Topic: Writing functions instead of copy/paste
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:55d44628-9343-434a-a19b-6dfe42d1debb@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260324T100000Z
 DTEND:20260324T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Loops, recursion, parallelisation
+DESCRIPTION:Topic: Loops, recursion, parallelisation
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:3f2157b2-1298-4d2f-9efa-a7d9ba5acce9@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260407T100000Z
 DTEND:20260407T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Paradigms: Base R vs. Tidyverse vs. data.table
+DESCRIPTION:Topic: Paradigms: Base R vs. Tidyverse vs. data.table
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:1ec428c5-0d70-467d-b1b8-f925c0f33a34@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260421T100000Z
 DTEND:20260421T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:More tidyverse
+DESCRIPTION:Topic: More tidyverse
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:742abc0a-0700-48b2-b01f-e1ac62dbbd9d@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260505T100000Z
 DTEND:20260505T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Handling many packages—and cross-package workflows
+DESCRIPTION:Topic: Handling many packages—and cross-package workflows
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:5cf2c9d4-26d8-4b08-87d9-d89d0ac4cc0a@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260519T100000Z
 DTEND:20260519T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Moving between R and Stata
+DESCRIPTION:Topic: Moving between R and Stata
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:19744c38-9867-4601-8878-6be25c365751@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260602T100000Z
 DTEND:20260602T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Markdown basics: Using Quarto and Rmarkdown
+DESCRIPTION:Topic: Markdown basics: Using Quarto and Rmarkdown
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 BEGIN:VEVENT
-UID:1d02dd51-a5be-4195-b7a9-4cc5ae1e0775@r-coding-cafe
-DTSTAMP:20260204T150136Z
+UID:81fadaf5-56fd-41ea-b878-3d6917402e7d@r-coding-cafe
+DTSTAMP:20260204T154221Z
 DTSTART:20260616T100000Z
 DTEND:20260616T113000Z
+STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Database formats (parquet and more)
+DESCRIPTION:Topic: Database formats (parquet and more)
 LOCATION:Hjørnerummet, A401-109
 END:VEVENT
 END:VCALENDAR
