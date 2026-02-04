@@ -1,0 +1,126 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//rstats//NONSGML v1.0//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-01-13 10:00:00
+DTEND:2026-01-13 12:00:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Introduction and planning of format
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-01-27 10:00:00
+DTEND:2026-01-27 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:How to ask for help: The minimal reproducible example and making simulated data
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-02-18 10:00:00
+DTEND:2026-02-18 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Prevention and diagnosis of errors in R
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-02-24 10:00:00
+DTEND:2026-02-24 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Types of data (object, classes)
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-03-10 10:00:00
+DTEND:2026-03-10 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Writing functions instead of copy/paste
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-03-24 10:00:00
+DTEND:2026-03-24 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Loops, recursion, parallelisation
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-04-07 10:00:00
+DTEND:2026-04-07 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Paradigms: Base R vs. Tidyverse vs. data.table
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-04-21 10:00:00
+DTEND:2026-04-21 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:More tidyverse
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-05-05 10:00:00
+DTEND:2026-05-05 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Handling many packages—and cross-package workflows
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-05-19 10:00:00
+DTEND:2026-05-19 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Moving between R and Stata
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-06-02 10:00:00
+DTEND:2026-06-02 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Markdown basics: Using Quarto and Rmarkdown
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+BEGIN:VEVENT
+UID:5ff6fb38-090c-45cf-90b5-2ffb14483f3a@r-coding-cafe
+DTSTAMP:20260204T144613Z
+DTSTART:2026-06-16 10:00:00
+DTEND:2026-06-16 11:30:00
+SUMMARY:R Coding Café
+URL:r-coding-cafe.zheer.dk
+DESCRIPTION:Database formats (parquet and more)
+LOCATION:Hjørnerummet, A401-109
+END:VEVENT
+END:VCALENDAR

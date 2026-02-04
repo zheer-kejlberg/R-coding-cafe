@@ -14,7 +14,7 @@ We suggest you search on <a href="https://stackoverflow.com">StackOverflow</a>; 
 ::: {.callout-caution collapse="true"}
 ## AI-tools
 
-As a next step, it can be useful to use AI-tools like ChatGPT; however, beware that these can make up functions, that it often still requires debugging, and that even working solutions (especially to more complex questions) can be unstable over time or datasets.
+As a next step, it can be useful to use AI-tools like ChatGPT; however, beware that these can make up functions, that it often still requires debugging, and that even working solutions (especially to more complex questions) can be unstable over time or across datasets.
 :::
 
 ### Asking a clear coding question
