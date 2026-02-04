@@ -153,9 +153,9 @@ DESCRIPTION:%s
 LOCATION:%s
 END:VEVENT", 
     uuid::UUIDgenerate(),rep("r-coding-cafe", reps), 
-    rep(format(Sys.time(), "%Y%m%dT%H%M%SZ", tz="Europe/Copenhagen"), reps),
-    start,
-    end,
+    Sys.time() |> format("%Y%m%dT%H%M%SZ", tz="Europe/Copenhagen") |> rep(reps),
+    start |> format("%Y%m%dT%H%M%SZ", tz = "Europe/Copenhagen"),
+    end |> format("%Y%m%dT%H%M%SZ", tz = "Europe/Copenhagen"),
     description,
     location
 ) |> paste0(collapse="\n")
@@ -172,9 +172,5 @@ END:VCALENDAR")
 
 with(timeline_raw, create_event(T_start, T_end, Topic, Location)) |>
   writeLines("r-coding-cafe.ics")
-
-
-
-
 ```
 
