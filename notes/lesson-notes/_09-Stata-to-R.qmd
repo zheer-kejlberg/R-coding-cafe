@@ -6,8 +6,9 @@ title: "Working across languages"
 
 STATA to R:
 
--   Factors as numeric
-    -   Labels
--   Reading and writing data
+- Factors as numeric
+  -   Labels
+- Reading and writing data
+- Dates and importance of the origin
 
 :::
