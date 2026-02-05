@@ -8,4 +8,4 @@ and_get_short_lessons_in <- data.frame(
         "- How to write clean and efficient code",
         "- How to debug",
         "- Nice packages to know",
-        "- And whatever else you request"))
+        "- And other topics of your choosing"))

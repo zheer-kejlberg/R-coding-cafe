@@ -21,7 +21,7 @@ n <- 2000
 bef <- data.frame(
   PNR = runif(n, min = 1e6, max = 1e7-1) |> floor() |> as.character(),
   koen = rbinom(n, size = 1, prob = 0.49) + 1,
-  FOED_DAG = runif(n, as.Date("1950-01-01"), as.Date("1989-12-31")) |> floor()  |> as.Date()
+  FOED_DAG = runif(n, as.Date("1940-01-01"), as.Date("1959-12-31")) |> floor()  |> as.Date()
 )
 ```
 
@@ -105,9 +105,15 @@ n_lab_missing <- floor(n / 10)
 lab_dm_forsker <- data.frame(
   PNR = sample(bef$PNR, size = n - n_lab_missing) |> sample(size = n_lab, replace = T),
   SAMPLINGDATE = runif(n_lab, as.Date("2000-01-01"), as.Date("2009-12-31")) |> floor()  |> as.Date(),
-  ANALYSISCODE = rep("eGFR", n_lab),
-  VALUE = rnorm(n_lab, mean = 70, sd = 10) |> round()
-)
+  ANALYSISCODE = rep("eGFR", n_lab)
+) |>
+  left_join(bef |> select(c(PNR, FOED_DAG)), by = "PNR") |>
+  mutate(
+    VALUE = rnorm(n_lab, 
+                  mean = 100 - as.numeric((as.Date(FOED_DAG) - as.Date("2020-01-01"))/3650)^2 |> round(2), 
+                  sd = 6) |> round()
+  ) |>
+  select(-c(FOED_DAG))
 ```
 
 Preview:
@@ -258,7 +264,11 @@ pop |> head(3) |> gt::gt()
 
 ## Now you can start analysing the data...
 ```{r}
-plot(pop$eGFR_val, pop$tte_metf)
+library(ggplot2)
+ggplot(pop, aes(x=age, y = eGFR_val)) +
+  geom_point() +
+  geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +
+  theme_bw()
 ```
 
 

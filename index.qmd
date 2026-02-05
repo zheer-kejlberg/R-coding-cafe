@@ -2,7 +2,6 @@
 title: "General info"
 page-layout: full
 sidebar: false
-css: Misc/css.css
 ---
 
 ```{r}
@@ -18,17 +17,15 @@ library(dplyr)
 
 We're a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code.
 
+  \
+  
 ## Format
 
 Below are the planned dates; you can arrive and leave at any time. 
 
-::: {.button-center}
-[Add to my calendar](webcal://r-coding-cafe.zheer.dk/r-coding-cafe.ics){.btn .btn-outline-primary .btn role="button" data-toggle="tooltip" title="Automatically updated upon changes."}
-:::
+There will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)
 
-There will be a ~15 minute presentation at the beginning, tackling a relevant topic (a general R concept, specific packages and workflows that are nice to know, etc.)
-
-Subsequently, 1-2 experienced instructors will help with your specific challenges and questions. But pelase interact with each other—maybe someone in the group has the solution to your exact problem.
+Subsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Prerequisites
@@ -38,41 +35,55 @@ You're expected to have an introductory knowledge of R and RStudio; consider
 - a course such as <a href="https://r-cubed-intro.rostools.org/">this</a> offered by the Danish Diabetes and Endocrinology Academy
 - an online course such as <a href="https://www.datacamp.com/courses/free-introduction-to-r">this one at Datacamp.com</a>
 - the fantastic online book <a href="https://r4ds.hadley.nz/intro.html">R for Data Science</a>
-
 :::
-
+  \
+  
 ## Schedule and themes
 
 ```{r}
 #| echo: false
 
 timeline_raw <- tibble::tribble(
-  ~Date, ~T_start, ~T_end, ~Location, ~Presenter, ~Topic, ~Helpers,
-  "2026-01-13", "10:00:00 AM", "12:00:00 PM", "Hjørnerummet (A401-109)", "Zheer", "Introduction and planning of format", "-",
-  "2026-01-27", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "-",
-  "2026-02-18", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Prevention and diagnosis of errors in R", "-", 
-  "2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Types of data (object, classes)", "-", 
-  "2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Writing functions instead of copy/paste", "-", 
-  "2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Loops, recursion, parallelisation", "-", 
-  "2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "-", 
-  "2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "More tidyverse", "-", 
-  "2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Handling many packages—and cross-package workflows", "-", 
-  "2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Moving between R and Stata", "-", 
-  "2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", "-", 
-  "2026-06-16", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Database formats (parquet and more)", "-"
+  ~Date, ~T_start, ~T_end, ~Location, ~Presenter, ~Topic, ~Note_URL, ~Helpers,
+  "2026-01-13", "10:00:00 AM", "12:00:00 PM", "Hjørnerummet (A401-109)", "Zheer", "Introduction and planning of format", NA_character_, "-",
+  
+  "2026-01-27", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "notes/lesson-notes/01-Minimal-Reproducible-Example.html", "-",
+  
+  "2026-02-18", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Prevention and diagnosis of errors in R", NA_character_, "-", 
+  
+  "2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Types of data (object, classes)", NA_character_, "-", 
+  
+  "2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Writing functions instead of copy/paste", NA_character_, "-", 
+  
+  "2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Loops, recursion, parallelisation", NA_character_, "-", 
+  
+  "2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", NA_character_, "-", 
+  
+  "2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "More tidyverse", NA_character_, "-", 
+  
+  "2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Handling many packages—and cross-package workflows", NA_character_, "-", 
+  
+  "2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Moving between R and Stata", NA_character_, "-", 
+  
+  "2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", NA_character_, "-", 
+  
+  "2026-06-16", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Database formats (parquet and more)", NA_character_, "-",
+  
+  "2026-06-17", "01:00:00 AM", "01:00:00 PM", "", "", "Intermezzo", NA_character_, "",
+  
+  "2026-08-11", "10:00:00 AM", "11:30:00 PM", "", "", "TBA", NA_character_, ""
 ) |>
-  dplyr::mutate(Date = as.Date(Date),
+  dplyr::mutate(#Date = as.Date(Date),
                 Passed = dplyr::case_when(Date > lubridate::today() ~ "Planned", 
-                                   Date == lubridate::today() ~ "Today",
-                                   Date < lubridate::today() ~ "Previous"),
+                                          Date == lubridate::today() ~ "Today",
+                                          Date < lubridate::today() ~ "Previous"),
                 Week = Date |> strftime("%V"))
 
 timeline <- timeline_raw |> 
   mutate(Time = paste0(stringr::str_extract(T_start, "^[0-9]+:[0-9]+"),
                        "-", 
                        stringr::str_extract(T_end, "^[0-9]+:[0-9]+"))) |>
-  select(-c(T_start, T_end)) |>
-  select(c(Week, Time, Location, Topic, Presenter, Helpers, Passed, Date))
+  select(c(Passed, Date, Week, Time, Location, Topic, Note_URL, Presenter, Helpers))
 
 timeline_raw <- timeline_raw |> 
   mutate(
@@ -88,35 +99,49 @@ previous <- timeline |> filter(Passed == "Previous") |> select(-c(Passed))
 upcoming <- timeline |> filter(Passed != "Previous") |> {\(x) {
   if(x$Passed |> unique() |> length() > 1) return(x)
   else return(x |> select(-c(Passed)))
-}}()
+}}() |> select(-c(Note_URL))
 ```
 
 ::: {.callout-note collapse="true" appearance="minimal" icon="false"}
-## Prior dates and subjects
+## Previous sessions
 
 ```{r}
 #| echo: false
 
-gt(previous, 
-       caption = "Prior dates, times, locations, and lesson subjects for the Café sessions.",
-       rowname_col = "Date")|>
+gt(previous, rowname_col = "Date")|>
   fmt_datetime(
     columns = Date,
     format = "EEE, MMM d, y",
     locale = "en"
   ) |> 
-  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels())
+  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels()) |>
+  tab_header(
+    title = "Dates, times, locations, and lesson topics.",
+    subtitle = html("&nbsp;")
+  ) |>
+  fmt_url(
+    columns = Note_URL,
+    label = "(notes)",
+    show_underline = FALSE,
+    color = "#990032"
+  ) |>
+  cols_merge(
+    columns = c(Topic, Note_URL),
+    pattern = "{1} {2}"
+  ) |>
+  sub_missing(columns = Note_URL, missing_text = html("&nbsp;"))
 ```
 :::
+  \
 
+#### Upcoming sessions
+
+[Add to your calendar](webcal://r-coding-cafe.zheer.dk/r-coding-cafe.ics){.btn .btn-outline-primary .btn role="button" data-toggle="tooltip" title="Automatically updated upon changes."} to receive automatic updates.
 
 ```{r}
 #| echo: false
 
-gt(upcoming, 
-       caption = "Upcoming dates, times, locations, and lesson subjects for the Café sessions. Note that the schedule can change.", 
-       rowname_col = "Date", 
-       groupname_col="Passed")|>
+gt(upcoming, rowname_col = "Date", groupname_col="Passed") |>
   fmt_datetime(
     columns = Date,
     format = "EEE, MMM d, y",
@@ -127,15 +152,36 @@ gt(upcoming,
             locations = cells_body(
               rows = Date == min(Date[Date >= lubridate::today()])
             )
+  ) |>
+  tab_style(style = cell_fill(color = "lightgrey"), 
+            locations = list(
+              cells_stub(rows = Topic == "Intermezzo"),
+              cells_body(rows = Topic == "Intermezzo")
+            )
+  ) |>
+  text_transform(
+    fn = function(x) "",
+    locations = list(
+      cells_body(rows = Topic == "Intermezzo"),
+      cells_stub(rows = Topic == "Intermezzo")
+    )
+  ) |>
+  text_transform(
+    fn = function(x) "Intermezzo",
+    locations = cells_body(rows = Topic == "Intermezzo", columns = Location)
+  ) |>
+  tab_header(
+    title = "Dates, times, locations, and lesson topics",
+    subtitle = "Note, the schedule may be subject to change"
   )
 
 ```
 
-### Other planned themes are:
+#### Other planned themes are:
 
 - Nice to know packages (e.g., `{gtsummary}`, `{Epi}`, and `{Hmisc}`)
 - Matching and Weighting (using `{MatchIt}` and `{WeightIt}` packages)
-- Missing data: packages for working with them, including imputation via {mice} and combining this with `{MatchThem}`/`{WeightThem}`
+- Missing data: relevant packages, including imputation via `{mice}` and combining this with `{MatchThem}`/`{WeightThem}`
 - Preregistration as a means to improved workflows in R
 
 Reach out to me if you want anything added to the list.
@@ -175,7 +221,11 @@ METHOD:PUBLISH
 END:VCALENDAR")
 }
 
-with(timeline_raw, create_event(T_start, T_end, Date, Topic, Location)) |>
+with(timeline_raw |> filter(Topic != "Intermezzo"), create_event(T_start, T_end, Date, Topic, Location)) |>
   writeLines("r-coding-cafe.ics")
 ```
 
+  \
+  \
+  
+This website was made in Quarto: see how <a href="https://github.com/zheer-kejlberg/R-coding-cafe">here</a>
