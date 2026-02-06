@@ -152,29 +152,55 @@ Reach out to me if you want anything added to the list.
 #| echo: false
 #| output: false
 
-create_event <- function(start, end, date, description, location) {
-  reps <- length(start)
-  # Create stable UIDs based on the event's number in the order (rank of date)
-  # This ensures the same event always gets the same UID
-  stable_uids <- date |> {\(event_id, domain = "r-coding-cafe.zheer.dk") {
+current_timeline <- timeline_raw |> 
+  filter(Topic != "Intermezzo") |>
+  arrange(Date) |>
+  mutate(
+    sequence = 0,
+    stable_uids = Date |> {\(event_id, domain = "r-coding-cafe.zheer.dk") {
     hash <- paste0(rank(event_id), domain) |> {digest::digest |> Vectorize()}()
-    uuid <- sprintf("%s-%s-%s-%s-%s@%s",
+    sprintf("%s-%s-%s-%s-%s@%s",
             substr(hash, 1, 8),
             substr(hash, 9, 12),
             substr(hash, 13, 16),
             substr(hash, 17, 20),
             substr(hash, 21, 32),
-            rep(domain, reps))
+            domain)
   }}()
+  )
+
+if (!file.exists("schedule.csv")) {
+  current_timeline |> 
+    write.csv("schedule.csv", row.names = F)
+}
+
+previous_timeline <- read.csv("schedule.csv") |> 
+  tibble() |>
+  mutate(Week = sprintf("%02.f", Week),
+         T_start = T_start |> as.POSIXct(tz = "Europe/Copenhagen"),
+         T_end = T_end |> as.POSIXct(tz = "Europe/Copenhagen"))
+
+
+create_event <- function(row_idx, current_schedule, previous_schedule ) {
+  row <- current_schedule[row_idx,]
+  comp_row <- previous_schedule[row_idx,]
   
   # Current timestamp for DTSTAMP (when the calendar was generated)
-  current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%SZ", tz = "UTC")
+  current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%S", tz = "Europe/Copenhagen")
   
-  # Update sequence number
-  get_sequence <- readLines("sequence.txt") |> as.numeric() |> {\(x) x+1}()
-  get_sequence |> as.character() |> writeLines("sequence.txt")
+  # Get latest sequence
+  if (nrow(previous_schedule) >= nrow(current_schedule)) {
+    row$sequence <- comp_row$sequence
+    if (comp_row$T_start != row$T_start | 
+        comp_row$T_end != row$T_end | 
+        comp_row$Location != row$Location)  {
+      row$sequence <- row$sequence + 1
+    }
+  } else {
+    row$sequence <- 0
+  }
   
-  events <- sprintf(
+  row$Event <- sprintf(
     "BEGIN:VEVENT
 UID:%s
 DTSTAMP:%s
@@ -187,16 +213,23 @@ URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: %s
 LOCATION:%s
 END:VEVENT", 
-    stable_uids,
-    rep(current_timestamp, reps),
-    start |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
-    end |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
-    get_sequence,
-    description,
-    location
-) |> paste0(collapse="\n")
-  
-  paste0("BEGIN:VCALENDAR
+    row$stable_uids,
+    current_timestamp,
+    row$T_start |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
+    row$T_end |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
+    row$sequence,
+    row$Topic,
+    row$Location
+)
+  return(row)
+}
+
+updated_timeline <- lapply(1:nrow(current_timeline), create_event, current_timeline, previous_timeline) |> bind_rows()
+
+updated_timeline |> 
+    write.csv("schedule.csv", row.names = F)
+
+paste0("BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//R Coding Café//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
@@ -205,14 +238,10 @@ X-WR-CALNAME:R Coding Café
 X-WR-TIMEZONE:Europe/Copenhagen
 X-WR-CALDESC:Bi-weekly coding café sessions
 ",
-  events,
+(updated_timeline$Event |> paste(collapse="\n")),
 "
-END:VCALENDAR")
-}
-
-timeline_raw |> 
-  filter(Topic != "Intermezzo") |> 
-  with(create_event(T_start, T_end, Date, Topic, Location)) |>
+END:VCALENDAR"
+) |>
   writeLines("r-coding-cafe.ics")
 ```
 
