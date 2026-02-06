@@ -1,148 +1,164 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//rstats//NONSGML v1.0//EN
+PRODID:-//R Coding Café//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
+X-WR-CALNAME:R Coding Café
+X-WR-TIMEZONE:Europe/Copenhagen
+X-WR-CALDESC:Bi-weekly coding café sessions
 BEGIN:VEVENT
-UID:b81f15d3-a19d-4735-ba3d-b1c3c299a929@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:03d14b28-8ea4-fab9-ceff-22e1a1069809@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260113T100000
 DTEND:20260113T120000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Introduction and planning of format
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:22eb3130-8330-4177-84f5-3a93d847475b@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:cf2812e6-f07b-6f2a-d381-58dc4e726228@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260127T100000
 DTEND:20260127T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: How to ask for help: The minimal reproducible example and making simulated data
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:56eefa8d-08a8-43a5-984c-7c8b65cfe9d1@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:b84f7940-c151-a8b9-28b6-208bbdc69ea2@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260218T100000
 DTEND:20260218T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Prevention and diagnosis of errors in R
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:91480612-ef8d-4691-baab-ec54f53ce8f3@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:f632f3e9-6c4e-8f4c-4951-dc600f92a895@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260224T100000
 DTEND:20260224T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Types of data (object, classes)
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:1ba1426e-c99b-477b-9afd-59f9bdff9a34@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:89ed8f6f-c857-2fe2-3da2-85ec393dc8a0@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260310T100000
 DTEND:20260310T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Writing functions instead of copy/paste
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:cf1899ae-4b85-4c74-b27f-f27539193d7d@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:04090f06-a1da-ac9c-1868-17c6a55233d5@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260324T100000
 DTEND:20260324T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Loops, recursion, parallelisation
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:c8713c2d-19cb-4ad7-bdef-e9dd27e2c1d6@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:5b78625a-cc77-955c-c538-68d1258ff958@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260407T100000
 DTEND:20260407T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Paradigms: Base R vs. Tidyverse vs. data.table
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:6413c61b-b280-4bc1-956f-6d12bd6d0408@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:339d3c65-be09-113f-8bcf-84cabe8655a9@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260421T100000
 DTEND:20260421T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: More tidyverse
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:89fa1d88-5437-436a-8dae-c385d5cfe9ee@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:f476c29c-ed4c-45a1-9506-0932b07f52d5@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260505T100000
 DTEND:20260505T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
-DESCRIPTION:Topic: Handling many packages<U+2014>and cross-package workflows
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Handling many packages—and cross-package workflows
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:e0209f80-c81d-4185-81c3-1d829e61e5d4@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:66895c35-29b0-c9f3-837e-5f7d8562ad5a@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260519T100000
 DTEND:20260519T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Moving between R and Stata
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:869f419d-479d-4976-8dae-d0c697f1859b@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:126d536e-1eb6-7ff9-9f5b-da4de17e380f@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260602T100000
 DTEND:20260602T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Markdown basics: Using Quarto and Rmarkdown
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:d5f8d369-1be1-4932-9b51-e5456146008f@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:066fe062-cba8-8e3c-2f17-02c8cedd9875@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260616T100000
 DTEND:20260616T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: Database formats (parquet and more)
-LOCATION:Hj<U+00F8>rnerummet (A401-109)
+LOCATION:Hjørnerummet (A401-109)
 END:VEVENT
 BEGIN:VEVENT
-UID:04b86de2-a9cc-4df7-8590-9132a26015ea@r-coding-cafe
-DTSTAMP:20260206T111440
+UID:42311759-a736-fd76-b224-70a50de36498@r-coding-cafe.zheer.dk
+DTSTAMP:20260206T141547Z
 DTSTART:20260811T100000
 DTEND:20260811T113000
+SEQUENCE:3
 STATUS:CONFIRMED
-SUMMARY:R Coding Caf<U+00E9>
-URL:r-coding-cafe.zheer.dk
+SUMMARY:R Coding Café
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: TBA
 LOCATION:
 END:VEVENT

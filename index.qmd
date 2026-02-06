@@ -43,41 +43,7 @@ You're expected to have an introductory knowledge of R and RStudio; consider
 ```{r}
 #| echo: false
 
-timeline_raw <- tibble::tribble(
-  ~Date, ~T_start, ~T_end, ~Location, ~Presenter, ~Topic, ~Note_URL, ~Helpers,
-  "2026-01-13", "10:00:00 AM", "12:00:00 PM", "Hjørnerummet (A401-109)", "Zheer", "Introduction and planning of format", NA_character_, "-",
-  
-  "2026-01-27", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "How to ask for help: The minimal reproducible example and making simulated data", "notes/lesson-notes/01-Minimal-Reproducible-Example.html", "-",
-  
-  "2026-02-18", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Prevention and diagnosis of errors in R", NA_character_, "-", 
-  
-  "2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Types of data (object, classes)", NA_character_, "-", 
-  
-  "2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Writing functions instead of copy/paste", NA_character_, "-", 
-  
-  "2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Loops, recursion, parallelisation", NA_character_, "-", 
-  
-  "2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", NA_character_, "-", 
-  
-  "2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "More tidyverse", NA_character_, "-", 
-  
-  "2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Handling many packages—and cross-package workflows", NA_character_, "-", 
-  
-  "2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Moving between R and Stata", NA_character_, "-", 
-  
-  "2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Markdown basics: Using Quarto and Rmarkdown", NA_character_, "-", 
-  
-  "2026-06-16", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", "Zheer", "Database formats (parquet and more)", NA_character_, "-",
-  
-  "2026-06-17", "01:00:00 AM", "01:00:00 PM", "", "", "Intermezzo", NA_character_, "",
-  
-  "2026-08-11", "10:00:00 AM", "11:30:00 PM", "", "", "TBA", NA_character_, ""
-) |>
-  dplyr::mutate(#Date = as.Date(Date),
-                Passed = dplyr::case_when(Date > lubridate::today() ~ "Planned", 
-                                          Date == lubridate::today() ~ "Today",
-                                          Date < lubridate::today() ~ "Previous"),
-                Week = Date |> strftime("%V"))
+source("schedule.R")
 
 timeline <- timeline_raw |> 
   mutate(Time = paste0(stringr::str_extract(T_start, "^[0-9]+:[0-9]+"),
@@ -90,10 +56,6 @@ timeline_raw <- timeline_raw |>
     T_start = as.POSIXct(paste(Date, T_start), tz = "Europe/Copenhagen"),
     T_end = as.POSIXct(paste(Date, T_end), tz = "Europe/Copenhagen")
   )
-```
-
-```{r}
-#| echo: false
 
 previous <- timeline |> filter(Passed == "Previous") |> select(-c(Passed))
 upcoming <- timeline |> filter(Passed != "Previous") |> {\(x) {
@@ -188,40 +150,69 @@ Reach out to me if you want anything added to the list.
 
 ```{r}
 #| echo: false
+#| output: false
 
 create_event <- function(start, end, date, description, location) {
   reps <- length(start)
+  # Create stable UIDs based on the event's number in the order (rank of date)
+  # This ensures the same event always gets the same UID
+  stable_uids <- date |> {\(event_id, domain = "r-coding-cafe.zheer.dk") {
+    hash <- paste0(rank(event_id), domain) |> {digest::digest |> Vectorize()}()
+    uuid <- sprintf("%s-%s-%s-%s-%s@%s",
+            substr(hash, 1, 8),
+            substr(hash, 9, 12),
+            substr(hash, 13, 16),
+            substr(hash, 17, 20),
+            substr(hash, 21, 32),
+            rep(domain, reps))
+  }}()
+  
+  # Current timestamp for DTSTAMP (when the calendar was generated)
+  current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%SZ", tz = "UTC")
+  
+  # Update sequence number
+  get_sequence <- readLines("sequence.txt") |> as.numeric() |> {\(x) x+1}()
+  get_sequence |> as.character() |> writeLines("sequence.txt")
+  
   events <- sprintf(
     "BEGIN:VEVENT
-UID:%s@%s
+UID:%s
 DTSTAMP:%s
 DTSTART:%s
 DTEND:%s
+SEQUENCE:%s
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
-URL:r-coding-cafe.zheer.dk
+URL:https://r-coding-cafe.zheer.dk
 DESCRIPTION:Topic: %s
 LOCATION:%s
 END:VEVENT", 
-    uuid::UUIDgenerate(n = reps),rep("r-coding-cafe", reps), 
-    Sys.time() |> format("%Y%m%dT%H%M%S", tz="Europe/Copenhagen") |> rep(reps),
+    stable_uids,
+    rep(current_timestamp, reps),
     start |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
     end |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
+    get_sequence,
     description,
     location
 ) |> paste0(collapse="\n")
+  
   paste0("BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//rstats//NONSGML v1.0//EN
+PRODID:-//R Coding Café//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
+X-WR-CALNAME:R Coding Café
+X-WR-TIMEZONE:Europe/Copenhagen
+X-WR-CALDESC:Bi-weekly coding café sessions
 ",
   events,
 "
 END:VCALENDAR")
 }
 
-with(timeline_raw |> filter(Topic != "Intermezzo"), create_event(T_start, T_end, Date, Topic, Location)) |>
+timeline_raw |> 
+  filter(Topic != "Intermezzo") |> 
+  with(create_event(T_start, T_end, Date, Topic, Location)) |>
   writeLines("r-coding-cafe.ics")
 ```
 
