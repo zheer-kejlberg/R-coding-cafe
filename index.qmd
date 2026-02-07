@@ -70,7 +70,7 @@ upcoming <- timeline |> filter(Passed != "Previous") |> {\(x) {
 ```{r}
 #| echo: false
 
-gt(previous, rowname_col = "Date")|>
+gt(previous, rowname_col = "Date", id="previous_schedule")|>
   fmt_datetime(
     columns = Date,
     format = "EEE, MMM d, y",
@@ -103,7 +103,7 @@ gt(previous, rowname_col = "Date")|>
 ```{r}
 #| echo: false
 
-gt(upcoming, rowname_col = "Date", groupname_col="Passed") |>
+gt(upcoming, rowname_col = "Date", groupname_col="Passed", id="upcoming_schedule") |>
   fmt_datetime(
     columns = Date,
     format = "EEE, MMM d, y",
