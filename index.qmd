@@ -187,17 +187,23 @@ create_event <- function(row_idx, current_schedule, previous_schedule ) {
   
   # Current timestamp for DTSTAMP (when the calendar was generated), rounded down to last full hour
   #current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%S", tz = "Europe/Copenhagen")
-  current_timestamp <- sprintf("%s%s", 
+  row$current_timestamp <- sprintf("%s%s", 
                                format(Sys.time(), "%Y%m%dT%H", tz = "Europe/Copenhagen"),
                                "0000")
   
+  row_is_new <- row_idx > nrow(previous_schedule)
+  row_is_changed <- 
+    (comp_row$T_start != row$T_start | 
+    comp_row$T_end != row$T_end | 
+    comp_row$Location != row$Location)
+  
   # Get latest sequence
-  if (nrow(previous_schedule) >= nrow(current_schedule)) {
+  if (!row_is_new) {
     row$sequence <- comp_row$sequence
-    if (comp_row$T_start != row$T_start | 
-        comp_row$T_end != row$T_end | 
-        comp_row$Location != row$Location)  {
+    if (row_is_changed)  {
       row$sequence <- row$sequence + 1
+    } else {
+      if ("current_timestamp" %in% colnames(previous_schedule)) {row$current_timestamp <- comp_row$current_timestamp}
     }
   } else {
     row$sequence <- 0
@@ -217,7 +223,7 @@ DESCRIPTION:Topic: %s
 LOCATION:%s
 END:VEVENT", 
     row$stable_uids,
-    current_timestamp,
+    row$current_timestamp,
     row$T_start |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
     row$T_end |> format("%Y%m%dT%H%M%S", tz = "Europe/Copenhagen"),
     row$sequence,
