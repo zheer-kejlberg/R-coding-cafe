@@ -1,7 +1,7 @@
 "Date","T_start","T_end","Location","Presenter","Topic","Note_URL","Helpers","Passed","Week","sequence","stable_uids","Event"
 "2026-01-13",2026-01-13 10:00:00,2026-01-13 12:00:00,"Hjørnerummet (A401-109)","Zheer","Introduction and planning of format",NA,"-","Previous","03",0,"03d14b28-8ea4-fab9-ceff-22e1a1069809@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:03d14b28-8ea4-fab9-ceff-22e1a1069809@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260113T100000
 DTEND:20260113T120000
 SEQUENCE:0
@@ -13,7 +13,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-01-27",2026-01-27 10:00:00,2026-01-27 11:30:00,"Hjørnerummet (A401-109)","Zheer","How to ask for help: The minimal reproducible example and making simulated data","notes/lesson-notes/01-Minimal-Reproducible-Example.html","-","Previous","05",0,"cf2812e6-f07b-6f2a-d381-58dc4e726228@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:cf2812e6-f07b-6f2a-d381-58dc4e726228@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260127T100000
 DTEND:20260127T113000
 SEQUENCE:0
@@ -25,7 +25,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-02-18",2026-02-18 10:00:00,2026-02-18 11:30:00,"Hjørnerummet (A401-109)","Zheer","Prevention and diagnosis of errors in R",NA,"-","Planned","08",0,"b84f7940-c151-a8b9-28b6-208bbdc69ea2@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:b84f7940-c151-a8b9-28b6-208bbdc69ea2@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260218T100000
 DTEND:20260218T113000
 SEQUENCE:0
@@ -37,7 +37,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-02-24",2026-02-24 10:00:00,2026-02-24 11:30:00,"Hjørnerummet (A401-109)","Zheer","Types of data (object, classes)",NA,"-","Planned","09",0,"f632f3e9-6c4e-8f4c-4951-dc600f92a895@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:f632f3e9-6c4e-8f4c-4951-dc600f92a895@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260224T100000
 DTEND:20260224T113000
 SEQUENCE:0
@@ -49,7 +49,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-03-10",2026-03-10 10:00:00,2026-03-10 11:30:00,"Hjørnerummet (A401-109)","Zheer","Writing functions instead of copy/paste",NA,"-","Planned","11",0,"89ed8f6f-c857-2fe2-3da2-85ec393dc8a0@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:89ed8f6f-c857-2fe2-3da2-85ec393dc8a0@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260310T100000
 DTEND:20260310T113000
 SEQUENCE:0
@@ -61,7 +61,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-03-24",2026-03-24 10:00:00,2026-03-24 11:30:00,"Hjørnerummet (A401-109)","Zheer","Loops, recursion, parallelisation",NA,"-","Planned","13",0,"04090f06-a1da-ac9c-1868-17c6a55233d5@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:04090f06-a1da-ac9c-1868-17c6a55233d5@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260324T100000
 DTEND:20260324T113000
 SEQUENCE:0
@@ -73,7 +73,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-04-07",2026-04-07 10:00:00,2026-04-07 11:30:00,"Hjørnerummet (A401-109)","Zheer","Paradigms: Base R vs. Tidyverse vs. data.table",NA,"-","Planned","15",0,"5b78625a-cc77-955c-c538-68d1258ff958@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:5b78625a-cc77-955c-c538-68d1258ff958@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260407T100000
 DTEND:20260407T113000
 SEQUENCE:0
@@ -85,7 +85,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-04-21",2026-04-21 10:00:00,2026-04-21 11:30:00,"Hjørnerummet (A401-109)","Zheer","More tidyverse",NA,"-","Planned","17",0,"339d3c65-be09-113f-8bcf-84cabe8655a9@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:339d3c65-be09-113f-8bcf-84cabe8655a9@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260421T100000
 DTEND:20260421T113000
 SEQUENCE:0
@@ -97,7 +97,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-05-05",2026-05-05 10:00:00,2026-05-05 11:30:00,"Hjørnerummet (A401-109)","Zheer","Handling many packages—and cross-package workflows",NA,"-","Planned","19",0,"f476c29c-ed4c-45a1-9506-0932b07f52d5@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:f476c29c-ed4c-45a1-9506-0932b07f52d5@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260505T100000
 DTEND:20260505T113000
 SEQUENCE:0
@@ -109,7 +109,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-05-19",2026-05-19 10:00:00,2026-05-19 11:30:00,"Hjørnerummet (A401-109)","Zheer","Moving between R and Stata",NA,"-","Planned","21",0,"66895c35-29b0-c9f3-837e-5f7d8562ad5a@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:66895c35-29b0-c9f3-837e-5f7d8562ad5a@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260519T100000
 DTEND:20260519T113000
 SEQUENCE:0
@@ -121,7 +121,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-06-02",2026-06-02 10:00:00,2026-06-02 11:30:00,"Hjørnerummet (A401-109)","Zheer","Markdown basics: Using Quarto and Rmarkdown",NA,"-","Planned","23",0,"126d536e-1eb6-7ff9-9f5b-da4de17e380f@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:126d536e-1eb6-7ff9-9f5b-da4de17e380f@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260602T100000
 DTEND:20260602T113000
 SEQUENCE:0
@@ -133,7 +133,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-06-16",2026-06-16 10:00:00,2026-06-16 11:30:00,"Hjørnerummet (A401-109)","Zheer","Database formats (parquet and more)",NA,"-","Planned","25",0,"066fe062-cba8-8e3c-2f17-02c8cedd9875@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:066fe062-cba8-8e3c-2f17-02c8cedd9875@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260616T100000
 DTEND:20260616T113000
 SEQUENCE:0
@@ -145,7 +145,7 @@ LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-08-11",2026-08-11 10:00:00,2026-08-11 11:30:00,"","","TBA",NA,"","Planned","33",0,"42311759-a736-fd76-b224-70a50de36498@r-coding-cafe.zheer.dk","BEGIN:VEVENT
 UID:42311759-a736-fd76-b224-70a50de36498@r-coding-cafe.zheer.dk
-DTSTAMP:20260207T004120
+DTSTAMP:20260207T090000
 DTSTART:20260811T100000
 DTEND:20260811T113000
 SEQUENCE:0
