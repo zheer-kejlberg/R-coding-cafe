@@ -2302,8 +2302,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bef <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">c</span>(PNR, FOED_DAG)), <span class="at">by =</span> <span class="st">"PNR"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">VALUE =</span> <span class="fu">rnorm</span>(n_lab, </span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mean =</span> <span class="dv">100</span> <span class="sc">-</span> <span class="fu">as.numeric</span>((<span class="fu">as.Date</span>(FOED_DAG) <span class="sc">-</span> <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>))<span class="sc">/</span><span class="dv">3650</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>), </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mean =</span> <span class="dv">100</span> <span class="sc">-</span> <span class="fu">as.numeric</span>((<span class="fu">as.Date</span>(<span class="st">"2000-01-01"</span>) <span class="sc">-</span> <span class="fu">as.Date</span>(FOED_DAG))<span class="sc">/</span><span class="dv">3650</span>)<span class="sc">^</span><span class="dv">10</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">^</span><span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>), </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(FOED_DAG))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -2775,19 +2775,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="PNR">8172410</td>
 <td class="gt_row gt_right" headers="SAMPLINGDATE">2006-12-10</td>
 <td class="gt_row gt_left" headers="ANALYSISCODE">eGFR</td>
-<td class="gt_row gt_right" headers="VALUE">64</td>
+<td class="gt_row gt_right" headers="VALUE">101</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="PNR">2697955</td>
 <td class="gt_row gt_right" headers="SAMPLINGDATE">2004-02-22</td>
 <td class="gt_row gt_left" headers="ANALYSISCODE">eGFR</td>
-<td class="gt_row gt_right" headers="VALUE">33</td>
+<td class="gt_row gt_right" headers="VALUE">38</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="PNR">1088015</td>
 <td class="gt_row gt_right" headers="SAMPLINGDATE">2009-09-23</td>
 <td class="gt_row gt_left" headers="ANALYSISCODE">eGFR</td>
-<td class="gt_row gt_right" headers="VALUE">63</td>
+<td class="gt_row gt_right" headers="VALUE">98</td>
 </tr>
 </tbody>
 </table>
@@ -4299,17 +4299,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td class="gt_row gt_right" headers="PNR">1000746</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-04-19</td>
-<td class="gt_row gt_right" headers="eGFR_val">44</td>
+<td class="gt_row gt_right" headers="eGFR_val">80</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="PNR">1010815</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-01-17</td>
-<td class="gt_row gt_right" headers="eGFR_val">61</td>
+<td class="gt_row gt_right" headers="eGFR_val">107</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="PNR">1019932</td>
 <td class="gt_row gt_right" headers="eGFR_date">2001-03-12</td>
-<td class="gt_row gt_right" headers="eGFR_val">69</td>
+<td class="gt_row gt_right" headers="eGFR_val">107</td>
 </tr>
 </tbody>
 </table>
@@ -4788,7 +4788,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="koen">1</td>
 <td class="gt_row gt_right" headers="age">53.05</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-04-19</td>
-<td class="gt_row gt_right" headers="eGFR_val">44</td>
+<td class="gt_row gt_right" headers="eGFR_val">80</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="PNR">1006023</td>
@@ -5792,7 +5792,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="koen">1</td>
 <td class="gt_row gt_right" headers="age">53.05</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-04-19</td>
-<td class="gt_row gt_right" headers="eGFR_val">44</td>
+<td class="gt_row gt_right" headers="eGFR_val">80</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="PNR">1006023</td>
@@ -6811,7 +6811,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="koen">1</td>
 <td class="gt_row gt_right" headers="age">53.05</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-04-19</td>
-<td class="gt_row gt_right" headers="eGFR_val">44</td>
+<td class="gt_row gt_right" headers="eGFR_val">80</td>
 <td class="gt_row gt_right" headers="metf_date">NA</td>
 <td class="gt_row gt_right" headers="metf_no_of_pills">NA</td>
 <td class="gt_row gt_right" headers="metf_total_dose">NA</td>
@@ -7331,7 +7331,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="koen">1</td>
 <td class="gt_row gt_right" headers="age">53.05</td>
 <td class="gt_row gt_right" headers="eGFR_date">2000-04-19</td>
-<td class="gt_row gt_right" headers="eGFR_val">44</td>
+<td class="gt_row gt_right" headers="eGFR_val">80</td>
 <td class="gt_row gt_right" headers="metf_date">NA</td>
 <td class="gt_row gt_right" headers="metf_no_of_pills">NA</td>
 <td class="gt_row gt_right" headers="metf_total_dose">NA</td>
