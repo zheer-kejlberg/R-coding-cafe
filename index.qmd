@@ -185,8 +185,11 @@ create_event <- function(row_idx, current_schedule, previous_schedule ) {
   row <- current_schedule[row_idx,]
   comp_row <- previous_schedule[row_idx,]
   
-  # Current timestamp for DTSTAMP (when the calendar was generated)
-  current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%S", tz = "Europe/Copenhagen")
+  # Current timestamp for DTSTAMP (when the calendar was generated), rounded down to last full hour
+  #current_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%S", tz = "Europe/Copenhagen")
+  current_timestamp <- sprintf("%s%s", 
+                               format(Sys.time(), "%Y%m%dT%H", tz = "Europe/Copenhagen"),
+                               "0000")
   
   # Get latest sequence
   if (nrow(previous_schedule) >= nrow(current_schedule)) {
