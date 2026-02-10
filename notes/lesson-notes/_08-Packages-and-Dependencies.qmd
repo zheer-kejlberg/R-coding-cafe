@@ -2,8 +2,6 @@
 title: "Working with many packages"
 ---
 
-::: {.content-visible when-format="pdf"}
-
 ### Dependencies and cross-package workflows
 
 -   Order of loading
@@ -17,4 +15,15 @@ title: "Working with many packages"
 
 ```
 
-:::
+# `{box}`
+
+```{r}
+#| eval: false
+
+box::use(
+    purrr,                          # 1
+    tbl = tibble,                   # 2
+    dplyr = dplyr[filter, select],  # 3
+    stats[st_filter = filter, ...]  # 4
+)
+```
