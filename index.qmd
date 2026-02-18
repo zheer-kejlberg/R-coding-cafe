@@ -65,7 +65,7 @@ upcoming <- timeline |> filter(Passed != "Previous") |> {\(x) {
 ```
 
 ::: {.callout-note collapse="true" appearance="minimal" icon="false"}
-## Previous sessions
+## Previous sessions (and notes)
 
 ```{r}
 #| echo: false

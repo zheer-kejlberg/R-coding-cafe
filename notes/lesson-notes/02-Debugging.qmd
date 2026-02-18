@@ -1,0 +1,218 @@
+---
+title: "Writing working code—and debugging it"
+---
+
+```{r}
+#| output: false
+# Get started
+set.seed(1234)
+library(dplyr)
+```
+
+
+## Two important error messages
+
+### > Error in `[insert some code]` : ! argument is of length zero
+
+```{r}
+#| error: true
+
+x <- c(1, 2, 3)
+
+x[0]
+if (x[0]>2) print(x)
+```
+
+This means that some object you tried to work with was *empty*; it simply didn't exist as you thought or didn't contain anything. In the above case, the vector *x* does not have an "index 0" to subset (fun fact: in most other languages, the first position of a list-like object is position 0).
+
+### > object of type 'closure' is not subsettable
+
+```{r}
+#| error: true
+
+printer <- data.frame(size = c(1, 2, 3), color = c("red", "orange", "blue"))
+printer[1,] # works fine
+
+print[1,] # the print function is the here object of type 'closure'
+```
+
+You wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.
+
+
+## First steps when encountering an error message
+
+Check the error message carefully!
+Sometimes the error message tells you which file and line number the error occurred on.
+
+- Look it up
+  - [StackOverflow.com](https://StackOverflow.com){.external target="_blank"}
+  - [List of common errors and warnings](https://statisticsglobe.com/errors-warnings-r){.external target="_blank"}
+
+- Have you tried a fresh session?
+
+### Debugging and sanity checks - useful before errors even occur
+
+#### Use the scientific method
+Go through everything - line by line.
+For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.
+
+#### Print debugging 
+Check intermediate results.
+
+Use some of the following summary functions for data structure and content:
+
+```{r}
+# Let's look at the mtcars dataset
+mtcars <- mtcars |> mutate(col = sample(c("orange", "blue", "white", NA_character_),size=nrow(mtcars), replace=T))
+
+mtcars |> head(4) |> gt::gt()
+```
+  
+  \
+  
+###### Check for NAs
+Always a good place to start. NAs are where good intentions in data management go to die. Make sure you ALWAYS know how many NAs there are—and how many there should be.
+```{r}
+# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column col:
+is.na(mtcars$col) 
+
+# Get totsl number of NAs in the column:
+is.na(mtcars$col) |> sum()
+```
+  
+  \
+   
+###### Summarise a dataset
+Let's now get summary data for every variable in the dataset. While `summary()` provides a decent overview, the `describe()` function from Harrell's `{Hmisc}` package is far more detailed.
+```{r}
+# Summarise data
+mtcars |> select(c(mpg, vs, col)) |> summary()
+
+mtcars |> select(c(mpg, vs, col)) |> Hmisc::describe()
+```
+   
+  \
+   
+###### Relations among variables
+Now we'll turn our attention to looking at relations among multiple variables. A simply way is to form a 2x2 (or for categories with >2 levels, a pxq) table:
+```{r}
+with(mtcars, table(cyl, gear))
+```
+    
+  \
+  
+###### summarise()
+`summarise()` from `{dplyr}` creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the original dataset)
+```{r}
+mtcars |> group_by(cyl) |> dplyr::summarise(mean_mpg = mean(mpg, na.rm=T), 
+                                            min_mpg = min(mpg, na.rm=T), 
+                                            max_mpr = max(mpg, na.rm=T))
+```
+   
+  \
+   
+###### Make a Table1
+Finally, sometimes it's nice to just get a full overview of the data, as it will look in a Table1:
+```{r}
+mtcars |> select(c(mpg, cyl, disp, col)) |>
+  gtsummary::tbl_summary(by = cyl,
+                         statistic = list(mpg ~ "{mean} (SD: {sd})"),
+                         missing_text = "Missing")
+
+```
+
+## Advanced functionality: when you see an error
+
+### The call tree
+
+Here's some code. The functions are irrelevant, expect `make_df()` takes an input, passes something on to `pass_on_df()`, which (conditionally) calls the `return_error()` function. When you use `make_df()`, you might not realise all of this is happening behind the scenes.
+
+```{r}
+#| error: true
+
+make_df <- function(x) {
+  df <- data.frame(y=x+10)
+  pass_on_df(df)
+}
+
+pass_on_df <- function(x) {
+  # ...
+  if(x$y > 11) return_error(x$y)
+}
+
+return_error <- function(x) {
+  stop(paste0(x, " not valid input"))
+}
+
+make_df(10)
+
+```
+When you see this error in RStudio, it looks as follows:
+ 
+![](imgs/02-Debugging_img1.png)
+
+If you click "Show Traceback" on the right, you'll see:
+
+![](imgs/02-Debugging_img2.png)
+From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn't `make_df()` directly but rather something downstream called `pass_on_df()`. This may not always give an obvious solution, but at least it can help you find out **which** package/function you should be Googling to understand the error message.
+
+### Formal debugging tools
+
+Below are a few highly related functions that can be useful for debugging. Sometimes you'll see a button to "Rerun with Debug" right under the "Show Traceback" button we just discussed. Doing so sends you *inside* the working environment (*'the scope'*) of the functions to "see what they see". I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause. 
+
+#### browser()
+Using this gives a similar experience; if you wrote a function yourself, you can write `browser()` anywhere within it to force a break in execution. It then allows you to inspect your function's inner workings (and contents) up to and at that point. 
+
+#### debug()
+this is useful for inspecting other people's functions; it adds a "browser()" statement into another function *for you* (`undebug()` removes it)
+
+#### breakpoints
+In .R scripts, you can click to the left of the line-numbers to add a small red dot. This is like inserting a `browser()` statement there.
+
+#### trace() / untrace()
+Like `debug()` but can be used to insert any other code of your choosing into a function.
+
+## Warnings
+
+Warnings are messages that don't prevent your code from running. **Treat these as you would errors**, until you're sure they're harmless. 
+
+Because your code runs, they can be easy to miss; but usually they're a package author's way of letting you know you might not be using their package in the way it was intended;
+
+They sometimes mean something horrible happened
+
+## Preparing for errors
+
+`try()` is handy when you know some code **can** cause an error but you don't want it to break everything; you want to just skip over it in that case:
+
+```{r}
+log_ <- function(x) {
+  try(
+    return(log(x)),
+    silent=TRUE
+  )
+  x
+}
+```
+
+```{r}
+log_(2)
+log_(1)
+log_(0)
+log_("a")
+```
+
+This function takes any input and tries to take its log; if unsuccessful, it simply returns the input unchanged (yes, I know this is a dumb function).
+
+## When code runs forever
+
+- R code
+
+If R never stops evaluting (e.g., stuck in an infinite loop), you can manually stop the process. This can be frustrating as you're left with little idea of what went wrong. 
+
+- Compiled code
+
+If R creashes the moment you hit "Interrupt R", the code was probably being run in another language (C/C++). There's no way out but to restart and get to debugging.
+
+## More reading
+
+[Hadley Wickham's tutorial on debugging](https://adv-r.hadley.nz/debugging.html){.external target="_blank"}
