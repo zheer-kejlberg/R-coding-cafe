@@ -7,38 +7,6 @@
     "text": "Things to do before asking for help\nBeing proficient in R does not equate to sitting down and writing everything free-hand. Experienced R users search online and ask LLMs. The great thing about R is that there are often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user knows what to search for and where. We suggest you search on StackOverflow; this can be daunting at first but is extremely helpful once you’ve learned to find your way around.\n\n\n\n\n\n\nCautionAI-tools\n\n\n\n\n\nAs a next step, it can be useful to use AI-tools like ChatGPT; however, beware that these can make up functions, that it often still requires debugging, and that even working solutions (especially to more complex questions) can be unstable over time or across datasets.\n\n\n\n\n\nAsking a clear coding question\nSome issues are simple; e.g., “I cannot download this package”. Other times what you want to do is more complex and needs context to explain to someone on the outside. Therefore, you need to prepare and provide the context to the person you are asking for help. This includes showing the structure of your dataset, presenting the functions you’ve used, and describing what you have tried so far.\n\n\n\n\n\n\nTipMinimal, reproducible examples\n\n\n\n\n\nThe first lesson in the coding café was specifically about preparing a good question (read the notes about minimal, reproducible examples).\n\n\n\n\n\nNote about sensitive data\n\n\n\n\n\n\nWarningIf you are working on DST\n\n\n\n\n\nyou are not allowed to show the data to anyone else! This is your own responsibility, and the helpers will not check what platform you’re working on.\n\n\n\nYou may need to prepare your question a bit more. Still, the principles of the minimal, reproducible example apply."
   },
   {
-    "objectID": "notes/extra/index.html",
-    "href": "notes/extra/index.html",
-    "title": "Extra notes and tutorials",
-    "section": "",
-    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "General info",
-    "section": "",
-    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
-  },
-  {
-    "objectID": "index.html#format",
-    "href": "index.html#format",
-    "title": "General info",
-    "section": "Format",
-    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
-  },
-  {
-    "objectID": "index.html#schedule-and-themes",
-    "href": "index.html#schedule-and-themes",
-    "title": "General info",
-    "section": "Schedule and themes",
-    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table\nZheer\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse\nZheer\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvplot}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
-  },
-  {
     "objectID": "notes/extra/1-example-pipeline.html",
     "href": "notes/extra/1-example-pipeline.html",
     "title": "Example pipeline",
@@ -99,6 +67,134 @@
     ]
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "General info",
+    "section": "",
+    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
+  },
+  {
+    "objectID": "index.html#format",
+    "href": "index.html#format",
+    "title": "General info",
+    "section": "Format",
+    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
+  },
+  {
+    "objectID": "index.html#schedule-and-themes",
+    "href": "index.html#schedule-and-themes",
+    "title": "General info",
+    "section": "Schedule and themes",
+    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions (and notes)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table\nZheer\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse\nZheer\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvplot}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
+  },
+  {
+    "objectID": "notes/extra/index.html",
+    "href": "notes/extra/index.html",
+    "title": "Extra notes and tutorials",
+    "section": "",
+    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html",
+    "href": "notes/lesson-notes/02-Debugging.html",
+    "title": "Writing working code—and debugging it",
+    "section": "",
+    "text": "# Get started\nset.seed(1234)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
+    "href": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
+    "title": "Writing working code—and debugging it",
+    "section": "Two important error messages",
+    "text": "Two important error messages\n\n&gt; Error in [insert some code] : ! argument is of length zero\n\nx &lt;- c(1, 2, 3)\n\nx[0]\n\nnumeric(0)\n\nif (x[0]&gt;2) print(x)\n\nError in `if (x[0] &gt; 2) ...`:\n! argument is of length zero\n\n\nThis means that some object you tried to work with was empty; it simply didn’t exist as you thought or didn’t contain anything. In the above case, the vector x does not have an “index 0” to subset (fun fact: in most other languages, the first position of a list-like object is position 0).\n\n\n&gt; object of type ‘closure’ is not subsettable\n\nprinter &lt;- data.frame(size = c(1, 2, 3), color = c(\"red\", \"orange\", \"blue\"))\nprinter[1,] # works fine\n\n  size color\n1    1   red\n\nprint[1,] # the print function is the here object of type 'closure'\n\nError in `print[1, ]`:\n! object of type 'closure' is not subsettable\n\n\nYou wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
+    "href": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
+    "title": "Writing working code—and debugging it",
+    "section": "First steps when encountering an error message",
+    "text": "First steps when encountering an error message\nCheck the error message carefully! Sometimes the error message tells you which file and line number the error occurred on.\n\nLook it up\n\nStackOverflow.com\nList of common errors and warnings\n\nHave you tried a fresh session?\n\n\nDebugging and sanity checks - useful before errors even occur\n\nUse the scientific method\nGo through everything - line by line. For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.\n\n\nPrint debugging\nCheck intermediate results.\nUse some of the following summary functions for data structure and content:\n\n# Let's look at the mtcars dataset\nmtcars &lt;- mtcars |&gt; mutate(col = sample(c(\"orange\", \"blue\", \"white\", NA_character_),size=nrow(mtcars), replace=T))\n\nmtcars |&gt; head(4) |&gt; gt::gt()\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\ncol\n\n\n\n\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\nNA\n\n\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\nNA\n\n\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\nblue\n\n\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\nblue\n\n\n\n\n\n\n\n\n\n\nCheck for NAs\nAlways a good place to start. NAs are where good intentions in data management go to die. Make sure you ALWAYS know how many NAs there are—and how many there should be.\n\n# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column col:\nis.na(mtcars$col) \n\n [1]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE\n[13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE\n[25]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE\n\n# Get totsl number of NAs in the column:\nis.na(mtcars$col) |&gt; sum()\n\n[1] 13\n\n\n\n\n\n\nSummarise a dataset\nLet’s now get summary data for every variable in the dataset. While summary() provides a decent overview, the describe() function from Harrell’s {Hmisc} package is far more detailed.\n\n# Summarise data\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; summary()\n\n      mpg              vs             col           \n Min.   :10.40   Min.   :0.0000   Length:32         \n 1st Qu.:15.43   1st Qu.:0.0000   Class :character  \n Median :19.20   Median :0.0000   Mode  :character  \n Mean   :20.09   Mean   :0.4375                     \n 3rd Qu.:22.80   3rd Qu.:1.0000                     \n Max.   :33.90   Max.   :1.0000                     \n\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; Hmisc::describe()\n\nselect(mtcars, c(mpg, vs, col)) \n\n 3  Variables      32  Observations\n--------------------------------------------------------------------------------\nmpg \n       n  missing distinct     Info     Mean  pMedian      Gmd      .05 \n      32        0       25    0.999    20.09     19.6    6.796    12.00 \n     .10      .25      .50      .75      .90      .95 \n   14.34    15.43    19.20    22.80    30.09    31.30 \n\nlowest : 10.4 13.3 14.3 14.7 15  , highest: 26   27.3 30.4 32.4 33.9\n--------------------------------------------------------------------------------\nvs \n       n  missing distinct     Info      Sum     Mean \n      32        0        2    0.739       14   0.4375 \n\n--------------------------------------------------------------------------------\ncol \n       n  missing distinct \n      19       13        3 \n                               \nValue        blue orange  white\nFrequency      11      4      4\nProportion  0.579  0.211  0.211\n--------------------------------------------------------------------------------\n\n\n\n\n\n\nRelations among variables\nNow we’ll turn our attention to looking at relations among multiple variables. A simply way is to form a 2x2 (or for categories with &gt;2 levels, a pxq) table:\n\nwith(mtcars, table(cyl, gear))\n\n   gear\ncyl  3  4  5\n  4  1  8  2\n  6  2  4  1\n  8 12  0  2\n\n\n\n\n\n\nsummarise()\nsummarise() from {dplyr} creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the original dataset)\n\nmtcars |&gt; group_by(cyl) |&gt; dplyr::summarise(mean_mpg = mean(mpg, na.rm=T), \n                                            min_mpg = min(mpg, na.rm=T), \n                                            max_mpr = max(mpg, na.rm=T))\n\n# A tibble: 3 × 4\n    cyl mean_mpg min_mpg max_mpr\n  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n1     4     26.7    21.4    33.9\n2     6     19.7    17.8    21.4\n3     8     15.1    10.4    19.2\n\n\n\n\n\n\nMake a Table1\nFinally, sometimes it’s nice to just get a full overview of the data, as it will look in a Table1:\n\nmtcars |&gt; select(c(mpg, cyl, disp, col)) |&gt;\n  gtsummary::tbl_summary(by = cyl,\n                         statistic = list(mpg ~ \"{mean} (SD: {sd})\"),\n                         missing_text = \"Missing\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n4\nN = 111\n6\nN = 71\n8\nN = 141\n\n\n\n\nmpg\n26.7 (SD: 4.5)\n19.7 (SD: 1.5)\n15.1 (SD: 2.6)\n\n\ndisp\n108 (79, 121)\n168 (160, 225)\n351 (301, 400)\n\n\ncol\n\n\n\n\n\n\n\n\n    blue\n3 (43%)\n2 (100%)\n6 (60%)\n\n\n    orange\n3 (43%)\n0 (0%)\n1 (10%)\n\n\n    white\n1 (14%)\n0 (0%)\n3 (30%)\n\n\n    Missing\n4\n5\n4\n\n\n\n1 Mean (SD: SD); Median (Q1, Q3); n (%)",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
+    "href": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
+    "title": "Writing working code—and debugging it",
+    "section": "Advanced functionality: when you see an error",
+    "text": "Advanced functionality: when you see an error\n\nThe call tree\nHere’s some code. The functions are irrelevant, expect make_df() takes an input, passes something on to pass_on_df(), which (conditionally) calls the return_error() function. When you use make_df(), you might not realise all of this is happening behind the scenes.\n\nmake_df &lt;- function(x) {\n  df &lt;- data.frame(y=x+10)\n  pass_on_df(df)\n}\n\npass_on_df &lt;- function(x) {\n  # ...\n  if(x$y &gt; 11) return_error(x$y)\n}\n\nreturn_error &lt;- function(x) {\n  stop(paste0(x, \" not valid input\"))\n}\n\nmake_df(10)\n\nError in `return_error()`:\n! 20 not valid input\n\n\nWhen you see this error in RStudio, it looks as follows:\n\nIf you click “Show Traceback” on the right, you’ll see:\n From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn’t make_df() directly but rather something downstream called pass_on_df(). This may not always give an obvious solution, but at least it can help you find out which package/function you should be Googling to understand the error message.\n\n\nFormal debugging tools\nBelow are a few highly related functions that can be useful for debugging. Sometimes you’ll see a button to “Rerun with Debug” right under the “Show Traceback” button we just discussed. Doing so sends you inside the working environment (‘the scope’) of the functions to “see what they see”. I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause.\n\nbrowser()\nUsing this gives a similar experience; if you wrote a function yourself, you can write browser() anywhere within it to force a break in execution. It then allows you to inspect your function’s inner workings (and contents) up to and at that point.\n\n\ndebug()\nthis is useful for inspecting other people’s functions; it adds a “browser()” statement into another function for you (undebug() removes it)\n\n\nbreakpoints\nIn .R scripts, you can click to the left of the line-numbers to add a small red dot. This is like inserting a browser() statement there.\n\n\ntrace() / untrace()\nLike debug() but can be used to insert any other code of your choosing into a function.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#warnings",
+    "href": "notes/lesson-notes/02-Debugging.html#warnings",
+    "title": "Writing working code—and debugging it",
+    "section": "Warnings",
+    "text": "Warnings\nWarnings are messages that don’t prevent your code from running. Treat these as you would errors, until you’re sure they’re harmless.\nBecause your code runs, they can be easy to miss; but usually they’re a package author’s way of letting you know you might not be using their package in the way it was intended;\nThey sometimes mean something horrible happened",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
+    "href": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
+    "title": "Writing working code—and debugging it",
+    "section": "Preparing for errors",
+    "text": "Preparing for errors\ntry() is handy when you know some code can cause an error but you don’t want it to break everything; you want to just skip over it in that case:\n\nlog_ &lt;- function(x) {\n  try(\n    return(log(x)),\n    silent=TRUE\n  )\n  x\n}\n\n\nlog_(2)\n\n[1] 0.6931472\n\nlog_(1)\n\n[1] 0\n\nlog_(0)\n\n[1] -Inf\n\nlog_(\"a\")\n\n[1] \"a\"\n\n\nThis function takes any input and tries to take its log; if unsuccessful, it simply returns the input unchanged (yes, I know this is a dumb function).",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
+    "href": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
+    "title": "Writing working code—and debugging it",
+    "section": "When code runs forever",
+    "text": "When code runs forever\n\nR code\n\nIf R never stops evaluting (e.g., stuck in an infinite loop), you can manually stop the process. This can be frustrating as you’re left with little idea of what went wrong.\n\nCompiled code\n\nIf R creashes the moment you hit “Interrupt R”, the code was probably being run in another language (C/C++). There’s no way out but to restart and get to debugging.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#more-reading",
+    "href": "notes/lesson-notes/02-Debugging.html#more-reading",
+    "title": "Writing working code—and debugging it",
+    "section": "More reading",
+    "text": "More reading\nHadley Wickham’s tutorial on debugging",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
     "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
     "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
     "title": "Minimal, reproducible example",
@@ -156,162 +252,6 @@
       "R Coding Café",
       "Lesson notes",
       "Minimal, reproducible example"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html",
-    "href": "notes/lesson-notes/02-Debugging.html",
-    "title": "Writing working code—and debugging it",
-    "section": "",
-    "text": "# Get started\nset.seed(1234)\nlibrary(dplyr)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#common-error-messages",
-    "href": "notes/lesson-notes/02-Debugging.html#common-error-messages",
-    "title": "Writing working code—and debugging it",
-    "section": "Common error messages",
-    "text": "Common error messages\n\nError in [SOME CODE BLOCK] : argument is of length zero\n\n\nx &lt;- c(1, 2, 3)\n\nx[0]\n\nnumeric(0)\n\nif (x[0]&gt;2) print(x)\n\nError in `if (x[0] &gt; 2) ...`:\n! argument is of length zero\n\n\nThis means that some object you tried to work with was empty; it simply didn’t exist as you thought or didn’t contain anything. In the above case, the vector x does not have an index 0 to subset.\n\nError in data$age : object of type ‘closure’ is not subsettable\n\n\nprinter &lt;- data.frame(size = c(1, 2, 3), color = c(\"red\", \"orange\", \"blue\"))\nprinter[1,] # works fine\n\n  size color\n1    1   red\n\nprint[1,] # the print function is the here object of type 'closure'\n\nError in `print[1, ]`:\n! object of type 'closure' is not subsettable\n\n\nYou wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
-    "href": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
-    "title": "Writing working code—and debugging it",
-    "section": "First steps when encountering an error message",
-    "text": "First steps when encountering an error message\nCheck the error message carefully! Sometimes the error message tells you which file and line number the error occurred on.\n\nLook it up\n\nStackOverflow.com\nList of common errors and warnings\n\nHave you tried a fresh session?\n\n\nDebugging and sanity checks - useful before errors even occur\n\nUse the scientific method\nGo through everything - line by line. For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.\n\n\nPrint debugging\nCheck intermediate results.\nUse some of the following summary functions for data structure and content:\n\n# Let's look at the mtcars dataset\nmtcars &lt;- mtcars |&gt; mutate(col = sample(c(\"orange\", \"blue\", \"white\", NA_character_),size=nrow(mtcars), replace=T))\n\nmtcars |&gt; head(4) |&gt; gt::gt()\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\ncol\n\n\n\n\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\nNA\n\n\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\nNA\n\n\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\nblue\n\n\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\nblue\n\n\n\n\n\n\n\n\n\n\nCheck for NAs\nAlways a good place to start. NAs are where good intentions in data management go to die. Make sure you ALWAYS know how many NAs there are—and how many there should be.\n\n# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column col:\nis.na(mtcars$col) \n\n [1]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE\n[13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE\n[25]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE\n\n# Get totsl number of NAs in the column:\nis.na(mtcars$col) |&gt; sum()\n\n[1] 13\n\n\n\n\n\n\nSummarise a dataset\nLet’s now get summary data for every variable in the dataset. While summary() provides a decent overview, the describe() function from Harrell’s {Hmisc} package is far more detailed.\n\n# Summarise data\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; summary()\n\n      mpg              vs             col           \n Min.   :10.40   Min.   :0.0000   Length:32         \n 1st Qu.:15.43   1st Qu.:0.0000   Class :character  \n Median :19.20   Median :0.0000   Mode  :character  \n Mean   :20.09   Mean   :0.4375                     \n 3rd Qu.:22.80   3rd Qu.:1.0000                     \n Max.   :33.90   Max.   :1.0000                     \n\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; Hmisc::describe()\n\nselect(mtcars, c(mpg, vs, col)) \n\n 3  Variables      32  Observations\n--------------------------------------------------------------------------------\nmpg \n       n  missing distinct     Info     Mean  pMedian      Gmd      .05 \n      32        0       25    0.999    20.09     19.6    6.796    12.00 \n     .10      .25      .50      .75      .90      .95 \n   14.34    15.43    19.20    22.80    30.09    31.30 \n\nlowest : 10.4 13.3 14.3 14.7 15  , highest: 26   27.3 30.4 32.4 33.9\n--------------------------------------------------------------------------------\nvs \n       n  missing distinct     Info      Sum     Mean \n      32        0        2    0.739       14   0.4375 \n\n--------------------------------------------------------------------------------\ncol \n       n  missing distinct \n      19       13        3 \n                               \nValue        blue orange  white\nFrequency      11      4      4\nProportion  0.579  0.211  0.211\n--------------------------------------------------------------------------------\n\n\n\n\n\n\nRelations among variables\nNow we’ll turn our attention to looking at relations among multiple variables. A simply way is to form a 2x2 (or for categories with &gt;2 levels, a pxq) table:\n\nwith(mtcars, table(cyl, gear))\n\n   gear\ncyl  3  4  5\n  4  1  8  2\n  6  2  4  1\n  8 12  0  2\n\n\n\n\n\n\nsummarise()\nsummarise() from {dplyr} creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the original dataset)\n\nmtcars |&gt; group_by(cyl) |&gt; dplyr::summarise(mean_mpg = mean(mpg, na.rm=T), \n                                            min_mpg = min(mpg, na.rm=T), \n                                            max_mpr = max(mpg, na.rm=T))\n\n# A tibble: 3 × 4\n    cyl mean_mpg min_mpg max_mpr\n  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n1     4     26.7    21.4    33.9\n2     6     19.7    17.8    21.4\n3     8     15.1    10.4    19.2\n\n\n\n\n\n\nMake a Table1\nFinally, sometimes it’s nice to just get a full overview of the data, as it will look in a Table1:\n\nmtcars |&gt; select(c(mpg, cyl, disp, col)) |&gt;\n  gtsummary::tbl_summary(by = cyl,\n                         statistic = list(mpg ~ \"{mean} (SD: {sd})\"),\n                         missing_text = \"Missing\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n4\nN = 111\n6\nN = 71\n8\nN = 141\n\n\n\n\nmpg\n26.7 (SD: 4.5)\n19.7 (SD: 1.5)\n15.1 (SD: 2.6)\n\n\ndisp\n108 (79, 121)\n168 (160, 225)\n351 (301, 400)\n\n\ncol\n\n\n\n\n\n\n\n\n    blue\n3 (43%)\n2 (100%)\n6 (60%)\n\n\n    orange\n3 (43%)\n0 (0%)\n1 (10%)\n\n\n    white\n1 (14%)\n0 (0%)\n3 (30%)\n\n\n    Missing\n4\n5\n4\n\n\n\n1 Mean (SD: SD); Median (Q1, Q3); n (%)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#debugging-and-sanity-checks---useful-before-errors-even-occur",
-    "href": "notes/lesson-notes/02-Debugging.html#debugging-and-sanity-checks---useful-before-errors-even-occur",
-    "title": "Writing working code—and debugging it",
-    "section": "Debugging and sanity checks - useful before errors even occur",
-    "text": "Debugging and sanity checks - useful before errors even occur\n\nUse the scientific method For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.\nLine by line execution\nPrint debugging: check intermediate results Use some of the following summary functions for data structure and content:\n\n\n# Let's look at the mtcars dataset\nmtcars &lt;- mtcars |&gt; mutate(col = sample(c(\"orange\", \"blue\", \"white\", NA_character_),size=nrow(mtcars), replace=T))\n\nmtcars |&gt; head(4) |&gt; gt::gt()\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\ncol\n\n\n\n\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\nNA\n\n\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\nNA\n\n\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\nblue\n\n\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\nblue\n\n\n\n\n\n\n\nA good place to start is always check for NAs. NAs are where good intentions in data management go to die. Make sure you ALWAYS know how many NAs there are—and how many there should be.\n\n# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column col:\nis.na(mtcars$col) \n\n [1]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE\n[13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE\n[25]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE\n\n# Get totsl number of NAs in the column:\nis.na(mtcars$col) |&gt; sum()\n\n[1] 13\n\n\nLet’s now get summary data for every variable in the dataset. While summary() provides a decent overview, the describe() function from Harrell’s {Hmisc} package is far more detailed.\n\n# Summarise data\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; summary()\n\n      mpg              vs             col           \n Min.   :10.40   Min.   :0.0000   Length:32         \n 1st Qu.:15.43   1st Qu.:0.0000   Class :character  \n Median :19.20   Median :0.0000   Mode  :character  \n Mean   :20.09   Mean   :0.4375                     \n 3rd Qu.:22.80   3rd Qu.:1.0000                     \n Max.   :33.90   Max.   :1.0000                     \n\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; Hmisc::describe()\n\nselect(mtcars, c(mpg, vs, col)) \n\n 3  Variables      32  Observations\n--------------------------------------------------------------------------------\nmpg \n       n  missing distinct     Info     Mean  pMedian      Gmd      .05 \n      32        0       25    0.999    20.09     19.6    6.796    12.00 \n     .10      .25      .50      .75      .90      .95 \n   14.34    15.43    19.20    22.80    30.09    31.30 \n\nlowest : 10.4 13.3 14.3 14.7 15  , highest: 26   27.3 30.4 32.4 33.9\n--------------------------------------------------------------------------------\nvs \n       n  missing distinct     Info      Sum     Mean \n      32        0        2    0.739       14   0.4375 \n\n--------------------------------------------------------------------------------\ncol \n       n  missing distinct \n      19       13        3 \n                               \nValue        blue orange  white\nFrequency      11      4      4\nProportion  0.579  0.211  0.211\n--------------------------------------------------------------------------------\n\n\nNow we’ll turn our attention to looking at relations among multiple variables. A simply way is to form a 2x2 (or for categories with &gt;2 levels, a pxq) table:\n\nwith(mtcars, table(cyl, gear))\n\n   gear\ncyl  3  4  5\n  4  1  8  2\n  6  2  4  1\n  8 12  0  2\n\n\nsummarise() from {dplyr} creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the original dataset)\n\nmtcars |&gt; group_by(cyl) |&gt; dplyr::summarise(mean_mpg = mean(mpg, na.rm=T), \n                                            min_mpg = min(mpg, na.rm=T), \n                                            max_mpr = max(mpg, na.rm=T))\n\n# A tibble: 3 × 4\n    cyl mean_mpg min_mpg max_mpr\n  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n1     4     26.7    21.4    33.9\n2     6     19.7    17.8    21.4\n3     8     15.1    10.4    19.2\n\n\nFinally, sometimes it’s nice to just get a full overview of the data, as it will look in a Table1:\n\nmtcars |&gt; select(c(mpg, cyl, disp, col)) |&gt;\n  gtsummary::tbl_summary(by = cyl,\n                         statistic = list(mpg ~ \"{mean} (SD: {sd})\"),\n                         missing_text = \"Missing\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n4\nN = 111\n6\nN = 71\n8\nN = 141\n\n\n\n\nmpg\n26.7 (SD: 4.5)\n19.7 (SD: 1.5)\n15.1 (SD: 2.6)\n\n\ndisp\n108 (79, 121)\n168 (160, 225)\n351 (301, 400)\n\n\ncol\n\n\n\n\n\n\n\n\n    blue\n3 (43%)\n2 (100%)\n6 (60%)\n\n\n    orange\n3 (43%)\n0 (0%)\n1 (10%)\n\n\n    white\n1 (14%)\n0 (0%)\n3 (30%)\n\n\n    Missing\n4\n5\n4\n\n\n\n1 Mean (SD: SD); Median (Q1, Q3); n (%)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
-    "href": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
-    "title": "Writing working code—and debugging it",
-    "section": "Advanced functionality: when you see an error",
-    "text": "Advanced functionality: when you see an error\n\nThe call tree\nHere’s some code. The functions are irrelevant, expect make_df() takes an input, passes something on to pass_on_df(), which (conditionally) calls the return_error() function. When you use make_df(), you might not realise all of this is happening behind the scenes.\n\nmake_df &lt;- function(x) {\n  df &lt;- data.frame(y=x+10)\n  pass_on_df(df)\n}\n\npass_on_df &lt;- function(x) {\n  # ...\n  if(x$y &gt; 11) return_error(x$y)\n}\n\nreturn_error &lt;- function(x) {\n  stop(paste0(x, \" not valid input\"))\n}\n\nmake_df(10)\n\nError in `return_error()`:\n! 20 not valid input\n\n\nWhen you see this error in RStudio, it looks as follows:\n\nIf you click “Show Traceback” on the right, you’ll see:\n From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn’t make_df() directly but rather something downstream called pass_on_df(). This may not always give an obvious solution, but at least it can help you find out which package/function you should be Googling to understand the error message.\n\n\nFormal debugging tools\nBelow are a few highly related functions that can be useful for debugging. Sometimes you’ll see a button to “Rerun with Debug” right under the “Show Traceback” button we just discussed. Doing so sends you inside the working environment (‘the scope’) of the functions to “see what they see”. I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause.\n\nbrowser()\nUsing this gives a similar experience; if you wrote a function yourself, you can write browser() anywhere within it to force a break in execution. It then allows you to inspect your function’s inner workings (and contents) up to and at that point.\n\n\ndebug()\nthis is useful for inspecting other people’s functions; it adds a “browser()” statement into another function for you (undebug() removes it)\n\n\nbreakpoints\nIn .R scripts, you can click to the left of the line-numbers to add a small red dot. This is like inserting a browser() statement there.\n\n\ntrace() / untrace()\nLike debug() but can be used to insert any other code of your choosing into a function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#the-call-tree",
-    "href": "notes/lesson-notes/02-Debugging.html#the-call-tree",
-    "title": "Writing working code—and debugging it",
-    "section": "The call tree",
-    "text": "The call tree\nHere’s some code. The functions are irrelevant, expect make_df() takes an input, passes something on to pass_on_df(), which (conditionally) calls the return_error() function. When you use make_df(), you might not realise all of this is happening behind the scenes.\n\nmake_df &lt;- function(x) {\n  df &lt;- data.frame(y=x+10)\n  pass_on_df(df)\n}\n\npass_on_df &lt;- function(x) {\n  # ...\n  if(x$y &gt; 11) return_error(x$y)\n}\n\nreturn_error &lt;- function(x) {\n  stop(paste0(x, \" not valid input\"))\n}\n\nmake_df(10)\n\nError in `return_error()`:\n! 20 not valid input\n\n\nWhen you see this error in RStudio, it looks as follows:\n\nIf you click “Show Traceback” on the right, you’ll see:\n From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn’t make_df() directly but rather something downstream called pass_on_df(). This may not always give an obvious solution, but at least it can help you find out which package/function you should be Googling to understand the error message.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#formal-debugging-tools",
-    "href": "notes/lesson-notes/02-Debugging.html#formal-debugging-tools",
-    "title": "Writing working code—and debugging it",
-    "section": "Formal debugging tools",
-    "text": "Formal debugging tools\nBelow are a few highly related functions that can be useful for debugging. Sometimes you’ll see a button to “Rerun with Debug” right under the “Show Traceback” button we just discussed. Doing so send you inside the working environment (‘the scope’) of the functions to “see what they see”. I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause.\n\nbrowser() Using this gives a similar experience; this one you have to embed within your own function; it allows you to inspect your own function’s inner working at any point.\ndebug() this is useful for inspecting other people’s functions; it adds a “browser()” statement into another function for you (undebug() removes it)\nbreakpoints In .R scripts, you can click to the left of the line-numbers to add a small red dot. This functions like inserting a browser() statement there.\ntrace() / untrace() Like debug() but can be used to insert any other code of your choosing into a function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#warnings",
-    "href": "notes/lesson-notes/02-Debugging.html#warnings",
-    "title": "Writing working code—and debugging it",
-    "section": "Warnings",
-    "text": "Warnings\nWarnings are messages that don’t prevent your code from running. Treat these as you would errors, until you’re sure they’re harmless.\nBecause your code runs, they can be easy to miss; but usually they’re a package author’s way of letting you know you might not be using their package in the way it was intended;\nThey sometimes mean something horrible happened",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
-    "href": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
-    "title": "Writing working code—and debugging it",
-    "section": "Preparing for errors",
-    "text": "Preparing for errors\ntry() is handy when you know some code can cause an error but you don’t want it to break everything; you want to just skip over it in that case:\n\nlog_ &lt;- function(x) {\n  try(\n    return(log(x)),\n    silent=TRUE\n  )\n  x\n}\n\n\nlog_(2)\n\n[1] 0.6931472\n\nlog_(1)\n\n[1] 0\n\nlog_(0)\n\n[1] -Inf\n\nlog_(\"a\")\n\n[1] \"a\"\n\n\nThis function takes any input and tries to take its log; if unsuccessful, it simply returns the input unchanged (yes, I know this is a dumb function).",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#when-r-crashes-entirely",
-    "href": "notes/lesson-notes/02-Debugging.html#when-r-crashes-entirely",
-    "title": "Writing working code—and debugging it",
-    "section": "When R crashes entirely",
-    "text": "When R crashes entirely\n\nCompiled code",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#more-reading",
-    "href": "notes/lesson-notes/02-Debugging.html#more-reading",
-    "title": "Writing working code—and debugging it",
-    "section": "More reading",
-    "text": "More reading\nHadley Wickham’s tutorial on debugging",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
-    "href": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
-    "title": "Writing working code—and debugging it",
-    "section": "When code runs forever",
-    "text": "When code runs forever\n\nR code\n\nIf R never stops evaluting (e.g., stuck in an infinite loop), you can manually stop the process. This can be frustrating as you’re left with little idea of what went wrong.\n\nCompiled code\n\nIf R creashes the moment you hit “Interrupt R”, the code was probably being run in another language (C/C++). There’s no way out but to restart and get to debugging.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
-    "href": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
-    "title": "Writing working code—and debugging it",
-    "section": "Two important error messages",
-    "text": "Two important error messages\n\n&gt; Error in [insert some code] : ! argument is of length zero\n\nx &lt;- c(1, 2, 3)\n\nx[0]\n\nnumeric(0)\n\nif (x[0]&gt;2) print(x)\n\nError in `if (x[0] &gt; 2) ...`:\n! argument is of length zero\n\n\nThis means that some object you tried to work with was empty; it simply didn’t exist as you thought or didn’t contain anything. In the above case, the vector x does not have an “index 0” to subset (fun fact: in most other languages, the first position of a list-like object is position 0).\n\n\n&gt; object of type ‘closure’ is not subsettable\n\nprinter &lt;- data.frame(size = c(1, 2, 3), color = c(\"red\", \"orange\", \"blue\"))\nprinter[1,] # works fine\n\n  size color\n1    1   red\n\nprint[1,] # the print function is the here object of type 'closure'\n\nError in `print[1, ]`:\n! object of type 'closure' is not subsettable\n\n\nYou wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
     ]
   }
 ]
