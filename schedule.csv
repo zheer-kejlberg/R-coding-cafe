@@ -8,16 +8,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Introduction and planning of format 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Introduction and planning of format \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-01-27",2026-01-27 10:00:00,2026-01-27 11:30:00,"Hjørnerummet (A401-109)","Zheer","How to ask for help: The minimal reproducible example and making simulated data","notes/lesson-notes/01-Minimal-Reproducible-Example.html","-","Previous","05",0,"cf2812e6-f07b-6f2a-d381-58dc4e726228@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -29,16 +20,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: How to ask for help: The minimal reproducible example and making simulated data 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: How to ask for help: The minimal reproducible example and making simulated data \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-02-18",2026-02-18 10:00:00,2026-02-18 11:30:00,"Hjørnerummet (A401-109)","Zheer","Prevention and diagnosis of errors in R",NA,"-","Today","08",0,"b84f7940-c151-a8b9-28b6-208bbdc69ea2@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -50,16 +32,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Prevention and diagnosis of errors in R 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Prevention and diagnosis of errors in R \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-02-24",2026-02-24 10:00:00,2026-02-24 11:30:00,"Hjørnerummet (A401-109)","Zheer","Types of data (object, classes)",NA,"-","Planned","09",0,"f632f3e9-6c4e-8f4c-4951-dc600f92a895@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -71,16 +44,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Types of data (object, classes) 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Types of data (object, classes) \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-03-10",2026-03-10 10:00:00,2026-03-10 11:30:00,"Hjørnerummet (A401-109)","Zheer","Writing functions instead of copy/paste",NA,"-","Planned","11",0,"89ed8f6f-c857-2fe2-3da2-85ec393dc8a0@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -92,16 +56,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Writing functions instead of copy/paste 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Writing functions instead of copy/paste \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-03-24",2026-03-24 10:00:00,2026-03-24 11:30:00,"Hjørnerummet (A401-109)","Zheer","Loops, recursion, parallelisation",NA,"-","Planned","13",0,"04090f06-a1da-ac9c-1868-17c6a55233d5@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -113,16 +68,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Loops, recursion, parallelisation 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Loops, recursion, parallelisation \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-04-07",2026-04-07 10:00:00,2026-04-07 11:30:00,"Hjørnerummet (A401-109)","Zheer","Paradigms: Base R vs. Tidyverse vs. data.table",NA,"-","Planned","15",0,"5b78625a-cc77-955c-c538-68d1258ff958@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -134,16 +80,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Paradigms: Base R vs. Tidyverse vs. data.table 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Paradigms: Base R vs. Tidyverse vs. data.table \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-04-21",2026-04-21 10:00:00,2026-04-21 11:30:00,"Hjørnerummet (A401-109)","Zheer","More tidyverse",NA,"-","Planned","17",0,"339d3c65-be09-113f-8bcf-84cabe8655a9@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -155,16 +92,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: More tidyverse 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: More tidyverse \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-05-05",2026-05-05 10:00:00,2026-05-05 11:30:00,"Hjørnerummet (A401-109)","Zheer","Handling many packages—and cross-package workflows",NA,"-","Planned","19",0,"f476c29c-ed4c-45a1-9506-0932b07f52d5@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -176,16 +104,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Handling many packages—and cross-package workflows 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Handling many packages—and cross-package workflows \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-05-19",2026-05-19 10:00:00,2026-05-19 11:30:00,"Hjørnerummet (A401-109)","Zheer","Moving between R and Stata",NA,"-","Planned","21",0,"66895c35-29b0-c9f3-837e-5f7d8562ad5a@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -197,16 +116,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Moving between R and Stata 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Moving between R and Stata \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-06-02",2026-06-02 10:00:00,2026-06-02 11:30:00,"Hjørnerummet (A401-109)","Zheer","Markdown basics: Using Quarto and Rmarkdown",NA,"-","Planned","23",0,"126d536e-1eb6-7ff9-9f5b-da4de17e380f@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -218,16 +128,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Markdown basics: Using Quarto and Rmarkdown 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Markdown basics: Using Quarto and Rmarkdown \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-06-16",2026-06-16 10:00:00,2026-06-16 11:30:00,"Hjørnerummet (A401-109)","Zheer","Database formats (parquet and more)",NA,"-","Planned","25",0,"066fe062-cba8-8e3c-2f17-02c8cedd9875@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -239,16 +140,7 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: Database formats (parquet and more) 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: Database formats (parquet and more) \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:Hjørnerummet (A401-109)
 END:VEVENT"
 "2026-08-11",2026-08-11 10:00:00,2026-08-11 11:30:00,"","","TBA",NA,"","Planned","33",0,"42311759-a736-fd76-b224-70a50de36498@r-coding-cafe.zheer.dk","20260207T090000","BEGIN:VEVENT
@@ -260,15 +152,6 @@ SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
 URL:https://r-coding-cafe.zheer.dk
-
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: TBA 
-
-Zoom: 
-https://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 
-Meeting ID: 738 5574 0803
-Passcode: m13GZQ 
-
-r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: TBA \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
 LOCATION:
 END:VEVENT"

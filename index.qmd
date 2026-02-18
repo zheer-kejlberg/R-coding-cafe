@@ -228,8 +228,8 @@ DTEND:%s
 SEQUENCE:%s
 STATUS:CONFIRMED
 SUMMARY:R Coding Café
-URL:https://r-coding-cafe.zheer.dk\n\nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1
-DESCRIPTION:Topic: %s \n\nZoom: \nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \nMeeting ID: 738 5574 0803\nPasscode: m13GZQ \n\nr-coding-cafe.zheer.dk
+URL:https://r-coding-cafe.zheer.dk
+DESCRIPTION:Topic: %s \\n\\nZoom: \\nhttps://us04web.zoom.us/j/73855740803?pwd=pFAlZIhlsysHGiKLk14dUCYUdXXi8R.1 \\nMeeting ID: 738 5574 0803\\nPasscode: m13GZQ \\n\\nr-coding-cafe.zheer.dk
 LOCATION:%s
 END:VEVENT", 
     row$stable_uids,
