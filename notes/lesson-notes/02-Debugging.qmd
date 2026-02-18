@@ -62,8 +62,12 @@ Check intermediate results.
 Use some of the following summary functions for data structure and content:
 
 ```{r}
-# Let's look at the mtcars dataset
-mtcars <- mtcars |> mutate(col = sample(c("orange", "blue", "white", NA_character_),size=nrow(mtcars), replace=T))
+# Let's look at the mtcars dataset (and add our own categorical variable with some NAs, for good measure)
+mtcars <- mtcars |> 
+  mutate(col = sample(c("orange", "blue", "white", NA_character_),
+                      size=nrow(mtcars), 
+                      replace=T)
+         )
 
 mtcars |> head(4) |> gt::gt()
 ```
@@ -71,30 +75,33 @@ mtcars |> head(4) |> gt::gt()
   \
   
 ###### Check for NAs
-Always a good place to start. NAs are where good intentions in data management go to die. Make sure you ALWAYS know how many NAs there are—and how many there should be.
+Always a good place to start. `NA`s are where good intentions in data management go to die. Make sure you **always** know how many `NA`s there are—and how many there should be.
 ```{r}
-# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column col:
+# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column 'col':
 is.na(mtcars$col) 
 
-# Get totsl number of NAs in the column:
+# Get total number of NAs in the column:
 is.na(mtcars$col) |> sum()
 ```
   
   \
    
 ###### Summarise a dataset
-Let's now get summary data for every variable in the dataset. While `summary()` provides a decent overview, the `describe()` function from Harrell's `{Hmisc}` package is far more detailed.
+Let's now get summary data for every variable in the dataset. 
 ```{r}
 # Summarise data
 mtcars |> select(c(mpg, vs, col)) |> summary()
+```
 
+While `summary()` provides a decent overview, the `describe()` function from Harrell's `{Hmisc}` package is far more detailed.
+```{r}
 mtcars |> select(c(mpg, vs, col)) |> Hmisc::describe()
 ```
    
   \
    
 ###### Relations among variables
-Now we'll turn our attention to looking at relations among multiple variables. A simply way is to form a 2x2 (or for categories with >2 levels, a pxq) table:
+Now we'll turn our attention to looking at relations among multiple variables. A simply way is to form a contingency table (a 2x2 or, for categories with >2 levels, a pxq table) using `table()`:
 ```{r}
 with(mtcars, table(cyl, gear))
 ```
@@ -102,11 +109,15 @@ with(mtcars, table(cyl, gear))
   \
   
 ###### summarise()
-`summarise()` from `{dplyr}` creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the original dataset)
+`summarise()` from `{dplyr}` creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the dataset)
 ```{r}
-mtcars |> group_by(cyl) |> dplyr::summarise(mean_mpg = mean(mpg, na.rm=T), 
-                                            min_mpg = min(mpg, na.rm=T), 
-                                            max_mpr = max(mpg, na.rm=T))
+mtcars |> group_by(cyl) |> dplyr::summarise(mpg_min = min(mpg, na.rm=T), 
+                                            mpg_Q1 = quantile(mpg, 0.25),
+                                            mpg_median = median(mpg, na.rm=T),
+                                            mpg_Q3 = quantile(mpg, 0.75),
+                                            mpg_max = max(mpg, na.rm=T),
+                                            col_NAs = sum(is.na(col))
+                                            )
 ```
    
   \
