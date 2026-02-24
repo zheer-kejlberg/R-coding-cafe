@@ -13,7 +13,7 @@ timeline_raw <- tribble(
   "Zheer", "Prevention and diagnosis of errors in R", "notes/lesson-notes/02-Debugging.html", "-", 
   
   "2026-02-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Types of data (object, classes)", "notes/lesson-notes/03-Date-Types.html", "-", 
+  "Zheer", "Types of data (object, classes)", "notes/lesson-notes/03-Data-Types.html", "-", 
   
   "2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "Writing functions instead of copy/paste", NA_character_, "-", 
