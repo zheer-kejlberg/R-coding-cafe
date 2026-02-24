@@ -1,0 +1,364 @@
+---
+title: "Data types and structures"
+---
+
+```{r}
+#| output: false
+
+library(dplyr)
+library(ggplot2)
+```
+
+# Terminology: Objects and classes
+- Objects & variables
+
+Everything in your environment has a name (variable) and a value (object)
+
+- Classes
+
+Specific sets of attributes that define different types of objects
+
+
+# Basic data types
+
+## Numerics
+
+Integers
+```{r}
+x <- 1L
+
+typeof(1:5)
+class(1L)
+```
+
+Doubles
+```{r}
+x <- 1.3
+
+typeof(x)
+class(x)
+```
+
+However, both can be seen as instances of numeric:
+```{r}
+is.numeric(1L)
+is.numeric(1.3)
+```
+
+## Complex
+```{r}
+6i
+typeof(6i)
+```
+
+## Character
+```{r}
+"Hello"
+typeof("Hello")
+```
+
+## Logical
+```{r}
+TRUE
+FALSE
+NA
+typeof(c(T,F,NA))
+```
+
+## Raw
+```{r}
+"Hello" |> charToRaw()
+"Hello" |> charToRaw() |> rawToBits()
+
+8 |> intToBits()
+```
+
+
+# Vectors
+
+## Numeric vector:
+```{r}
+c(1,3,4,2)
+```
+
+## Character vector:
+```{r}
+c("Word1", "Word2", "Word3")
+```
+
+## Logical vector:
+```{r}
+c(TRUE, FALSE, TRUE, NA)
+```
+
+## Empty vector:
+```{r}
+c(TRUE, FALSE)[0]
+c("hello", "world")[0]
+c(1.0, 2.3)[0]
+c(1L, 4L)[0]
+```
+## Actually, it was all vectors all along:
+```{r}
+c(1) == 1
+```
+
+## Type coercion
+
+Every element in a vector must have the same type
+```{r}
+c(1, "Hello")
+
+# Notice, the num 1 is coerced into "1" (a character)
+```
+
+## Combining vectors
+```{r}
+vec1 <- 1:3
+vec2 <- 5
+
+c(vec1, vec2)
+c(vec1, 4, 5)
+```
+
+# Larger structures
+
+## Matrices - vectors in higher dimensions
+```{r}
+matrix(1:6, nrow = 3, ncol = 2)
+```
+
+# Type coercion
+```{r}
+c("Hello", 1:4) |> matrix(nrow = 3, ncol = 2)
+```
+
+Creating a matrix by changing dimensionality of a vector
+```{r}
+m <- c(1:18)
+m
+dim(m) <- c(3,3,2)
+m
+```
+
+## Lists
+
+Lists can contain elements of different class/type and length, and elements can be named:
+```{r}
+list1 <- list(
+  a = c("a", "b"),
+  b = c(TRUE, FALSE, TRUE, TRUE),
+  "Some text here",
+  c = NULL,
+  "More text"
+)
+list1
+```
+
+(Actually, vectors can also have named elements)
+
+## Data.frames
+```{r}
+df <- data.frame(
+  x = 1:4, 
+  y = c(100,200,100,200),
+  z = c("word1", "word2", "word3", "word4")
+)
+df
+```
+
+
+```{r}
+list2 <- list(
+  a = c("a", "b"),
+  b = c(TRUE, FALSE, TRUE, TRUE),
+  c = NULL,
+  df,
+  my_plot = df |> ggplot(aes(x=x, y=y)) + geom_point()
+)
+list2
+```
+
+
+# Other types and structures
+
+## Factors
+
+Character vectors with specific levels
+```{r}
+c("cat", "c", "Dog", "Dog", "cat") |> 
+  factor(levels = c("cat", "c", "Dog"), 
+         labels = c("Cat", "Cat", "Dog"))
+```
+
+## Dates and Date-times (yyyy-mm-dd)
+```{r}
+# Types
+"1970-01-01" |> as.Date()
+"2001-04-01 07:30:00" |> as.POSIXct()
+```
+
+Notes, dates start at 1970-01-01
+```{r}
+# Day 0
+as.Date(0)
+as.numeric(as.Date("1969-01-01"))
+```
+
+Because dates are just numbers behind-the-scenes, R can directly plot dates
+```{r}
+# Plotting and calculations
+df_n <- 500
+df <- tibble::tibble(
+  date = as.Date(runif(df_n, min = 0, max = 730)),
+  y = as.numeric(date) * 0.2 + rnorm(df_n, 0, 100)
+)
+
+with(df, plot(date, y, pch="."))
+```
+
+And even perform regression analyses on them
+```{r}
+df |> ggplot(aes(x = date, y = y)) +
+  geom_point(alpha = 0.2, size = .6) +
+  geom_smooth(method = "lm", formula = y~x, se = T)
+```
+
+### Difftime objects
+```{r}
+diff <- as.Date("1970-01-01") - as.Date("1960-01-01")
+diff
+```
+
+## Tibble (tidyverse)
+
+Tibbles are built sequentially (i.e., each column is created before the next one); this means that the values from one column can be used in defining the values of the next
+```{r}
+tibble <- tibble(x=1:5, 
+                 y = x + 5)
+```
+
+Subsetting a single column from a tibble allows you to keep the data in tibble-form, whereas subsetting a single column from a df usually gives just the vector that formed that column
+```{r}
+df <- data.frame(x=1:5, 
+                 y = 6:10)
+df[,"y"]
+
+tibble[,"y"]
+
+# Unless you use the $ operator
+tibble$y 
+```
+
+## Data.table
+A layer on top of data.frames. Comes from the `{data.table}` package. Useful for writing concise code and lightning fast for very large datasets.
+
+## Regular expressions
+
+These are pattern matching tools; useful when you want to match text but don't want to or are unable to match every single instance of text *exactly*. 
+```{r}
+pattern <- "^cat_[1-3]" # reads as "starts with cat_ and is followed by a digit of 1, 2 or 3."
+vec <- c("cat_3", "dog_3", "cat_1", "cat_4")
+
+# Check which elements of vec match the pattern
+grepl(pattern, vec)
+
+```
+
+# Example Manipulations
+
+## Factors
+
+To turn a factor into its index in the ordering of its levels, use `as.numeric()`:
+```{r}
+vec |> factor() |> as.numeric()
+```
+
+## Parse numbers
+
+To turn text into numbers (e.g., when importing data from excel), `as.numeric()` is rather limited:
+```{r}
+c("2", "1234", "1,234", "$123", "") |> as.numeric()
+```
+
+`{readr}` has some nice parsing functions for various data types:
+```{r}
+readr::parse_number("$1,234")
+readr::parse_number("$1.234", locale = readr::locale(decimal_mark = ","))
+
+```
+
+## Work with logicals
+
+Important to know that logicals have three values (`TRUE`, `FALSE` and `NA`). When an expression is evaluated as `NA`, it does not interpret this as the expression evaluating to `FALSE`:
+```{r}
+x <- 3
+ifelse(x == 3, "It's 3",  "It's not 3")
+
+x <- 4
+ifelse(x == 3, "It's 3",  "It's not 3")
+
+x <- NA
+ifelse(x == 3, "It's 3",  "It's not 3")
+```
+
+That is `NA == 3` will return `NA`. Same reason you can't do
+```{r}
+x == NA
+```
+
+But have to instead ask
+```{r}
+is.na(x)
+```
+
+### Filtering
+
+When filtering things out from a dataset, knowing the logicals don't automatically evaluate to `FALSE` when `NA`s are present is important, as rows can be dropped otherwise:
+```{r}
+df <- data.frame(
+  age = c(60,66,NA,50),
+  sex = c(1,2,2,2)
+)
+df |> filter(age > 60) # This only keeps those with KNOWN age > 60
+df |> filter(!age > 60)
+```
+
+Note, even though `age > 60` and `!age > 60` seem like complements of each other, the two new datasets combined have 3 rows, not 4. All `NA`s were dropped entirely.
+
+In order to keep `NA`s you could specify
+```{r}
+df |> filter(is.na(age) | age > 60)
+```
+
+To get the complement of a filter, you can also use the new  `dplyr::filter_out()` command:
+```{r}
+df |> filter(age > 60)
+df |> filter_out(age > 60)
+```
+These two datasets combined now have every original row.
+
+# Type coercion
+
+If you try to put multiple data types into one vector, a hierarchy determines which data type will come out on top (left dominates right):
+
+Character > Double > Integer > Logical 
+```{r}
+#| echo: false
+
+types <- c("Character","Double","Integer","Logical")
+
+data.frame(
+  Character = c("---", types[1], types[1], types[1]),
+  Double = c("---", "---", types[2], types[2]),
+  Integer = c("---", "---", "---", types[3]),
+  Logical = c("---", "---", "---", "---"),
+  types=types
+) %>% gt::gt(rowname_col="types")
+```
+
+
+# Further reading
+[Working with variables of various types with dplyr](https://r4ds.hadley.nz/transform.html){.external target="_blank"}
+
+[Hadley Wickham's "Advanced R" - old version](http://adv-r.had.co.nz/Data-structures.html){.external target="_blank"} (new version is far more advanced)

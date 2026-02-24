@@ -151,7 +151,7 @@ gt(upcoming, rowname_col = "Date", groupname_col="Passed", id="upcoming_schedule
   - Data presentation: `{tinytable}`, `{kable}`, `{gt}`, `{gtsummary}`
 - Matching and Weighting (using `{MatchIt}` and `{WeightIt}` packages)
 - Missing data: relevant packages, including imputation via `{mice}` and combining this with `{MatchThem}`/`{WeightThem}`
-- Survival analysis: `{Epi}`, `{survival}`, `{ggsurvplot}`
+- Survival analysis: `{Epi}`, `{survival}`, `{ggsurvfit}`
 - Preregistration as a means to improved workflows in R
 - Working with AI/LLMs (large language models)—the right way
 - Reproducible pipelines: `{renv}`, `{targets}`
