@@ -541,5 +541,77 @@
       "Lesson notes",
       "Data types and structures"
     ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html",
+    "href": "notes/lesson-notes/04-Functions.html",
+    "title": "Functions",
+    "section": "",
+    "text": "library(dplyr)\nlibrary(ggplot2)\nset.seed(1234)\nFunctions are a special type of object that take some input(s) and return some output. In short, they’re a way to wrap a lot of code in a single name and then call that entire bunch of code later, whenever you need it.\nThey are extremely useful for keeping your code readable and without repetitions.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
+    "title": "Functions",
+    "section": "Some data to work on",
+    "text": "Some data to work on\n\nn &lt;- 1000\ndf &lt;- tibble::tibble(\n  x = 1:n,\n  age = rnorm(n,65, 10),\n  sex = rbinom(n, 1, 0.5),\n  BMI = rnorm(n, 22 + sex + age/100),\n  weight = BMI * rnorm(n, 1.7,0.1)^2\n)\n\ndf |&gt; \n  mutate(\n    sex = factor(sex)\n  ) |&gt; \n  ggplot(\n    aes(\n      y = BMI, \n      x = age, \n      color = sex\n    )\n  ) + \n  geom_point() + \n  geom_smooth(\n    method = lm, \n    formula = y ~ splines::bs(x,3) \n  )",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
+    "href": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
+    "title": "Functions",
+    "section": "Unnamed arguments",
+    "text": "Unnamed arguments\nYou can add an ellipsis argument to give the user flexibility to add additional arguments beyond the ones you explicitly specified.\n\nmy_function &lt;- function(data, ...) {\n  dots &lt;- list(...)\n  return(dots)\n}\nmy_function(df, stuff=2, more_stuff=3)\n\n$stuff\n[1] 2\n\n$more_stuff\n[1] 3\n\n\nThe syntax gets a bit tricky and can be difficult to understand, but this is extremely powerful. For example when you are calling other functions within your function, and you want to be able to pass on arguments down the line but without having to specify all (possibly hundreds) of them:\n\nmy_plotter &lt;- function(data, ...) {\n  do.call(plot, \n          list(data$age, data$BMI, ...))\n}\n\nCalling it clean:\n\nmy_plotter(df)\n\n\n\n\n\n\n\n\nUsing all the extra power:\n\nmy_plotter(df, type = \"p\", \n           xlim = c(0,100), ylim = c(15,30), \n           xlab = \"Age (years)\", ylab = \"BMI (kg/m^2)\", pch = \".\", \n           main = \"Distribution of BMI by age\")",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
+    "href": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
+    "title": "Functions",
+    "section": "When to use functions",
+    "text": "When to use functions\nA fundamental tenet of coding is DRY: Don’t Repeat Yourself. If you’re repeating 1-2 lines, turning it into a function doesn’t make sense. But if you’re repeating more than 5-10 lines (and especially if you’re repeating it more than once), you need to wrap that in a function.\n\nReproducibility and robustness\nAn important benefit is that you avoid having multiple copies of the same code to try to keep up-to-date. Code often evolves over time (as errors become apparent, or you simply change your mind about previous choices). With functions, you simply have to change the code once, and every call to the function will be fixed.\n\ndata_cleaning &lt;- function(data, title = \"Height quantile by weight quantile\") {\n  groups &lt;- unique(data$sex)\n  cols &lt;- wesanderson::wes_palette(\"Darjeeling2\", 2)[groups+1]\n  groups &lt;- tribble(\n    ~from, ~to,\n    1, \"Male\",\n    0, \"Female\"\n  )\n  \n  data &lt;- data |&gt;\n    mutate(sex = recode_values(sex, from = groups$from, to = groups$to) |&gt; factor()) |&gt;\n    mutate(age_rank = rank(age),\n           height = (weight/BMI)^0.5) |&gt;\n    filter(height &gt; 1.7) |&gt;\n    mutate(height_quantile = ecdf(height)(height),\n           weight_quantile = ecdf(weight)(weight)) %&gt;%\n    ggplot(., aes(x = weight_quantile, y = height_quantile, color = sex)) + \n    geom_point() + \n    labs(title = title) |&gt;\n    theme(legend.position = \"top\", legend.title = element_blank()) +\n    scale_color_manual(values = cols, label = groups)\n  return(data)\n}\n\ndf |&gt; data_cleaning()\n\n\n\n\n\n\n\ndf |&gt; filter(sex == 1) |&gt; data_cleaning(\"Height quantile by weight quantile in men\")\n\n\n\n\n\n\n\ndf |&gt; filter(sex == 0) |&gt; data_cleaning(\"Height quantile by weight quantile in women\")\n\n\n\n\n\n\n\n\nOften, I’ll start by writing the code out in the open, but then wrap a function definition around it once it works and I know I’ll be reusing it. Equally importantly; don’t write functions just for the sake of writing functions. If the code is straightforward and won’t be reused, adding additional names (functions within functions within functions) only adds unnecessary complexity and obscurity.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#the-tidy-way",
+    "href": "notes/lesson-notes/04-Functions.html#the-tidy-way",
+    "title": "Functions",
+    "section": "The tidy way",
+    "text": "The tidy way\nIf you’re familiar with {dplyr} and the wider tidyverse, you might have noticed a certain way of doing things; the tidy way. The key behind making tidyverse verbs so easy to put as pearls on a string is the data.frame-first principle; verbs will usually take the data as their first argument and return the data as their output:\n\n# Not like this\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n# Like this\nadd_col &lt;- function(data, colname = \"newcol\") {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\") |&gt;\n  head(5) |&gt; gt::gt()\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n3\n75.84441\n1\n23.05100\n56.65979\nNA\n\n\n4\n41.54302\n1\n22.85915\n63.89481\nNA\n\n\n6\n70.06056\n1\n23.32443\n55.18981\nNA\n\n\n7\n59.25260\n1\n24.05105\n63.71530\nNA\n\n\n9\n59.35548\n1\n23.06609\n68.44197\nNA\n\n\n\n\n\n\n\nIf I insist on putting the data somewhere else in the argument list, it’s still possible to pipe, but I have to be explicit about which argument the data is being piped into (using the _ placeholder—and that’s not as elegant):\n\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\", data = _) |&gt;\n  head(5) |&gt; gt::gt()\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n3\n75.84441\n1\n23.05100\n56.65979\nNA\n\n\n4\n41.54302\n1\n22.85915\n63.89481\nNA\n\n\n6\n70.06056\n1\n23.32443\n55.18981\nNA\n\n\n7\n59.25260\n1\n24.05105\n63.71530\nNA\n\n\n9\n59.35548\n1\n23.06609\n68.44197\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#the-scope",
+    "href": "notes/lesson-notes/04-Functions.html#the-scope",
+    "title": "Functions",
+    "section": "The scope",
+    "text": "The scope\nIt’s important to know that different parts of your code may have access to different sets of variables. This is called scopes. Every function creates its own walled-off section where it stores variables that may be created while the function runs. These variables are accessible (by default) only within the function’s scope, and are consequently destroyed when the function exits. The only thing that remains is whatever the function was told to return() as output (unless, of course, other things were made to remain; ask your local LLM/chatbot about outputting plots from functions, saving files, or global assignment [NOT recommended]).",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
   }
 ]
