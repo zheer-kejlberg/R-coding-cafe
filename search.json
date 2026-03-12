@@ -67,6 +67,18 @@
     ]
   },
   {
+    "objectID": "notes/lesson-notes/04-Functions.html#the-return-call",
+    "href": "notes/lesson-notes/04-Functions.html#the-return-call",
+    "title": "Functions",
+    "section": "The return() call",
+    "text": "The return() call\nYou want functions to have some sort of output. Whether you want the function to pass on some data that you can continue working with, to display a plot, to save something to a file, or something fourth, is up to you.\nImplicit return: if you do not write a return() call, the function will return the last object that was produced or assigned\n\nmy_function &lt;- function(input) {\n  input + 2\n  (input + 2)\n}\nmy_function(5)\n\n[1] 7\n\n\nHowever, when the last operation in a function is assignment, the value is still returned by the function but it is made invisible (not printed):\n\nmy_function &lt;- function(input) {\n  sum &lt;- input + 2\n}\n\n# Simply calling the function does not print what was returned:\nmy_function(5) \n\n# But explicitly asking for something out of the function does:\na &lt;- my_function(5) \na\n\n[1] 7\n\n\nNote, there are ways to manually ask for this so-called suppression (using the invisible() function), or to force functions not to return anything.\nIf you want to return more than one thing from a function, you probably need to use a list or a vector:\n\nmy_function &lt;- function(input) {\n  half &lt;- input/2\n  double &lt;- input * 2\n  character &lt;- as.character(input)\n  \n  return(list(half, double, character))\n}\nmy_function(10)\n\n[[1]]\n[1] 5\n\n[[2]]\n[1] 20\n\n[[3]]\n[1] \"10\"\n\n\nSomewhere you may come across something called global assignment (&lt;&lt;-), but be warned: this is almost definitely a bad idea.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
+    ]
+  },
+  {
     "objectID": "notes/lesson-notes/04-Functions.html#the-scope",
     "href": "notes/lesson-notes/04-Functions.html#the-scope",
     "title": "Functions",
@@ -612,18 +624,6 @@
       "R Coding Café",
       "Lesson notes",
       "Data types and structures"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/04-Functions.html#the-return-call",
-    "href": "notes/lesson-notes/04-Functions.html#the-return-call",
-    "title": "Functions",
-    "section": "The return() call",
-    "text": "The return() call\nYou want functions to have some sort of output. Whether you want the function to pass on some data that you can continue working with, to display a plot, to save something to a file, or something fourth, is up to you.\nImplicit return: if you do not write a return() call, the function will return the last object that was produced or assigned\n\nmy_function &lt;- function(input) {\n  input + 2\n  (input + 2)\n}\nmy_function(5)\n\n[1] 7\n\n\nHowever, when the last operation in a function is assignment, the value is still returned by the function but it is made invisible (not printed):\n\nmy_function &lt;- function(input) {\n  sum &lt;- input + 2\n}\n\n# Simply calling the function does not print what was returned:\nmy_function(5) \n\n# But explicitly asking for something out of the function does:\na &lt;- my_function(5) \na\n\n[1] 7\n\n\nNote, there are ways to manually ask for this so-called suppression (using the invisible() function), or to force functions not to return anything.\nIf you want to return more than one thing from a function, you probably need to use a list or a vector:\n\nmy_function &lt;- function(input) {\n  half &lt;- input/2\n  double &lt;- input * 2\n  character &lt;- as.character(input)\n  \n  return(list(half, double, character))\n}\nmy_function(10)\n\n[[1]]\n[1] 5\n\n[[2]]\n[1] 20\n\n[[3]]\n[1] \"10\"\n\n\nSomewhere you may come across something called global assignment (&lt;&lt;-), but be warned: this is almost definitely a bad idea.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Functions"
     ]
   }
 ]
