@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,9 +71,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bca81f4a44bdcac9f2ea5a7007c52c72.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-538170d48c3795f1291bb9214db34236.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bca81f4a44bdcac9f2ea5a7007c52c72.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0d1e469a869c971cd78fbb3410af720a.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-c60d0c88b8f94ab884ab7eddfde2937b.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0d1e469a869c971cd78fbb3410af720a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-58be809aee9e352d4cbc710845b6c930.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -116,8 +116,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title"></span>
     </a>
@@ -129,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../../index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">R Coding Café</span></a>
   </li>  
   <li class="nav-item">
@@ -137,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Practical info</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../notes/lesson-notes/index.html"> 
+    <a class="nav-link active" href="../../notes/lesson-notes/index.html" aria-current="page"> 
 <span class="menu-text">Notes</span></a>
   </li>  
 </ul>
@@ -164,10 +162,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="../../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -241,6 +235,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#reproducibility-and-robustness" id="toc-reproducibility-and-robustness" class="nav-link" data-scroll-target="#reproducibility-and-robustness">Reproducibility and robustness</a></li>
   </ul></li>
   <li><a href="#the-tidy-way" id="toc-the-tidy-way" class="nav-link" data-scroll-target="#the-tidy-way">The tidy way</a></li>
+  <li><a href="#the-return-call" id="toc-the-return-call" class="nav-link" data-scroll-target="#the-return-call">The <code>return()</code> call</a></li>
   <li><a href="#the-scope" id="toc-the-scope" class="nav-link" data-scroll-target="#the-scope">The scope</a></li>
   </ul></li>
   </ul>
@@ -283,26 +278,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">rnorm</span>(n,<span class="dv">65</span>, <span class="dv">10</span>),</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">BMI =</span> <span class="fu">rnorm</span>(n, <span class="dv">22</span> <span class="sc">+</span> sex <span class="sc">+</span> age<span class="sc">/</span><span class="dv">100</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> BMI <span class="sc">*</span> <span class="fu">rnorm</span>(n, <span class="fl">1.7</span>,<span class="fl">0.1</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">BMI =</span> <span class="fu">rnorm</span>(n, <span class="dv">22</span> <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>sex <span class="sc">+</span> sex<span class="sc">*</span>age<span class="sc">/</span><span class="dv">15</span> <span class="sc">+</span> age<span class="sc">/</span><span class="dv">15</span>, <span class="at">sd =</span> age<span class="sc">/</span><span class="dv">40</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight =</span> BMI <span class="sc">*</span> <span class="fu">rnorm</span>(n, <span class="fl">1.7</span>, <span class="fl">0.1</span>)<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">factor</span>(sex)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> BMI, </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> age, </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> sex</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> lm, </span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> y <span class="sc">~</span> splines<span class="sc">::</span><span class="fu">bs</span>(x,<span class="dv">3</span>) </span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">factor</span>(sex)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> BMI, <span class="at">x =</span> age, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> splines<span class="sc">::</span><span class="fu">bs</span>(x,<span class="dv">3</span>) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -346,14 +331,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Sometimes, you want the ability to pass an argument, but you don’t want to have to do it explicitly every time; this calls for default values.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>increment <span class="ot">&lt;-</span> <span class="cf">function</span>(value, <span class="at">increment =</span> <span class="dv">1</span>) {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(value <span class="sc">+</span> increment)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>incrementer <span class="ot">&lt;-</span> <span class="cf">function</span>(input_value, <span class="at">increment =</span> <span class="dv">1</span>) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(input_value <span class="sc">+</span> increment)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">increment</span>(<span class="at">value =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">incrementer</span>(<span class="at">input_value =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 6</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">increment</span>(<span class="at">value =</span> <span class="dv">5</span>, <span class="at">increment =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">incrementer</span>(<span class="at">input_value =</span> <span class="dv">5</span>, <span class="at">increment =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 7</code></pre>
 </div>
@@ -396,7 +381,7 @@ $more_stuff
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">list</span>(data<span class="sc">$</span>age, data<span class="sc">$</span>BMI, ...))</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Calling it clean:</p>
+<p>Calling it without extra arguments:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_plotter</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -410,7 +395,7 @@ $more_stuff
 <p>Using all the extra power:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">my_plotter</span>(df, <span class="at">type =</span> <span class="st">"p"</span>, </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">100</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">30</span>), </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">20</span>,<span class="dv">100</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">20</span>,<span class="dv">40</span>), </span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab =</span> <span class="st">"Age (years)"</span>, <span class="at">ylab =</span> <span class="st">"BMI (kg/m^2)"</span>, <span class="at">pch =</span> <span class="st">"."</span>, </span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Distribution of BMI by age"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -429,7 +414,7 @@ $more_stuff
 <h3 class="anchored" data-anchor-id="reproducibility-and-robustness">Reproducibility and robustness</h3>
 <p>An important benefit is that you avoid having multiple copies of the same code to try to keep up-to-date. Code often evolves over time (as errors become apparent, or you simply change your mind about previous choices). With functions, you simply have to change the code <strong>once</strong>, and every call to the function will be fixed.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data_cleaning <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">title =</span> <span class="st">"Height quantile by weight quantile"</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data_cleaning <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">title =</span> <span class="st">"Height by weight"</span>) {</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  groups <span class="ot">&lt;-</span> <span class="fu">unique</span>(data<span class="sc">$</span>sex)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> wesanderson<span class="sc">::</span><span class="fu">wes_palette</span>(<span class="st">"Darjeeling2"</span>, <span class="dv">2</span>)[groups<span class="sc">+</span><span class="dv">1</span>]</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  groups <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
@@ -447,13 +432,19 @@ $more_stuff
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">weight_quantile =</span> <span class="fu">ecdf</span>(weight)(weight)) <span class="sc">%&gt;%</span></span>
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> weight_quantile, <span class="at">y =</span> height_quantile, <span class="at">color =</span> sex)) <span class="sc">+</span> </span>
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> title) <span class="sc">|&gt;</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">legend.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> cols, <span class="at">label =</span> groups)</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title, </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Height (percentile)"</span>, </span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Weight (percentile)"</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">legend.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> cols, <span class="at">label =</span> groups) <span class="sc">+</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> \(x) {x<span class="sc">*</span><span class="dv">100</span>}) <span class="sc">+</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> \(x) {x<span class="sc">*</span><span class="dv">100</span>})</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -461,7 +452,7 @@ $more_stuff
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>(<span class="st">"Height quantile by weight quantile in men"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">&lt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>(<span class="st">"Height by weight in those aged &lt; 60 years"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -469,7 +460,7 @@ $more_stuff
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>(<span class="st">"Height quantile by weight quantile in women"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">&gt;=</span> <span class="dv">60</span>) <span class="sc">|&gt;</span> <span class="fu">data_cleaning</span>(<span class="st">"Height by weight in those aged 60 years or above"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -967,40 +958,40 @@ $more_stuff
 <td class="gt_row gt_right" headers="x">3</td>
 <td class="gt_row gt_right" headers="age">75.84441</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.05100</td>
-<td class="gt_row gt_right" headers="weight">56.65979</td>
+<td class="gt_row gt_right" headers="BMI">28.77120</td>
+<td class="gt_row gt_right" headers="weight">70.72014</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="x">4</td>
 <td class="gt_row gt_right" headers="age">41.54302</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">22.85915</td>
-<td class="gt_row gt_right" headers="weight">63.89481</td>
+<td class="gt_row gt_right" headers="BMI">24.96133</td>
+<td class="gt_row gt_right" headers="weight">69.77073</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="x">6</td>
 <td class="gt_row gt_right" headers="age">70.06056</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.32443</td>
-<td class="gt_row gt_right" headers="weight">55.18981</td>
+<td class="gt_row gt_right" headers="BMI">28.68252</td>
+<td class="gt_row gt_right" headers="weight">67.86804</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="x">7</td>
 <td class="gt_row gt_right" headers="age">59.25260</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">24.05105</td>
-<td class="gt_row gt_right" headers="weight">63.71530</td>
+<td class="gt_row gt_right" headers="BMI">28.57957</td>
+<td class="gt_row gt_right" headers="weight">75.71211</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="x">9</td>
 <td class="gt_row gt_right" headers="age">59.35548</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.06609</td>
-<td class="gt_row gt_right" headers="weight">68.44197</td>
+<td class="gt_row gt_right" headers="BMI">27.13137</td>
+<td class="gt_row gt_right" headers="weight">80.50450</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 </tbody>
@@ -1487,40 +1478,40 @@ $more_stuff
 <td class="gt_row gt_right" headers="x">3</td>
 <td class="gt_row gt_right" headers="age">75.84441</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.05100</td>
-<td class="gt_row gt_right" headers="weight">56.65979</td>
+<td class="gt_row gt_right" headers="BMI">28.77120</td>
+<td class="gt_row gt_right" headers="weight">70.72014</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="x">4</td>
 <td class="gt_row gt_right" headers="age">41.54302</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">22.85915</td>
-<td class="gt_row gt_right" headers="weight">63.89481</td>
+<td class="gt_row gt_right" headers="BMI">24.96133</td>
+<td class="gt_row gt_right" headers="weight">69.77073</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="x">6</td>
 <td class="gt_row gt_right" headers="age">70.06056</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.32443</td>
-<td class="gt_row gt_right" headers="weight">55.18981</td>
+<td class="gt_row gt_right" headers="BMI">28.68252</td>
+<td class="gt_row gt_right" headers="weight">67.86804</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_right" headers="x">7</td>
 <td class="gt_row gt_right" headers="age">59.25260</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">24.05105</td>
-<td class="gt_row gt_right" headers="weight">63.71530</td>
+<td class="gt_row gt_right" headers="BMI">28.57957</td>
+<td class="gt_row gt_right" headers="weight">75.71211</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_right" headers="x">9</td>
 <td class="gt_row gt_right" headers="age">59.35548</td>
 <td class="gt_row gt_right" headers="sex">1</td>
-<td class="gt_row gt_right" headers="BMI">23.06609</td>
-<td class="gt_row gt_right" headers="weight">68.44197</td>
+<td class="gt_row gt_right" headers="BMI">27.13137</td>
+<td class="gt_row gt_right" headers="weight">80.50450</td>
 <td class="gt_row gt_center" headers="my_col">NA</td>
 </tr>
 </tbody>
@@ -1530,9 +1521,63 @@ $more_stuff
 </div>
 </div>
 </section>
+<section id="the-return-call" class="level2">
+<h2 class="anchored" data-anchor-id="the-return-call">The <code>return()</code> call</h2>
+<p>You want functions to have some sort of output. Whether you want the function to pass on some data that you can continue working with, to display a plot, to save something to a file, or something fourth, is up to you.</p>
+<p>Implicit return: if you do not write a <code>return()</code> call, the function will return the last object that was produced or assigned</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(input) {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  input <span class="sc">+</span> <span class="dv">2</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  (input <span class="sc">+</span> <span class="dv">2</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">my_function</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7</code></pre>
+</div>
+</div>
+<p>However, when the last operation in a function is assignment, the value is still returned by the function but it is made <em>invisible</em> (not printed):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(input) {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  sum <span class="ot">&lt;-</span> input <span class="sc">+</span> <span class="dv">2</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Simply calling the function does not print what was returned:</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">my_function</span>(<span class="dv">5</span>) </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># But explicitly asking for something out of the function does:</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">my_function</span>(<span class="dv">5</span>) </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>a</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7</code></pre>
+</div>
+</div>
+<p>Note, there are ways to manually ask for this so-called <em>suppression</em> (using the <code>invisible()</code> function), or to force functions not to return anything.</p>
+<p>If you want to return more than one thing from a function, you probably need to use a list or a vector:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(input) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  half <span class="ot">&lt;-</span> input<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  double <span class="ot">&lt;-</span> input <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  character <span class="ot">&lt;-</span> <span class="fu">as.character</span>(input)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(half, double, character))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">my_function</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 5
+
+[[2]]
+[1] 20
+
+[[3]]
+[1] "10"</code></pre>
+</div>
+</div>
+<p>Somewhere you may come across something called <em>global assignment</em> (<code>&lt;&lt;-</code>), but be warned: this is almost definitely a bad idea.</p>
+</section>
 <section id="the-scope" class="level2">
 <h2 class="anchored" data-anchor-id="the-scope">The scope</h2>
-<p>It’s important to know that different parts of your code may have access to different sets of variables. This is called <code>scopes</code>. Every function creates its own walled-off section where it stores variables that may be created while the function runs. These variables are accessible (by default) only within the function’s scope, and are consequently <em>destroyed</em> when the function exits. The only thing that remains is whatever the function was told to <code>return()</code> as output (unless, of course, other things were made to remain; ask your local LLM/chatbot about <em>outputting plots</em> from functions, <em>saving files</em>, or <em>global assignment</em> [NOT recommended]).</p>
+<p>It’s important to know that different parts of your code may have access to different sets of variables. This is called <code>scopes</code>. Every function creates its own walled-off section where it stores variables that may be created while the function runs. These variables are accessible (by default) only within the function’s scope, and are consequently <em>destroyed</em> when the function exits. The only thing that remains is whatever the function was told to <code>return()</code> as output (unless, of course, other things were made to remain; see above).</p>
 
 
 </section>
