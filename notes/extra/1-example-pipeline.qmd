@@ -80,6 +80,8 @@ pop |> head(3) |> gt::gt()
 ### Get first glucose-lowering drug prescription
 ```{r}
 lmdb_first_gld <- lmdb |>
+  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])
+  filter(grepl("^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]", ATC)) |>
   # For each person, only keep the earliest date of redemption
   group_by(PNR) |>
   filter(EKSD == min(EKSD)) |>

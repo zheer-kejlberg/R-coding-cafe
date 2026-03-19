@@ -45,13 +45,13 @@ ATC_codes <- httr2::request("https://pgx-db.org/rest-api/atc/atc_code/CS/") |>
   dplyr::bind_rows()
 
 # Select a subset
-ATC_select_glucose_lowering <- ATC_codes |> 
+ATC_select_A <- ATC_codes |> 
   rename(ATC = `ATC code`) |>
-  filter(grepl("^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]", ATC))
+  filter(grepl("^A", ATC))
 
 # Simulate prescriptions
-n_lmdb <- n * 10
-lmdb <- sample_n(ATC_select_glucose_lowering,
+n_lmdb <- n * 600
+lmdb <- sample_n(ATC_select_A,
                size = n_lmdb,
                replace=T) |>
   mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),
