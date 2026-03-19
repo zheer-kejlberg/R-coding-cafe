@@ -183,6 +183,18 @@
     ]
   },
   {
+    "objectID": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "href": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "title": "Example pipeline",
+    "section": "Or save the cleaned dataset for later use",
+    "text": "Or save the cleaned dataset for later use\n\nsaveRDS(pop, \"cleaned_data.rds\")\n\nMaking it easy to load the dataset in at a later time without having to repeat the whole pipeline: pop &lt;- readRDS(“cleaned_data.rds”)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
     "objectID": "notes/lesson-notes/02-Debugging.html",
     "href": "notes/lesson-notes/02-Debugging.html",
     "title": "Writing working code—and debugging it",
