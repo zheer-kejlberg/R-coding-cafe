@@ -244,6 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#calculate-time-to-metformin" id="toc-calculate-time-to-metformin" class="nav-link" data-scroll-target="#calculate-time-to-metformin">Calculate time to metformin</a></li>
   </ul></li>
   <li><a href="#now-you-can-start-analysing-the-data" id="toc-now-you-can-start-analysing-the-data" class="nav-link" data-scroll-target="#now-you-can-start-analysing-the-data">Now you can start analysing the data…</a></li>
+  <li><a href="#or-save-the-cleaned-dataset-for-later-use" id="toc-or-save-the-cleaned-dataset-for-later-use" class="nav-link" data-scroll-target="#or-save-the-cleaned-dataset-for-later-use">Or save the cleaned dataset for later use</a></li>
   </ul>
 </nav>
     </div>
@@ -271,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="working-with-data-from-statistics-denmark-dst" class="level2">
 <h2 class="anchored" data-anchor-id="working-with-data-from-statistics-denmark-dst">Working with data from Statistics Denmark (DST)</h2>
-<p>Here, we’ll use the simulated data from <a href="https://r-coding-cafe.zheer.dk/notes/lesson-notes/0-simulate-data.html" class="external" target="_blank">the previous note</a> to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g.&nbsp;read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.</p>
+<p>Here, we’ll use the simulated data from <a href="https://r-coding-cafe.zheer.dk/notes/extra/0-simulate-data.html" class="external" target="_blank">the previous note</a> to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g.&nbsp;read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123456</span>)</span>
@@ -4873,6 +4874,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+<section id="or-save-the-cleaned-dataset-for-later-use" class="level2">
+<h2 class="anchored" data-anchor-id="or-save-the-cleaned-dataset-for-later-use">Or save the cleaned dataset for later use</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pop, <span class="st">"cleaned_data.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Making it easy to load the dataset in at a later time without having to repeat the whole pipeline: pop &lt;- readRDS(“cleaned_data.rds”)</p>
 
 
 </section>

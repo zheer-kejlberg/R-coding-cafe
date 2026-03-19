@@ -4,7 +4,7 @@ title: "Example pipeline"
 
 ## Working with data from Statistics Denmark (DST)
 
-Here, we'll use the simulated data from [the previous note](https://r-coding-cafe.zheer.dk/notes/lesson-notes/0-simulate-data.html){.external target="_blank"} to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.
+Here, we'll use the simulated data from [the previous note](https://r-coding-cafe.zheer.dk/notes/extra/0-simulate-data.html){.external target="_blank"} to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.
 
 
 ```{r}
@@ -168,6 +168,15 @@ ggplot(pop, aes(x=age, y = eGFR_val)) +
   geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +
   theme_bw()
 ```
+
+## Or save the cleaned dataset for later use
+```{r}
+saveRDS(pop, "cleaned_data.rds")
+```
+
+Making it easy to load the dataset in at a later time without having to repeat the whole pipeline:
+```{r}
+pop <- readRDS("cleaned_data.rds")
 
 
 
