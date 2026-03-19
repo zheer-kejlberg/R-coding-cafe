@@ -1,0 +1,132 @@
+---
+title: "Simulate some data for further work"
+author: "Zheer Kejlberg Al-Mashhadi"
+date: "2026-03-19"
+---
+
+  
+  
+Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.
+
+```{r}
+#| output: false
+
+set.seed(123456)
+library(dplyr)
+```
+
+## Let's construct some fake data
+
+### Population
+```{r}
+n <- 2000
+bef <- data.frame(
+  PNR = runif(n, min = 1e6, max = 1e7-1) |> floor() |> as.character(),
+  koen = rbinom(n, size = 1, prob = 0.49) + 1,
+  FOED_DAG = runif(n, as.Date("1940-01-01"), as.Date("1959-12-31")) |> floor()  |> as.Date()
+)
+```
+
+Preview:
+```{r}
+bef |> head(3) |> gt::gt()
+```
+
+### LMDB
+```{r}
+# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.
+ATC_codes <- httr2::request("https://pgx-db.org/rest-api/atc/atc_code/CS/") |>
+  httr2::req_headers(
+    accept = "application/json",
+    `X-CSRFToken`= "3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy"
+  ) |>
+  httr2::req_perform() |>
+  httr2::resp_body_json() |> 
+  dplyr::bind_rows()
+
+# Select a subset
+ATC_select_glucose_lowering <- ATC_codes |> 
+  rename(ATC = `ATC code`) |>
+  filter(grepl("^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]", ATC))
+
+# Simulate prescriptions
+n_lmdb <- n * 10
+lmdb <- sample_n(ATC_select_glucose_lowering,
+               size = n_lmdb,
+               replace=T) |>
+  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),
+         EKSD = runif(n_lmdb, as.Date("2000-01-01"), as.Date("2020-12-31")) |> floor()  |> as.Date(),
+         APK = runif(n_lmdb, 1, 4) |> floor(),
+         PACKSIZE = runif(n_lmdb, 1, 4) |> floor() * 10,
+         STRNUM = round(rnorm(n_lmdb, 15, 4)),
+         VOLUME = PACKSIZE * APK)
+```
+
+Preview:
+```{r}
+lmdb |> head(3) |> gt::gt()
+```
+
+### LPR2
+```{r}
+n_lpr <- n * 30
+hip_injury_icd <- c("S70.0", "S71.0", "S72.0", "S72.1", "S72.2", "S72.3", "S72.4", "S72.7", "S72.8", "S72.9")
+lpr_adm <- data.frame(
+  PNR = sample(bef$PNR, size = n_lpr, replace = T),
+  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |> floor() |> unique(),
+  D_INDDTO = runif(n_lpr, as.Date("2000-01-01"), as.Date("2009-12-31")) |> floor() |> as.Date(),
+  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)
+)
+
+lpr_diag <- lpr_adm |> 
+  select(RECNUM, C_ADIAG) |>
+  rename(C_DIAG = C_ADIAG) |>
+  mutate(C_DIAGTYPE = "A") |>
+  # Add in a B-diagnosis for a third of people
+  rbind(
+    data.frame(
+      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),
+      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),
+      C_DIAGTYPE = "B"
+    )
+  )
+```
+
+Previews:
+```{r}
+lpr_subset <- lpr_adm$RECNUM |> head(3)
+lpr_adm |> filter(RECNUM %in% lpr_subset) |> gt::gt()
+lpr_diag |> filter(RECNUM %in% lpr_subset) |> gt::gt()
+
+```
+
+### LAB
+```{r}
+n_lab <- n * 40
+n_lab_missing <- floor(n / 10)
+lab_dm_forsker <- data.frame(
+  PNR = sample(bef$PNR, size = n - n_lab_missing) |> sample(size = n_lab, replace = T),
+  SAMPLINGDATE = runif(n_lab, as.Date("2000-01-01"), as.Date("2009-12-31")) |> floor()  |> as.Date(),
+  ANALYSISCODE = rep("eGFR", n_lab)
+) |>
+  left_join(bef |> select(c(PNR, FOED_DAG)), by = "PNR") |>
+  mutate(
+    VALUE = rnorm(n_lab, 
+                  mean = 100 - as.numeric((as.Date("2000-01-01") - as.Date(FOED_DAG))/3650)^10/(2^20) |> round(2), 
+                  sd = 10) |> round()
+  ) |>
+  select(-c(FOED_DAG))
+```
+
+Preview:
+```{r}
+lab_dm_forsker |> head(3) |> gt::gt()
+```
+
+```{r}
+#| echo: false
+# save all datasets to one R object
+save(bef, lmdb, lpr_adm, lpr_diag, lab_dm_forsker, file = "simulated_data.RData")
+
+
+```
