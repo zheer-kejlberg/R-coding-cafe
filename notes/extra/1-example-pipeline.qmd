@@ -177,7 +177,4 @@ saveRDS(pop, "cleaned_data.rds")
 Making it easy to load the dataset in at a later time without having to repeat the whole pipeline:
 ```{r}
 pop <- readRDS("cleaned_data.rds")
-
-
-
-
+```
