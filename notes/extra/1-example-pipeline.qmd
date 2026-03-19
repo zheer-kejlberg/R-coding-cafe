@@ -54,8 +54,19 @@ pop |> head(3) |> gt::gt()
 ### Get last eGFR before fracture
 ```{r}
 last_eGFR <- left_join(pop, lab_dm_forsker, by = "PNR")
-# Note, approx 10% of individuals have never had an eGFR measured; they now have NAs
+```
 
+Previews:
+```{r}
+last_eGFR |> head(3) |> gt::gt()
+```
+
+Note, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.
+
+Also, "ANALYSISCODE" is currently just "eGFR" for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.
+
+### Get first glucose-lowering drug prescription
+```{r}
 last_eGFR <- last_eGFR |>
   # Get eGFRs prior to fracture
   filter(SAMPLINGDATE <= index_date) |>
