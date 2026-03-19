@@ -65,7 +65,6 @@ Note, approx 10% of individuals have never had an eGFR measured; they now have N
 
 Also, "ANALYSISCODE" is currently just "eGFR" for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.
 
-### Get first glucose-lowering drug prescription
 ```{r}
 last_eGFR <- last_eGFR |>
   # Get eGFRs prior to fracture
