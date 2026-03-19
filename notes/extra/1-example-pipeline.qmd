@@ -8,17 +8,13 @@ Here, we'll use the simulated data from [the previous note](https://r-coding-caf
 
 
 ```{r}
-#| echo: false
-
-load("simulated_data.RData")
+#| output: false
+library(dplyr)
 ```
 
-
+Loading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):
 ```{r}
-#| output: false
-# Loading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.)
-set.seed(123456)
-library(dplyr)
+load("simulated_data.RData")
 ```
 
 ### Identify first hip fracture
