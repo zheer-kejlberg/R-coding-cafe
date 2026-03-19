@@ -21,14 +21,14 @@ n <- 1000
 df <- tibble::tibble(
   x = 1:n,
   age = rnorm(n,65, 10),
-  sex = rbinom(n, 1, 0.5),
+  sex = rbinom(n, 1, 0.5) +1,
   BMI = rnorm(n, 22 - 2*sex + sex*age/15 + age/15, sd = age/40),
   weight = BMI * rnorm(n, 1.7, 0.1)^2
 )
 
 df |> 
-  mutate(sex = factor(sex)) |> 
-  ggplot(aes(y = BMI, x = age, color = sex)) + 
+  mutate(sex = factor(sex, levels = c(1,2), labels = c("Male", "Female"))) |> 
+  ggplot(aes(y = BMI, x = age, color = sex, fill = sex)) + 
   geom_point() + 
   geom_smooth(method = lm, 
               formula = y ~ splines::bs(x,3) )
