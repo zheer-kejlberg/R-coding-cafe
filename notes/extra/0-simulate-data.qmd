@@ -60,6 +60,8 @@ lmdb <- sample_n(ATC_select_A,
          PACKSIZE = runif(n_lmdb, 1, 4) |> floor() * 10,
          STRNUM = round(rnorm(n_lmdb, 15, 4)),
          VOLUME = PACKSIZE * APK)
+
+    
 ```
 
 Preview:
