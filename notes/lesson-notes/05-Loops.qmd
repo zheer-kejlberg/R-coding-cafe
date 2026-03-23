@@ -1,0 +1,211 @@
+---
+title: "Loops, parallelisation and recursion"
+---
+
+```{r}
+#| output: false
+
+library(dplyr)
+library(purrr)
+set.seed(1234)
+```
+
+Loops let you repeat an operation many times without copy-pasting code. They are the backbone of most data-processing pipelines.
+
+## Some data to work on
+
+A small dataset of clinical measurements, one row per patient:
+
+```{r}
+patients <- tibble::tibble(
+  id      = 1:8,
+  age     = c(45, 62, 38, 71, 55, 49, 66, 34),
+  sbp     = c(128, 145, 118, 160, 135, 122, 150, 112),
+  dbp     = c(82,  95,  75,  98,  88,  79,  92,  70)
+)
+patients
+```
+
+# `for` loops
+
+A `for` loop iterates over a sequence and runs the same code block each time:
+
+```{r}
+for (i in 1:5) {
+  print(i^2)
+}
+```
+
+A practical example—flag patients with high systolic blood pressure (SBP ≥ 140):
+
+```{r}
+patients$hypertensive <- FALSE
+
+for (i in seq_len(nrow(patients))) {
+  if (patients$sbp[i] >= 140) {
+    patients$hypertensive[i] <- TRUE
+  }
+}
+patients
+```
+
+Note that this particular example could be done more neatly with `dplyr::mutate()`, but the loop makes the logic very transparent.
+
+# `while` loops
+
+A `while` loop keeps running as long as a condition is `TRUE`. Useful when you don't know in advance how many iterations you need:
+
+```{r}
+dose <- 10        # starting dose (mg)
+effect <- 0
+
+while (effect < 80) {
+  dose   <- dose * 1.5
+  effect <- 100 * (1 - exp(-dose / 30))   # simple exponential saturation curve
+}
+cat("Dose needed:", round(dose, 1), "mg  |  Effect:", round(effect, 1), "%\n")
+```
+
+::: {.callout-warning}
+A `while` loop that never reaches a stopping condition will run forever. Always make sure the condition *can* eventually become `FALSE`.
+:::
+
+# The `apply()` family
+
+`apply()`, `sapply()`, and `lapply()` are R's built-in way to apply a function to every element of a vector or list—replacing many `for` loops with a single line.
+
+## `sapply()` — simplest to read
+
+Returns a vector (or matrix) when the result has a regular shape:
+
+```{r}
+# Mean of each numeric column
+sapply(patients[, c("age", "sbp", "dbp")], mean)
+```
+
+## `lapply()` — always returns a list
+
+Useful when the results are of different lengths or types:
+
+```{r}
+lapply(patients[, c("age", "sbp", "dbp")], summary)
+```
+
+## `apply()` — over rows or columns of a matrix/data.frame
+
+`MARGIN = 1` → rows, `MARGIN = 2` → columns:
+
+```{r}
+# Range (max – min) of each column
+apply(patients[, c("age", "sbp", "dbp")], MARGIN = 2, FUN = function(x) diff(range(x)))
+```
+
+One pain point: the output type of `sapply()` is unpredictable—it silently returns a vector, a matrix, or a list depending on the result. This can cause hard-to-find bugs.
+
+# `purrr::map()`
+
+`{purrr}` provides a consistent, predictable alternative. The key rule: **the suffix tells you the output type**:
+
+| function      | output        |
+|---------------|---------------|
+| `map()`       | always a list |
+| `map_dbl()`   | numeric vector |
+| `map_int()`   | integer vector |
+| `map_chr()`   | character vector |
+| `map_lgl()`   | logical vector |
+| `map_dfr()`   | data frame (row-bind) |
+
+```{r}
+# Always returns a list — equivalent to lapply()
+map(patients[, c("age", "sbp", "dbp")], mean)
+```
+
+```{r}
+# Always returns a numeric vector — no surprises
+map_dbl(patients[, c("age", "sbp", "dbp")], mean)
+```
+
+```{r}
+# Two inputs at once: map2()
+map2_dbl(patients$sbp, patients$dbp,
+         \(s, d) s - d)   # pulse pressure
+```
+
+The predictability of `map_*()` is its biggest advantage over `sapply()`: you know exactly what type you'll get back, and if the result doesn't match, you get a clear error instead of a silent type change.
+
+# `Vectorize()`
+
+Last time we wrote functions that operate on a single value. But what if you want to pass a whole vector and get a vector back, without writing a loop yourself?
+
+```{r}
+# A function that only works on scalars
+bp_category <- function(sbp) {
+  if      (sbp < 120) "Normal"
+  else if (sbp < 130) "Elevated"
+  else if (sbp < 140) "Stage 1"
+  else                "Stage 2"
+}
+```
+
+Calling it on a vector fails:
+
+```{r}
+#| error: true
+bp_category(patients$sbp)
+```
+
+`Vectorize()` wraps the function so that it loops over each element automatically:
+
+```{r}
+bp_category_v <- Vectorize(bp_category)
+bp_category_v(patients$sbp)
+```
+
+This is handy for quick fixes, though `dplyr::case_when()` or `ifelse()` chains are usually cleaner for data-frame work.
+
+# Parallel loops with `{foreach}` and `{doParallel}`
+
+When a loop is slow because it's doing a lot of independent work, you can run the iterations simultaneously on multiple CPU cores.
+
+```{r}
+#| eval: false
+
+library(doParallel)
+
+cl <- makeCluster(2)          # open 2 worker processes
+registerDoParallel(cl)
+
+results <- foreach(x = patients$sbp, .combine = c) %dopar% {
+  # each iteration runs on a separate core
+  x^2
+}
+
+stopCluster(cl)
+closeAllConnections()
+
+results
+```
+
+The `%dopar%` operator swaps in parallel execution; swap back to `%do%` for sequential (useful for debugging). Note that starting workers has overhead, so parallelisation only pays off for genuinely slow tasks.
+
+# Honourable mention: recursion
+
+A recursive function calls *itself*. This can be a very elegant way to solve problems that have a naturally self-similar structure (e.g., navigating a folder tree, parsing nested data).
+
+```{r}
+factorial_r <- function(n) {
+  if (n <= 1) return(1)
+  n * factorial_r(n - 1)
+}
+factorial_r(6)   # 720
+```
+
+In practice, R's function-call overhead means recursion is often slower than a loop, and R has a relatively shallow default call stack (try `factorial_r(10000)`). For everyday data analysis, loops or `map()` are almost always a better choice.
+
+# Further reading
+
+[R for Data Science — Iteration chapter](https://r4ds.hadley.nz/iteration.html){.external target="_blank"}
+
+[`{purrr}` reference](https://purrr.tidyverse.org/){.external target="_blank"}
+
+[`{foreach}` vignette](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html){.external target="_blank"}
