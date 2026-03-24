@@ -224,11 +224,12 @@ This is equivalent to writing a `for` loop, but in one line. (For the tidyverse 
 So far, all loops run **sequentially** — one step at a time.
 For computationally expensive work (e.g., bootstrapping, simulations), you can run iterations **in parallel** across multiple CPU cores using `{doParallel}` with the for-like syntax of `foreach()`.
 ```{r}
-#| eval: false
-
+#| output: false
 library(foreach)
 library(doParallel)
+```
 
+```{r}
 cl <- makeCluster(10)          # open 10 workers
 registerDoParallel(cl)
 
@@ -247,7 +248,8 @@ closeAllConnections()
 
 results |> quantile(probs = c(0.025,0.975))
 ```
-.combine = c` means the result of each loop iteration is returned in a combined vector (`c()`) in the end.
+
+`.combine = c` means the result of each loop iteration is returned in a combined vector (`c()`) in the end.
 
 ::: callout-tip
 For simpler parallelism inside `purrr`, the [`{furrr}`](https://furrr.futureverse.org/) package lets you swap `map()` for `future_map()` with almost no code change.
