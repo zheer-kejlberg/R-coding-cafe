@@ -127,7 +127,7 @@ data_cleaning <- function(data, title = "Height by weight") {
   groups <- tribble(
     ~from, ~to,
     1, "Male",
-    0, "Female"
+    2, "Female"
   )
   
   data <- data |>

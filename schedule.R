@@ -16,10 +16,10 @@ timeline_raw <- tribble(
   "Zheer", "Types of data (object, classes)", "notes/lesson-notes/03-Data-Types.html", "-", 
   
   "2026-03-10", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Writing functions instead of copy/paste", NA_character_, "-", 
+  "Zheer", "Writing functions instead of copy/paste", "notes/lesson-notes/04-Functions.html", "-", 
   
   "2026-03-24", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Loops, recursion, parallelisation", NA_character_, "-", 
+  "Zheer", "Loops, recursion, parallelisation", "notes/lesson-notes/05-Loops.html", "-", 
   
   "2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", NA_character_, "-", 
