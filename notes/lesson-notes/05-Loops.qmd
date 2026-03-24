@@ -20,43 +20,33 @@ patients <- tibble(
   age     = c(45, 67, 53, 71, 38, 60, 55, 49),
   systolic = c(120, 145, 132, 158, 112, 140, 128, 119)
 )
-patients
+patients |> gt::gt()
 ```
 
 # `for` loops
 
 A `for` loop runs a block of code once for every element in a vector:
 ```{r}
-for (i in 1:5) {
-  print(i)
-}
+
 ```
 
 You can loop over any vector — including character vectors:
 ```{r}
-for (col in c("age", "systolic")) {
-  cat(col, "— mean:", mean(patients[[col]]), "\n")
-}
+chars <- c("age", "systolic")
+
 ```
 
 A common pattern is to build up a result vector as you go:
 ```{r}
 high_bp <- c()
-for (i in seq_len(nrow(patients))) {
-  high_bp[i] <- patients$systolic[i] >= 130
-}
-high_bp
+
 ```
 
 # `while` loops
 
 A `while` loop keeps running as long as a condition is `TRUE`:
 ```{r}
-x <- 2
-while (x < 100) {
-  x <- x^2
-  print(x)
-}
+
 ```
 
 ::: callout-warning
@@ -72,21 +62,19 @@ Be careful: if the condition never becomes `FALSE`, the loop runs forever.
 Both apply a function to each element of a vector or list. The difference is the output format:
 ```{r}
 # lapply always returns a list
-lapply(patients[c("age", "systolic")], mean)
+
 ```
 
 ```{r}
 # sapply tries to simplify to a vector or matrix
-sapply(patients[c("age", "systolic")], mean)
+
 ```
 
 ## `apply()` for matrices/data frames
 
 `apply()` works on rows (`MARGIN = 1`) or columns (`MARGIN = 2`):
 ```{r}
-mat <- matrix(1:12, nrow = 3)
-apply(mat, MARGIN = 1, FUN = sum) # row sums
-apply(mat, MARGIN = 2, FUN = sum) # col sums
+
 ```
 
 The problem with the `apply()` family is that the function names and output types are different every time, which makes them hard to remember.
@@ -104,29 +92,30 @@ The `{purrr}` package gives you a consistent, predictable alternative.
 | `map_lgl()`  | logical vector   |
 | `map_df()`   | data frame       |
 
+`map()` always returns a list
 ```{r}
-# Always returns a list
-map(patients[c("age", "systolic")], mean)
+
 ```
 
+Want a numeric vector? Be explicit:
 ```{r}
-# Want a numeric vector? Be explicit:
-map_dbl(patients[c("age", "systolic")], mean)
+
 ```
 
+`map()` works naturally with pipes
 ```{r}
-# Works naturally with pipes and anonymous functions
-patients[c("age", "systolic")] |>
-  map_dbl(\(col) round(mean(col), 1))
+
+```
+
+...and custom functions
+```{r}
+
 ```
 
 ## `map2()` — mapping over two inputs at once
 
 ```{r}
-names  <- c("Alice", "Bob", "Carol")
-scores <- c(88, 95, 72)
 
-map2_chr(names, scores, \(n, s) paste0(n, " scored ", s))
 ```
 
 # `Vectorize()`
@@ -144,13 +133,12 @@ bp_category <- function(systolic) {
   if (systolic >= 130) "High" else "Normal"
 }
 
-bp_category(c(120, 145, 132)) # doesn't work on a vector
+c(120, 145, 132) |> bp_category() # doesn't work on a vector
 ```
 
 `Vectorize()` wraps your function so it loops automatically:
 ```{r}
-bp_category_v <- Vectorize(bp_category)
-bp_category_v(patients$systolic)
+
 ```
 
 This is equivalent to writing a `for` loop, but in one line. (For the tidyverse crowd, `dplyr::case_when()` is often a cleaner solution inside `mutate()`.)
@@ -190,11 +178,11 @@ For simpler parallelism inside `purrr`, the [`{furrr}`](https://furrr.futurevers
 A function can call *itself*. This is called **recursion**, and it's another way to repeat an operation. Classic example: factorials.
 
 ```{r}
-factorial_r <- function(n) {
+factorial <- function(n) {
   if (n <= 1) return(1)
-  n * factorial_r(n - 1)
+  else return(n * factorial(n - 1))
 }
-factorial_r(5)
+factorial(5)
 ```
 
 Recursion is elegant for certain problems (tree traversal, divide-and-conquer algorithms) but can be slow and hard to debug in R. Loops or `map()` are usually the better choice for day-to-day data work.
