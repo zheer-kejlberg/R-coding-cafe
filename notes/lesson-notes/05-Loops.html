@@ -293,25 +293,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">age     =</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">67</span>, <span class="dv">53</span>, <span class="dv">71</span>, <span class="dv">38</span>, <span class="dv">60</span>, <span class="dv">55</span>, <span class="dv">49</span>),</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">systolic =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">145</span>, <span class="dv">132</span>, <span class="dv">158</span>, <span class="dv">112</span>, <span class="dv">140</span>, <span class="dv">128</span>, <span class="dv">119</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>patients <span class="sc">|&gt;</span> gt<span class="sc">::</span><span class="fu">gt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>patients <span class="sc">|&gt;</span> gt<span class="sc">::</span><span class="fu">gt</span>(<span class="at">id =</span> <span class="st">"patients"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="pzveloiefp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pzveloiefp table {
+<div id="patients" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#patients table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pzveloiefp thead, #pzveloiefp tbody, #pzveloiefp tfoot, #pzveloiefp tr, #pzveloiefp td, #pzveloiefp th {
+#patients thead, #patients tbody, #patients tfoot, #patients tr, #patients td, #patients th {
   border-style: none;
 }
 
-#pzveloiefp p {
+#patients p {
   margin: 0;
   padding: 0;
 }
 
-#pzveloiefp .gt_table {
+#patients .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -337,12 +337,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_caption {
+#patients .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pzveloiefp .gt_title {
+#patients .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -354,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#pzveloiefp .gt_subtitle {
+#patients .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -366,7 +366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#pzveloiefp .gt_heading {
+#patients .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -378,13 +378,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_bottom_border {
+#patients .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_col_headings {
+#patients .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -399,7 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_col_heading {
+#patients .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -419,7 +419,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#pzveloiefp .gt_column_spanner_outer {
+#patients .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -431,15 +431,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#pzveloiefp .gt_column_spanner_outer:first-child {
+#patients .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pzveloiefp .gt_column_spanner_outer:last-child {
+#patients .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pzveloiefp .gt_column_spanner {
+#patients .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -451,11 +451,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#pzveloiefp .gt_spanner_row {
+#patients .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pzveloiefp .gt_group_heading {
+#patients .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -481,7 +481,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#pzveloiefp .gt_empty_group_heading {
+#patients .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -496,15 +496,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#pzveloiefp .gt_from_md > :first-child {
+#patients .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pzveloiefp .gt_from_md > :last-child {
+#patients .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pzveloiefp .gt_row {
+#patients .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -523,7 +523,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#pzveloiefp .gt_stub {
+#patients .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -536,7 +536,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#pzveloiefp .gt_stub_row_group {
+#patients .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -550,15 +550,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#pzveloiefp .gt_row_group_first td {
+#patients .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pzveloiefp .gt_row_group_first th {
+#patients .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pzveloiefp .gt_summary_row {
+#patients .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -568,16 +568,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#pzveloiefp .gt_first_summary_row {
+#patients .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_first_summary_row.thick {
+#patients .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pzveloiefp .gt_last_summary_row {
+#patients .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -587,7 +587,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_grand_summary_row {
+#patients .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -597,7 +597,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#pzveloiefp .gt_first_grand_summary_row {
+#patients .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -607,7 +607,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_last_grand_summary_row_top {
+#patients .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -617,11 +617,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_striped {
+#patients .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pzveloiefp .gt_table_body {
+#patients .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -630,7 +630,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_footnotes {
+#patients .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -644,7 +644,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_footnote {
+#patients .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -653,7 +653,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#pzveloiefp .gt_sourcenotes {
+#patients .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -667,7 +667,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#pzveloiefp .gt_sourcenote {
+#patients .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -675,72 +675,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#pzveloiefp .gt_left {
+#patients .gt_left {
   text-align: left;
 }
 
-#pzveloiefp .gt_center {
+#patients .gt_center {
   text-align: center;
 }
 
-#pzveloiefp .gt_right {
+#patients .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pzveloiefp .gt_font_normal {
+#patients .gt_font_normal {
   font-weight: normal;
 }
 
-#pzveloiefp .gt_font_bold {
+#patients .gt_font_bold {
   font-weight: bold;
 }
 
-#pzveloiefp .gt_font_italic {
+#patients .gt_font_italic {
   font-style: italic;
 }
 
-#pzveloiefp .gt_super {
+#patients .gt_super {
   font-size: 65%;
 }
 
-#pzveloiefp .gt_footnote_marks {
+#patients .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pzveloiefp .gt_asterisk {
+#patients .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pzveloiefp .gt_indent_1 {
+#patients .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pzveloiefp .gt_indent_2 {
+#patients .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pzveloiefp .gt_indent_3 {
+#patients .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pzveloiefp .gt_indent_4 {
+#patients .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pzveloiefp .gt_indent_5 {
+#patients .gt_indent_5 {
   text-indent: 25px;
 }
 
-#pzveloiefp .katex-display {
+#patients .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#pzveloiefp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#patients div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>

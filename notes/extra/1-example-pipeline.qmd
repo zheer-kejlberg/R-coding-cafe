@@ -34,7 +34,7 @@ lpr <- left_join(lpr_adm, lpr_diag, by = "RECNUM") |>
 
 Preview:
 ```{r}
-lpr |> head(3) |> gt::gt()
+lpr |> head(3) |> gt::gt(id = "lpr")
 ```
 
 ### Add background info
@@ -48,7 +48,7 @@ pop <- left_join(lpr, bef, by = "PNR") |>
 
 Preview:
 ```{r}
-pop |> head(3) |> gt::gt()
+pop |> head(3) |> gt::gt(id = "pop")
 ```
 
 ### Get last eGFR before fracture
@@ -58,7 +58,7 @@ last_eGFR <- left_join(pop, lab_dm_forsker, by = "PNR")
 
 Previews:
 ```{r}
-last_eGFR |> head(3) |> gt::gt()
+last_eGFR |> head(3) |> gt::gt(id = "last_eGFR")
 ```
 
 Note, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.
@@ -83,8 +83,8 @@ pop <- left_join(pop, last_eGFR, by ="PNR")
 
 Previews:
 ```{r}
-last_eGFR |> head(3) |> gt::gt()
-pop |> head(3) |> gt::gt()
+last_eGFR |> head(3) |> gt::gt(id = "last_eGFR2")
+pop |> head(3) |> gt::gt(id = "pop2")
 ```
 
 ### Get first glucose-lowering drug prescription
@@ -103,7 +103,7 @@ lmdb_first_gld <- lmdb |>
 
 Preview:
 ```{r}
-lmdb_first_gld |> head(3) |> gt::gt()
+lmdb_first_gld |> head(3) |> gt::gt(id = "lmdb_first_gld")
 ```
 
 ### Add in medication data and remove individuals with prior drug exposure
@@ -118,7 +118,7 @@ pop <- pop |>
 
 Preview:
 ```{r}
-pop |> head(3) |> gt::gt()
+pop |> head(3) |> gt::gt(id = "pop3")
 ```
 
 ### Get first metformin prescription
@@ -144,7 +144,7 @@ lmdb_metformin <- lmdb_metformin |>
 
 Preview:
 ```{r}
-lmdb_metformin |> head(3) |> gt::gt()
+lmdb_metformin |> head(3) |> gt::gt(id = "lmdb_metformin")
 ```
 
 ### Add in metformin data
@@ -154,7 +154,7 @@ pop <- left_join(pop, lmdb_metformin, by ="PNR")
 
 Preview:
 ```{r}
-pop |> head(3) |> gt::gt()
+pop |> head(3) |> gt::gt(id = "pop4")
 ```
 
 ### Calculate time to metformin
@@ -165,7 +165,7 @@ pop <- pop |>
 
 Preview:
 ```{r}        
-pop |> head(3) |> gt::gt()
+pop |> head(3) |> gt::gt(id = "pop5")
 ```
 
 ## Now you can start analysing the data...

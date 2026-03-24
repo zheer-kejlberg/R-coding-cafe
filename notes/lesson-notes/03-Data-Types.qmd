@@ -354,7 +354,8 @@ data.frame(
   Integer = c("---", "---", "---", types[3]),
   Logical = c("---", "---", "---", "---"),
   types=types
-) %>% gt::gt(rowname_col="types")
+) |> gt::gt(rowname_col="types", id = "tbl_hierarchy") |>
+  gt::tab_header(title = "Hierarchy of type coercion")
 ```
 
 

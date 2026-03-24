@@ -177,7 +177,7 @@ add_col <- function(data, colname = "newcol") {
 df |>
   filter(sex == 1) |>
   add_col(colname = "my_col") |>
-  head(5) |> gt::gt()
+  head(5) |> gt::gt(id = "my_table")
 ```
 
 If I insist on putting the data somewhere else in the argument list, it's still *possible* to pipe, but I have to be explicit about which argument the data is being piped into (using the `_` placeholder—and that's not as elegant):
@@ -190,7 +190,7 @@ add_col <- function(colname = "newcol", data) {
 df |>
   filter(sex == 1) |>
   add_col(colname = "my_col", data = _) |>
-  head(5) |> gt::gt()
+  head(5) |> gt::gt(id = "my_table2")
 ```
 
 ## The `return()` call

@@ -20,7 +20,7 @@ patients <- tibble(
   age     = c(45, 67, 53, 71, 38, 60, 55, 49),
   systolic = c(120, 145, 132, 158, 112, 140, 128, 119)
 )
-patients |> gt::gt()
+patients |> gt::gt(id = "patients")
 ```
 
 # `for` loops
