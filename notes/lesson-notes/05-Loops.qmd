@@ -25,28 +25,69 @@ patients |> gt::gt()
 
 # `for` loops
 
-A `for` loop runs a block of code once for every element in a vector:
+A `for` loop runs a block of code once for every element in a vector; i.e., it runs a fixed/prespecified number of times:
 ```{r}
-
+for (i in 1:5) {
+  print(
+    paste0(
+      "Age of row ", i, ": ", 
+      patients$age[i]
+    )
+  )
+}
 ```
 
 You can loop over any vector — including character vectors:
 ```{r}
-chars <- c("age", "systolic")
-
+columns <- c("age", "systolic")
+for (col in columns) {
+  print(paste0(
+    "Mean ", col, ": ",
+    mean(patients[[col]]))
+  )
+}
 ```
 
 A common pattern is to build up a result vector as you go:
 ```{r}
 high_bp <- c()
 
+for (i in 1:nrow(patients)) {
+  high_bp <- c(high_bp, patients$age[i])
+}
+
+high_bp
+```
+
+This might be useful if you're bootstrapping, for instance:
+```{r}
+#| eval: false
+
+results <- c()
+
+mean_age <- function(df) mean(df$age)
+
+for (i in 1:10000) {
+  dataset_i <- slice_sample(df, n = nrow(df), replace = TRUE) 
+  result_i <- mean_age(dataset_i) # or any prespecified analysis function
+  results <- c(results, result_i)
+}
+conf.int <- quantile(results, probs = c(0.025,0.975))
+
+paste0("Mean age: ", mean(df$age))
+conf.int
+
 ```
 
 # `while` loops
 
-A `while` loop keeps running as long as a condition is `TRUE`:
+A `while` loop keeps running as long as a condition (in this example `x < 1000`) is `TRUE`:
 ```{r}
-
+x <- 2
+while(x < 1000){
+  x <- x^2
+  print(x)
+}
 ```
 
 ::: callout-warning
@@ -59,22 +100,45 @@ Be careful: if the condition never becomes `FALSE`, the loop runs forever.
 
 ## `sapply()` and `lapply()`
 
-Both apply a function to each element of a vector or list. The difference is the output format:
-```{r}
-# lapply always returns a list
+Both apply a function to each element of a vector or list. The difference is the output format.
 
+`lapply()` always returns a list
+```{r}
+df <- patients |> select(-id)
+
+lapply(X = df, FUN = mean)
 ```
 
+`sapply()` tries to simplify to a vector or matrix
 ```{r}
-# sapply tries to simplify to a vector or matrix
+sapply(X = df, FUN = mean)
+```
 
+This is the same as manually doing `lapply` + `unlist`:
+```{r}
+lapply(X = df, FUN = mean) |> unlist()
+```
+
+The `apply()` family also easily work with custom functions:
+```{r}
+squared <- function(x) {
+  x^2
+}
+sapply(X = c(1:5), FUN = squared)
 ```
 
 ## `apply()` for matrices/data frames
 
 `apply()` works on rows (`MARGIN = 1`) or columns (`MARGIN = 2`):
 ```{r}
+mat <- matrix(1:12, nrow = 3)
+mat
 
+print("Row sums:")
+apply(X = mat, MARGIN = 1, FUN = sum)
+
+print("Column sums:")
+apply(X = mat, MARGIN = 2, FUN = sum)
 ```
 
 The problem with the `apply()` family is that the function names and output types are different every time, which makes them hard to remember.
@@ -94,29 +158,39 @@ The `{purrr}` package gives you a consistent, predictable alternative.
 
 `map()` always returns a list
 ```{r}
-
+map(df, mean)
 ```
 
 Want a numeric vector? Be explicit:
 ```{r}
-
+map_dbl(df, mean)
 ```
 
 `map()` works naturally with pipes
 ```{r}
-
-```
-
-...and custom functions
-```{r}
-
+df |> map(mean)
 ```
 
 ## `map2()` — mapping over two inputs at once
 
+This function requires both inputs to be the same length, and element i of input .x will be mapped to element i of input .y; that is, you don't get every possible combination of .x and .y
 ```{r}
+names <- c("Alice", "Bob", "Carol")
+scores <- c(88, 95, 72)
 
+myPaste <- function(nm, scr) paste0(nm, " scored ", scr)
+
+map2_chr(.x = names, .y = scores, .f = myPaste)
 ```
+
+For all combinations, try something like:
+```{r}
+with(
+  expand.grid(names, scores),
+  paste0(Var1, " scored ", Var2)
+)
+```
+
 
 # `Vectorize()`
 
@@ -138,7 +212,9 @@ c(120, 145, 132) |> bp_category() # doesn't work on a vector
 
 `Vectorize()` wraps your function so it loops automatically:
 ```{r}
+bp_category <- bp_category |> Vectorize()
 
+c(120, 145, 132) |> bp_category()
 ```
 
 This is equivalent to writing a `for` loop, but in one line. (For the tidyverse crowd, `dplyr::case_when()` is often a cleaner solution inside `mutate()`.)
@@ -146,28 +222,32 @@ This is equivalent to writing a `for` loop, but in one line. (For the tidyverse 
 # Parallel loops with `foreach` and `%dopar%`
 
 So far, all loops run **sequentially** — one step at a time.
-For computationally expensive work (e.g., bootstrapping, simulations), you can run iterations **in parallel** across multiple CPU cores.
-
+For computationally expensive work (e.g., bootstrapping, simulations), you can run iterations **in parallel** across multiple CPU cores using `{doParallel}` with the for-like syntax of `foreach()`.
 ```{r}
 #| eval: false
 
 library(foreach)
 library(doParallel)
 
-cl <- makeCluster(2)          # open 2 workers
+cl <- makeCluster(10)          # open 10 workers
 registerDoParallel(cl)
 
-results <- foreach(i = 1:8, .combine = c) %dopar% {
-  patients$systolic[i]^2
+mean_age <- function(df) mean(df$age)
+
+results <- foreach(i = 1:1000, 
+                   .packages = "dplyr",
+                   .combine = c) %dopar% {
+  dataset_i <- slice_sample(df, n = nrow(df), replace = TRUE) 
+  result_i <- mean_age(dataset_i)
+  return(result_i)
 }
 
 stopCluster(cl)
 closeAllConnections()
 
-results
+results |> quantile(probs = c(0.025,0.975))
 ```
-
-The key difference is `%dopar%` instead of `%do%`: the former distributes iterations across cores, the latter runs them sequentially (useful for testing before going parallel).
+.combine = c` means the result of each loop iteration is returned in a combined vector (`c()`) in the end.
 
 ::: callout-tip
 For simpler parallelism inside `purrr`, the [`{furrr}`](https://furrr.futureverse.org/) package lets you swap `map()` for `future_map()` with almost no code change.
@@ -185,7 +265,7 @@ factorial <- function(n) {
 factorial(5)
 ```
 
-Recursion is elegant for certain problems (tree traversal, divide-and-conquer algorithms) but can be slow and hard to debug in R. Loops or `map()` are usually the better choice for day-to-day data work.
+Recursion is elegant for certain problems (tree traversal, divide-and-conquer algorithms) but can be slow and hard to debug in R. Loops or `map()` are almost always what you need.
 
 # Further reading
 
