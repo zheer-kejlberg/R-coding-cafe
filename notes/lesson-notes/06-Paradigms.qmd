@@ -1,0 +1,193 @@
+---
+title: "Coding paradigms"
+---
+
+```{r}
+#| output: false
+
+library(dplyr)
+library(data.table)
+set.seed(1234)
+```
+
+A **coding paradigm** is a style or philosophy for writing code — a set of conventions and patterns that shape how you think about and solve problems.
+
+In R, there are three main paradigms for data manipulation:
+
+| Paradigm       | Main package(s)     | Tagline                         |
+|----------------|---------------------|---------------------------------|
+| **Base R**     | Built-in            | Explicit, no dependencies       |
+| **Tidyverse**  | `{dplyr}`, `{tidyr}` | Readable, pipe-friendly         |
+| **data.table** | `{data.table}`      | Concise, fast, memory-efficient |
+
+None is objectively best. Each has strengths, and you will encounter all three in the wild.
+
+## Some data to work on
+
+```{r}
+df <- tibble(
+  id      = 1:10,
+  age     = c(15, 34, 22, 45, 17, 60, 29, 38, 16, 51),
+  sex     = c("M","F","M","F","M","F","M","F","M","F"),
+  weight  = c(55, 68, 80, 72, 60, 65, 90, 75, 58, 70),
+  height  = c(1.65, 1.70, 1.80, 1.65, 1.72, 1.60, 1.85, 1.68, 1.69, 1.63)
+)
+
+DT <- as.data.table(df)   # data.table copy
+
+df |> gt::gt(id = "df_table")
+```
+
+# Base R
+
+Base R uses **explicit indexing** and **standard evaluation**. What you see is what you get — there are no hidden conventions or non-standard evaluation tricks.
+
+## Filter rows
+
+```{r}
+df[df$age >= 18, ]
+```
+
+The logical vector `df$age >= 18` selects only the matching rows. The trailing `,` keeps all columns.
+
+## Add a new column
+
+```{r}
+df$bmi <- df$weight / df$height^2
+head(df)
+```
+
+Direct assignment to `df$newcol` is the base R way.
+
+## Summarise by group
+
+```{r}
+aggregate(bmi ~ sex, data = df, FUN = mean)
+```
+
+`aggregate()` takes a formula, a data frame, and a summary function.
+
+# Tidyverse
+
+The tidyverse (centred on `{dplyr}`) is **declarative** and uses **non-standard evaluation** — you write column names without quoting them or prefixing with `$`. Operations are chained together with the pipe `|>`, reading top-to-bottom like a sentence.
+
+## Filter rows
+
+```{r}
+df |> filter(age >= 18)
+```
+
+## Add a new column
+
+```{r}
+df <- df |> mutate(
+  bmi = weight / height^2
+)
+head(df)
+```
+
+## Summarise by group
+
+```{r}
+df |>
+  group_by(sex) |>
+  summarise(mean_bmi = mean(bmi))
+```
+
+The pipe chains verbs together. Each verb takes a data frame as its first argument and returns a data frame — making them easy to compose.
+
+# data.table
+
+`{data.table}` extends the standard `[` operator with the concise syntax `DT[i, j, by]`:
+
+- **i** — which rows (filter)
+- **j** — what to do (select / compute columns)
+- **by** — grouping variable
+
+This makes it extremely fast and memory-efficient — a key advantage for large datasets.
+
+## Filter rows
+
+```{r}
+DT[age >= 18]
+```
+
+## Add a new column
+
+```{r}
+DT[, bmi := weight / height^2]
+head(DT)
+```
+
+`:=` modifies the table **in place** (no copy is made), which is why data.table is so memory-efficient.
+
+## Summarise by group
+
+```{r}
+DT[, .(mean_bmi = mean(bmi)), by = sex]
+```
+
+`.()` is shorthand for `list()` and names the output columns.
+
+# Side-by-side comparison
+
+The same three operations, across all three paradigms:
+
+```{r}
+#| eval: false
+
+## --- Filter: keep adults only ---
+
+# Base R
+df[df$age >= 18, ]
+
+# Tidyverse
+df |> filter(age >= 18)
+
+# data.table
+DT[age >= 18]
+
+
+## --- New column: compute BMI ---
+
+# Base R
+df$bmi <- df$weight / df$height^2
+
+# Tidyverse
+df <- df |> mutate(bmi = weight / height^2)
+
+# data.table
+DT[, bmi := weight / height^2]
+
+
+## --- Summarise: mean BMI by sex ---
+
+# Base R
+aggregate(bmi ~ sex, data = df, FUN = mean)
+
+# Tidyverse
+df |> group_by(sex) |> summarise(mean_bmi = mean(bmi))
+
+# data.table
+DT[, .(mean_bmi = mean(bmi)), by = sex]
+```
+
+# When to use which?
+
+- **Base R** — zero dependencies; great for simple scripts, package development, and teaching fundamentals.
+- **Tidyverse** — the most readable option; ideal for exploratory analysis and collaborative projects where clarity matters.
+- **data.table** — best when working with millions of rows; its in-place modification and optimised grouping make it significantly faster.
+
+::: callout-tip
+Most real-world R code mixes paradigms. You might load data with base R, clean it with dplyr, and run a heavy aggregation with data.table. Pick the right tool for each job.
+:::
+
+# Further reading
+
+[R intro (CRAN)](https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf){.external target="_blank"}
+
+[Tidyverse paper](https://cran.r-project.org/web/packages/tidyverse/vignettes/paper.html){.external target="_blank"}
+
+[dplyr intro vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html){.external target="_blank"}
+
+[data.table intro vignette](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html){.external target="_blank"}
