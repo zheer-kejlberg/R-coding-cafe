@@ -43,7 +43,9 @@ df |> gt::gt(id = "df_table")
 Base R uses explicit indexing with `$` for columns and `[]` for rows and columns. You need to specify exactly what you want, which can be verbose. `data.frame[rows, columns]` is the general form.
 
 ```{r}
-
+df[df$age <= 35, "weight"]
+df[df$age <= 35,]$weight
+df[df$age <= 35,][["weight"]]
 ```
 
 ### Tidyverse
@@ -51,7 +53,7 @@ Base R uses explicit indexing with `$` for columns and `[]` for rows and columns
 The tidyverse uses something called non-standard evaluation, allowing you to write column names directly without quoting. The pipe operator `|>` (or previously* `%>%`) lets you chain operations together in a readable way. You subset data using `filter()` (rows) and `select()` (columns).
 
 ```{r}
-
+df |> filter(age <= 35) |> select(weight)
 ```
 
 ### Data.table
@@ -65,7 +67,7 @@ The tidyverse uses something called non-standard evaluation, allowing you to wri
 For example:
 
 ```{r}
-
+DT[age <= 35, weight]
 ```
 
 # Per-group operations
@@ -74,7 +76,7 @@ For example:
 
 Base R doesn't have built-in group-wise operations, but you can use `aggregate()` to summarise by group:
 ```{r}
-
+aggregate(weight ~ sex, data = df, FUN = mean)
 ```
 
 ### Tidyverse
@@ -82,14 +84,16 @@ Base R doesn't have built-in group-wise operations, but you can use `aggregate()
 In the tidyverse, you can easily group by a variable and summarise:
 
 ```{r}
-
+df |>
+  group_by(sex) |>
+  summarise(mean_weight = mean(weight))
 ```
 
 ### Data.table
 
 In data.table, you can specify the grouping variable very naturally in the `by` argument:
 ```{r}
-
+DT[, .(mean_weight = mean(weight)), by = sex]
 ```
 
 in `{data.table}`, `.()` is shorthand for `list()` and names the output columns.
@@ -100,14 +104,18 @@ in `{data.table}`, `.()` is shorthand for `list()` and names the output columns.
 
 In base R, you can add a new column by direct assignment:
 ```{r}
-
+df$bmi <- (df$weight / df$height^2) |> round(1)
+head(df)
 ``` 
 
 ### Tidyverse
 
 In the tidyverse, you can use `mutate()` to add a new column:
 ```{r}
-
+df <- df |> mutate(
+  bmi = (weight / height^2) |> round(1)
+)
+head(df)
 ```
 
 ### Data.table
@@ -115,7 +123,8 @@ In the tidyverse, you can use `mutate()` to add a new column:
 In data.table, you can add a new column using `:=`, which modifies the table in place:
 
 ```{r}
-
+DT[, bmi := (weight / height^2) |> round(1)]
+head(DT)
 ```
 
 `:=` modifies the table **in place** (no copy is made), which is why data.table is so memory-efficient.
@@ -147,7 +156,7 @@ data.table is **concise** and **fast**. It uses a unique `DT[i, j, by]` syntax t
 **Pros**: Best when working with millions of rows; its in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.  
 **Cons**: The concise syntax can be less intuitive for beginners, and it has a steeper learning curve. Speed gains are often exaggerated, as base R and tidyverse have gained performance improvements in recent years.
 
-
+##
 ::: callout-tip
 Most real-world R code mixes paradigms. You might load data with base R, clean it with `{dplyr}`, and run a heavy aggregation with `{data.table}`. Pick the right tool for each job.
 :::
