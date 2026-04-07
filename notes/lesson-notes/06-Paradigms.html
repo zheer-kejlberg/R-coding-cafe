@@ -251,13 +251,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#tidyverse" id="toc-tidyverse" class="nav-link" data-scroll-target="#tidyverse">Tidyverse</a></li>
   <li><a href="#data.table" id="toc-data.table" class="nav-link" data-scroll-target="#data.table">Data.table</a></li>
   </ul></li>
-  <li><a href="#per-group-operations" id="toc-per-group-operations" class="nav-link" data-scroll-target="#per-group-operations">Per-group operations</a>
+  <li><a href="#add-a-column" id="toc-add-a-column" class="nav-link" data-scroll-target="#add-a-column">Add a column</a>
   <ul class="collapse">
   <li><a href="#base-r-1" id="toc-base-r-1" class="nav-link" data-scroll-target="#base-r-1">Base R</a></li>
   <li><a href="#tidyverse-1" id="toc-tidyverse-1" class="nav-link" data-scroll-target="#tidyverse-1">Tidyverse</a></li>
   <li><a href="#data.table-1" id="toc-data.table-1" class="nav-link" data-scroll-target="#data.table-1">Data.table</a></li>
   </ul></li>
-  <li><a href="#add-a-column" id="toc-add-a-column" class="nav-link" data-scroll-target="#add-a-column">Add a column</a>
+  <li><a href="#group-wise-operations" id="toc-group-wise-operations" class="nav-link" data-scroll-target="#group-wise-operations">Group-wise operations</a>
   <ul class="collapse">
   <li><a href="#base-r-2" id="toc-base-r-2" class="nav-link" data-scroll-target="#base-r-2">Base R</a></li>
   <li><a href="#tidyverse-2" id="toc-tidyverse-2" class="nav-link" data-scroll-target="#tidyverse-2">Tidyverse</a></li>
@@ -902,11 +902,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 2     83
 3     59</code></pre>
 </div>
+</div>
+<p>Alternatively, you can use <code>$</code> to select a column, but this gives you the column as a standalone vector rather than as a one-column dataframe:</p>
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df[df<span class="sc">$</span>age <span class="sc">&lt;=</span> <span class="dv">35</span>,]<span class="sc">$</span>weight</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 86 83 59</code></pre>
 </div>
+</div>
+<p>Or the double-bracket <code>[[</code> to select a column by name, which also returns a vector - this can be useful when you can’t explicitly write the column name but have it stored in a variable:</p>
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df[df<span class="sc">$</span>age <span class="sc">&lt;=</span> <span class="dv">35</span>,][[<span class="st">"weight"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 86 83 59</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>column_names <span class="ot">&lt;-</span> <span class="st">"weight"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[df<span class="sc">$</span>age <span class="sc">&lt;=</span> <span class="dv">35</span>,][[column_names]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 86 83 59</code></pre>
 </div>
@@ -916,7 +927,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="tidyverse">Tidyverse</h3>
 <p>The tidyverse uses something called non-standard evaluation, allowing you to write column names directly without quoting. The pipe operator <code>|&gt;</code> (or previously* <code>%&gt;%</code>) lets you chain operations together in a readable way. You subset data using <code>filter()</code> (rows) and <code>select()</code> (columns).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">&lt;=</span> <span class="dv">35</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(weight)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">filter</span>(age <span class="sc">&lt;=</span> <span class="dv">35</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(weight)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 1
   weight
@@ -929,114 +940,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data.table" class="level3">
 <h3 class="anchored" data-anchor-id="data.table">Data.table</h3>
-<p><code>{data.table}</code> extends the <code>[]</code> operator with a concise syntax: <code>DT[i, j, by]</code>, where</p>
+<p><code>{data.table}</code> extends the <code>df[]</code> bracket notation into <code>DT[i, j, by]</code>, where</p>
 <ul>
 <li><code>i</code> filters rows,</li>
-<li><code>j</code> specifies what to do (select or compute columns), and</li>
+<li><code>j</code> specifies an operation (select / compute columns)</li>
 <li><code>by</code> groups the data.</li>
 </ul>
 <p>For example:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>DT[age <span class="sc">&lt;=</span> <span class="dv">35</span>, weight]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>DT[age <span class="sc">&lt;=</span> <span class="dv">35</span>, weight]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 86 83 59</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="per-group-operations" class="level1">
-<h1>Per-group operations</h1>
+<section id="add-a-column" class="level1">
+<h1>Add a column</h1>
 <section id="base-r-1" class="level3">
 <h3 class="anchored" data-anchor-id="base-r-1">Base R</h3>
-<p>Base R doesn’t have built-in group-wise operations, but you can use <code>aggregate()</code> to summarise by group:</p>
+<p>In base R, you can add a new column by direct assignment:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(weight <span class="sc">~</span> sex, <span class="at">data =</span> df, <span class="at">FUN =</span> mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>bmi <span class="ot">&lt;-</span> (df<span class="sc">$</span>weight <span class="sc">/</span> df<span class="sc">$</span>height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  sex weight
-1   F 75.125
-2   M 72.000</code></pre>
+<pre><code># A tibble: 6 × 6
+     id   age sex   weight height   bmi
+  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1    46 F         83   1.84  24.5
+2     2    47 M         66   1.61  25.5
+3     3    39 F         72   1.72  24.3
+4     4    35 F         86   1.72  29.1
+5     5    46 M         78   1.64  29  
+6     6    22 F         83   1.74  27.4</code></pre>
 </div>
 </div>
 </section>
 <section id="tidyverse-1" class="level3">
 <h3 class="anchored" data-anchor-id="tidyverse-1">Tidyverse</h3>
-<p>In the tidyverse, you can easily group by a variable and summarise:</p>
+<p>In the tidyverse, you can use <code>mutate()</code> to add a new column:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_weight =</span> <span class="fu">mean</span>(weight))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi =</span> (weight <span class="sc">/</span> height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  sex   mean_weight
-  &lt;chr&gt;       &lt;dbl&gt;
-1 F            75.1
-2 M            72  </code></pre>
+<pre><code># A tibble: 6 × 6
+     id   age sex   weight height   bmi
+  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1    46 F         83   1.84  24.5
+2     2    47 M         66   1.61  25.5
+3     3    39 F         72   1.72  24.3
+4     4    35 F         86   1.72  29.1
+5     5    46 M         78   1.64  29  
+6     6    22 F         83   1.74  27.4</code></pre>
 </div>
 </div>
 </section>
 <section id="data.table-1" class="level3">
 <h3 class="anchored" data-anchor-id="data.table-1">Data.table</h3>
-<p>In data.table, you can specify the grouping variable very naturally in the <code>by</code> argument:</p>
+<p>In data.table, you can add a new column using <code>:=</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>DT[, .(<span class="at">mean_weight =</span> <span class="fu">mean</span>(weight)), by <span class="ot">=</span> sex]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      sex mean_weight
-   &lt;char&gt;       &lt;num&gt;
-1:      F      75.125
-2:      M      72.000</code></pre>
-</div>
-</div>
-<p>in <code>{data.table}</code>, <code>.()</code> is shorthand for <code>list()</code> and names the output columns.</p>
-</section>
-</section>
-<section id="add-a-column" class="level1">
-<h1>Add a column</h1>
-<section id="base-r-2" class="level3">
-<h3 class="anchored" data-anchor-id="base-r-2">Base R</h3>
-<p>In base R, you can add a new column by direct assignment:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>bmi <span class="ot">&lt;-</span> (df<span class="sc">$</span>weight <span class="sc">/</span> df<span class="sc">$</span>height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 6
-     id   age sex   weight height   bmi
-  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-1     1    46 F         83   1.84  24.5
-2     2    47 M         66   1.61  25.5
-3     3    39 F         72   1.72  24.3
-4     4    35 F         86   1.72  29.1
-5     5    46 M         78   1.64  29  
-6     6    22 F         83   1.74  27.4</code></pre>
-</div>
-</div>
-</section>
-<section id="tidyverse-2" class="level3">
-<h3 class="anchored" data-anchor-id="tidyverse-2">Tidyverse</h3>
-<p>In the tidyverse, you can use <code>mutate()</code> to add a new column:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">bmi =</span> (weight <span class="sc">/</span> height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 6
-     id   age sex   weight height   bmi
-  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-1     1    46 F         83   1.84  24.5
-2     2    47 M         66   1.61  25.5
-3     3    39 F         72   1.72  24.3
-4     4    35 F         86   1.72  29.1
-5     5    46 M         78   1.64  29  
-6     6    22 F         83   1.74  27.4</code></pre>
-</div>
-</div>
-</section>
-<section id="data.table-2" class="level3">
-<h3 class="anchored" data-anchor-id="data.table-2">Data.table</h3>
-<p>In data.table, you can add a new column using <code>:=</code>, which modifies the table in place:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>DT[, bmi <span class="sc">:</span><span class="er">=</span> (weight <span class="sc">/</span> height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)]</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(DT)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>DT[, bmi <span class="sc">:</span><span class="er">=</span> (weight <span class="sc">/</span> height<span class="sc">^</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(DT)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      id   age    sex weight height   bmi
    &lt;int&gt; &lt;num&gt; &lt;char&gt;  &lt;num&gt;  &lt;num&gt; &lt;num&gt;
@@ -1051,6 +1017,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code>:=</code> modifies the table <strong>in place</strong> (no copy is made), which is why data.table is so memory-efficient.</p>
 </section>
 </section>
+<section id="group-wise-operations" class="level1">
+<h1>Group-wise operations</h1>
+<section id="base-r-2" class="level3">
+<h3 class="anchored" data-anchor-id="base-r-2">Base R</h3>
+<p>Base R doesn’t have built-in group-wise operations, but you can use <code>aggregate()</code> to summarise by group:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(weight <span class="sc">~</span> sex, <span class="at">data =</span> df, <span class="at">FUN =</span> mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  sex weight
+1   F 75.125
+2   M 72.000</code></pre>
+</div>
+</div>
+</section>
+<section id="tidyverse-2" class="level3">
+<h3 class="anchored" data-anchor-id="tidyverse-2">Tidyverse</h3>
+<p>In the tidyverse, you can easily group by a variable and summarise:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_weight =</span> <span class="fu">mean</span>(weight))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  sex   mean_weight
+  &lt;chr&gt;       &lt;dbl&gt;
+1 F            75.1
+2 M            72  </code></pre>
+</div>
+</div>
+</section>
+<section id="data.table-2" class="level3">
+<h3 class="anchored" data-anchor-id="data.table-2">Data.table</h3>
+<p>In <code>{data.table}</code>, you can specify the grouping variable very naturally in the <code>by</code> argument:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>DT[, .(<span class="at">mean_weight =</span> <span class="fu">mean</span>(weight)), by <span class="ot">=</span> sex]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      sex mean_weight
+   &lt;char&gt;       &lt;num&gt;
+1:      F      75.125
+2:      M      72.000</code></pre>
+</div>
+</div>
+<p>Here, <code>.()</code> is shorthand for <code>list()</code> and names the output columns.</p>
+</section>
+</section>
 <section id="when-to-use-which" class="level1">
 <h1>When to use which?</h1>
 <section id="base-r-3" class="level2">
@@ -1061,15 +1072,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="tidyverse-3" class="level2">
 <h2 class="anchored" data-anchor-id="tidyverse-3">Tidyverse</h2>
-<p>The tidyverse (centred on <code>{dplyr}</code>) is <strong>declarative</strong> and uses <strong>non-standard evaluation</strong> — you write column names without quoting them or prefixing with <code>$</code>. Operations are chained together with the pipe <code>|&gt;</code>, reading top-to-bottom like a sentence.</p>
-<p>The pipe chains verbs together. Each verb takes a data frame as its first argument and returns a data frame — making them easy to compose.</p>
-<p><strong>Pros</strong>: The most readable option; ideal where clarity matters. Rich ecosystem of packages for everything from data manipulation to visualization.<br>
+<p>The tidyverse (centred on <code>{dplyr}</code>) is <strong>declarative</strong> and uses <strong>non-standard evaluation</strong> — you write column names without quoting them or prefixing with <code>$</code>. Operations are naturally chained together with the pipe <code>|&gt;</code>, reading top-to-bottom like a sentence; Each so-called <em>verb</em> takes a data.frame as its first argument and returns a data.frame — making them easy to compose.</p>
+<p><strong>Pros</strong>: The most readable option; ideal for clarity/readability. Rich ecosystem of packages; everything from data manipulation to visualization.<br>
 <strong>Cons</strong>: Like base R, it can be slower than data.table for large datasets due to copying.</p>
 </section>
 <section id="data.table-3" class="level2">
 <h2 class="anchored" data-anchor-id="data.table-3">data.table</h2>
-<p>data.table is <strong>concise</strong> and <strong>fast</strong>. It uses a unique <code>DT[i, j, by]</code> syntax that allows you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, which is why it’s so memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.</p>
-<p><strong>Pros</strong>: Best when working with millions of rows; its in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.<br>
+<p>data.table is <strong>concise</strong> and <strong>fast</strong>. It brings the <code>DT[i, j, by]</code> syntax, allowinng you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, making it memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.</p>
+<p><strong>Pros</strong>: Best when working with millions of rows; in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.<br>
 <strong>Cons</strong>: The concise syntax can be less intuitive for beginners, and it has a steeper learning curve. Speed gains are often exaggerated, as base R and tidyverse have gained performance improvements in recent years.</p>
 </section>
 <section id="section" class="level2">

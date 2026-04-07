@@ -22,7 +22,7 @@ timeline_raw <- tribble(
   "Zheer", "Loops, recursion, parallelisation", "notes/lesson-notes/05-Loops.html", "-", 
   
   "2026-04-07", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", NA_character_, "-", 
+  "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "notes/lesson-notes/06-Paradigms.html", "-", 
   
   "2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "More tidyverse", NA_character_, "-", 

@@ -44,8 +44,19 @@ Base R uses explicit indexing with `$` for columns and `[]` for rows and columns
 
 ```{r}
 df[df$age <= 35, "weight"]
+```
+
+Alternatively, you can use `$` to select a column, but this gives you the column as a standalone vector rather than as a one-column dataframe:
+```{r}
 df[df$age <= 35,]$weight
+```
+
+Or the double-bracket `[[` to select a column by name, which also returns a vector - this can be useful when you can't explicitly write the column name but have it stored in a variable:
+```{r}
 df[df$age <= 35,][["weight"]]
+
+column_names <- "weight"
+df[df$age <= 35,][[column_names]]
 ```
 
 ### Tidyverse
@@ -58,10 +69,10 @@ df |> filter(age <= 35) |> select(weight)
 
 ### Data.table
 
-`{data.table}` extends the `[]` operator with a concise syntax: `DT[i, j, by]`, where 
+`{data.table}` extends the `df[]` bracket notation into `DT[i, j, by]`, where 
 
 - `i` filters rows, 
-- `j` specifies what to do (select or compute columns), and 
+- `j` specifies an operation (select / compute columns) 
 - `by` groups the data. 
 
 For example:
@@ -69,34 +80,6 @@ For example:
 ```{r}
 DT[age <= 35, weight]
 ```
-
-# Per-group operations
-
-### Base R
-
-Base R doesn't have built-in group-wise operations, but you can use `aggregate()` to summarise by group:
-```{r}
-aggregate(weight ~ sex, data = df, FUN = mean)
-```
-
-### Tidyverse
-
-In the tidyverse, you can easily group by a variable and summarise:
-
-```{r}
-df |>
-  group_by(sex) |>
-  summarise(mean_weight = mean(weight))
-```
-
-### Data.table
-
-In data.table, you can specify the grouping variable very naturally in the `by` argument:
-```{r}
-DT[, .(mean_weight = mean(weight)), by = sex]
-```
-
-in `{data.table}`, `.()` is shorthand for `list()` and names the output columns.
 
 # Add a column
 
@@ -120,7 +103,7 @@ head(df)
 
 ### Data.table
 
-In data.table, you can add a new column using `:=`, which modifies the table in place:
+In data.table, you can add a new column using `:=`:
 
 ```{r}
 DT[, bmi := (weight / height^2) |> round(1)]
@@ -128,6 +111,33 @@ head(DT)
 ```
 
 `:=` modifies the table **in place** (no copy is made), which is why data.table is so memory-efficient.
+
+# Group-wise operations
+
+### Base R
+
+Base R doesn't have built-in group-wise operations, but you can use `aggregate()` to summarise by group:
+```{r}
+aggregate(weight ~ sex, data = df, FUN = mean)
+```
+
+### Tidyverse
+
+In the tidyverse, you can easily group by a variable and summarise:
+```{r}
+df |>
+  group_by(sex) |>
+  summarise(mean_weight = mean(weight))
+```
+
+### Data.table
+
+In `{data.table}`, you can specify the grouping variable very naturally in the `by` argument:
+```{r}
+DT[, .(mean_weight = mean(weight)), by = sex]
+```
+
+Here, `.()` is shorthand for `list()` and names the output columns.
 
 
 # When to use which?
@@ -141,19 +151,16 @@ Base R uses **explicit indexing** and **standard evaluation**. What you see is w
 
 ## Tidyverse 
 
-The tidyverse (centred on `{dplyr}`) is **declarative** and uses **non-standard evaluation** — you write column names without quoting them or prefixing with `$`. Operations are chained together with the pipe `|>`, reading top-to-bottom like a sentence.
+The tidyverse (centred on `{dplyr}`) is **declarative** and uses **non-standard evaluation** — you write column names without quoting them or prefixing with `$`. Operations are naturally chained together with the pipe `|>`, reading top-to-bottom like a sentence; Each so-called *verb* takes a data.frame as its first argument and returns a data.frame — making them easy to compose.
 
-The pipe chains verbs together. Each verb takes a data frame as its first argument and returns a data frame — making them easy to compose.
-
-
-**Pros**: The most readable option; ideal where clarity matters. Rich ecosystem of packages for everything from data manipulation to visualization.  
+**Pros**: The most readable option; ideal for clarity/readability. Rich ecosystem of packages; everything from data manipulation to visualization.  
 **Cons**: Like base R, it can be slower than data.table for large datasets due to copying.
 
 ## data.table 
 
-data.table is **concise** and **fast**. It uses a unique `DT[i, j, by]` syntax that allows you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, which is why it's so memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.
+data.table is **concise** and **fast**. It brings the `DT[i, j, by]` syntax, allowinng you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, making it memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.
 
-**Pros**: Best when working with millions of rows; its in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.  
+**Pros**: Best when working with millions of rows; in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.  
 **Cons**: The concise syntax can be less intuitive for beginners, and it has a steeper learning curve. Speed gains are often exaggerated, as base R and tidyverse have gained performance improvements in recent years.
 
 ##
