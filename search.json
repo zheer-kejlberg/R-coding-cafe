@@ -151,107 +151,123 @@
     ]
   },
   {
-    "objectID": "notes/extra/0-simulate-data.html",
-    "href": "notes/extra/0-simulate-data.html",
-    "title": "Simulate some data for further work",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html",
+    "href": "notes/lesson-notes/07-Tidyverse.html",
+    "title": "More Tidyverse",
     "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\nset.seed(123456)\nlibrary(dplyr)",
+    "text": "library(tidyverse)\nlibrary(lubridate)\nset.seed(1234)\nThe tidyverse is a collection of packages built for a common style of data analysis. The idea is simple: keep data in tidy columns, then solve tasks by chaining clear verbs.",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Simulate some data for further work"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
-    "href": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
-    "title": "Simulate some data for further work",
-    "section": "Let’s construct some fake data",
-    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1940-01-01\"), as.Date(\"1959-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1955-09-19\n\n\n7782085\n2\n1947-06-21\n\n\n4521300\n1\n1959-04-11\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_A &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 600\nlmdb &lt;- sample_n(ATC_select_A,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA11HA03\nTocopherol (vit e)\n2265313\n2014-10-27\n3\n20\n11\n60\n\n\nA03FA05\nAlizapride\n7571615\n2013-08-25\n3\n10\n11\n30\n\n\nA10AD06\nInsulin degludec and insulin aspart\n5854842\n2000-11-01\n3\n10\n2\n30\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n9768595\n3499773625\n2006-04-06\nS72.9\n\n\n5026141\n2430170757\n2003-05-21\nS72.0\n\n\n4377798\n3828151776\n2003-07-27\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n3499773625\nS72.9\nA\n\n\n2430170757\nS72.0\nA\n\n\n3828151776\nS72.1\nA\n\n\n3828151776\nS72.8\nB\n\n\n3499773625\nS72.1\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab)\n) |&gt;\n  left_join(bef |&gt; select(c(PNR, FOED_DAG)), by = \"PNR\") |&gt;\n  mutate(\n    VALUE = rnorm(n_lab, \n                  mean = 100 - as.numeric((as.Date(\"2000-01-01\") - as.Date(FOED_DAG))/3650)^10/(2^20) |&gt; round(2), \n                  sd = 10) |&gt; round()\n  ) |&gt;\n  select(-c(FOED_DAG))\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n4827513\n2001-02-12\neGFR\n83\n\n\n8230182\n2009-03-16\neGFR\n75\n\n\n4513978\n2002-02-28\neGFR\n68",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/07-Tidyverse.html#some-data-to-work-on",
+    "title": "More Tidyverse",
+    "section": "Some data to work on",
+    "text": "Some data to work on\n\nn &lt;- 1000\ndf &lt;- tibble(\n  id = 1:n,\n  date = sample(seq(ymd(\"2024-01-01\"), ymd(\"2024-12-31\"), by = \"days\"), n, replace = TRUE),\n  age = rnorm(n, mean = 40, sd = 10) |&gt; round(),\n  sex = sample(c(\"M\", \"F\"), n, replace = TRUE),\n  weight = rnorm(n, mean = 75, sd = 10) |&gt; round(),\n  height = (rnorm(n, mean = 170, sd = 7) + (date - ymd(\"2024-01-01\")) / 36.5 - (sex == \"F\")*7) |&gt; as.numeric() |&gt;round(),\n  note = sample(c(\"new-patient\", \"follow-up\", \"urgent\"), n, replace = TRUE)\n)\n\ndf |&gt; head(10) |&gt; gt::gt(id = \"patients_tbl\")\n\n\n\n\n\n\n\nid\ndate\nage\nsex\nweight\nheight\nnote\n\n\n\n\n1\n2024-10-10\n49\nF\n59\n174\nnew-patient\n\n\n2\n2024-12-01\n43\nM\n87\n175\nurgent\n\n\n3\n2024-04-10\n41\nM\n68\n174\nnew-patient\n\n\n4\n2024-04-20\n34\nF\n84\n167\nnew-patient\n\n\n5\n2024-05-12\n42\nF\n74\n170\nfollow-up\n\n\n6\n2024-04-07\n38\nF\n76\n164\nurgent\n\n\n7\n2024-04-12\n41\nM\n80\n174\nurgent\n\n\n8\n2024-08-01\n34\nM\n66\n170\nurgent\n\n\n9\n2024-03-30\n52\nF\n74\n159\nfollow-up\n\n\n10\n2024-11-21\n51\nM\n68\n177\nnew-patient",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Simulate some data for further work"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "notes/extra/index.html",
-    "href": "notes/extra/index.html",
-    "title": "Extra notes and tutorials",
-    "section": "",
-    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#pivot_longer-and-pivot_wider",
+    "href": "notes/lesson-notes/07-Tidyverse.html#pivot_longer-and-pivot_wider",
+    "title": "More Tidyverse",
+    "section": "pivot_longer() and pivot_wider()",
+    "text": "pivot_longer() and pivot_wider()\n\ndf_wide &lt;- df |&gt;\n  select(id, weight, height)\n\ndf_long &lt;- df_wide |&gt;\n  pivot_longer(cols = c(weight, height), names_to = \"measure\", values_to = \"value\")\n\ndf_long\n\n# A tibble: 2,000 × 3\n      id measure value\n   &lt;int&gt; &lt;chr&gt;   &lt;dbl&gt;\n 1     1 weight     59\n 2     1 height    174\n 3     2 weight     87\n 4     2 height    175\n 5     3 weight     68\n 6     3 height    174\n 7     4 weight     84\n 8     4 height    167\n 9     5 weight     74\n10     5 height    170\n# ℹ 1,990 more rows\n\ndf_long |&gt;\n  pivot_wider(names_from = measure, values_from = value)\n\n# A tibble: 1,000 × 3\n      id weight height\n   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;\n 1     1     59    174\n 2     2     87    175\n 3     3     68    174\n 4     4     84    167\n 5     5     74    170\n 6     6     76    164\n 7     7     80    174\n 8     8     66    170\n 9     9     74    159\n10    10     68    177\n# ℹ 990 more rows",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "General info",
-    "section": "",
-    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
-  },
-  {
-    "objectID": "index.html#format",
-    "href": "index.html#format",
-    "title": "General info",
-    "section": "Format",
-    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
-  },
-  {
-    "objectID": "index.html#schedule-and-themes",
-    "href": "index.html#schedule-and-themes",
-    "title": "General info",
-    "section": "Schedule and themes",
-    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions (and notes)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes) (notes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste (notes)\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation (notes)\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse\nZheer\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}, {modelsummary}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvfit}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
-  },
-  {
-    "objectID": "notes/extra/1-example-pipeline.html",
-    "href": "notes/extra/1-example-pipeline.html",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#separate_wider_delim",
+    "href": "notes/lesson-notes/07-Tidyverse.html#separate_wider_delim",
+    "title": "More Tidyverse",
+    "section": "separate_wider_delim()",
+    "text": "separate_wider_delim()\n\ndata.frame(\n  x = c(\"A_1\", \"B_2\", \"C_1\", \"D_2\", \"E_2\")\n) |&gt;\n  separate_wider_delim(x, delim = \"_\", names = c(\"letter\", \"number\"))\n\n# A tibble: 5 × 2\n  letter number\n  &lt;chr&gt;  &lt;chr&gt; \n1 A      1     \n2 B      2     \n3 C      1     \n4 D      2     \n5 E      2",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#readr-import-text-data",
+    "href": "notes/lesson-notes/07-Tidyverse.html#readr-import-text-data",
+    "title": "More Tidyverse",
+    "section": "readr (import text data)",
+    "text": "readr (import text data)\nPurpose: fast, friendly file import. Useful functions: read_csv(), read_tsv(), write_csv().\n\n\n\n\n\n\nTip\n\n\n\nOther nice packages are {readxl} for Excel files and {googlesheets4} for Google Sheets along with {tidyxl} for non-tabular Excel files.",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "title": "Example pipeline",
-    "section": "Now you can start analysing the data…",
-    "text": "Now you can start analysing the data…\n\nlibrary(ggplot2)\nggplot(pop, aes(x=age, y = eGFR_val)) +\n  geom_point() +\n  geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +\n  theme_bw()\n\nWarning: Removed 753 rows containing non-finite outside the scale range\n(`stat_smooth()`).\n\n\nWarning: Removed 753 rows containing missing values or values outside the scale range\n(`geom_point()`).",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#tibble-modern-data-frame",
+    "href": "notes/lesson-notes/07-Tidyverse.html#tibble-modern-data-frame",
+    "title": "More Tidyverse",
+    "section": "tibble (modern data frame)",
+    "text": "tibble (modern data frame)\nPurpose: cleaner printing and safer column handling. Useful functions: tibble(), add_row(), as_tibble().\n\ndf |&gt;\n  add_row(id = 9, date = ymd(\"2026-04-06\"), sex = \"Male\")\n\n# A tibble: 1,001 × 7\n      id date         age sex   weight height note       \n   &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      \n 1     1 2024-10-10    49 F         59    174 new-patient\n 2     2 2024-12-01    43 M         87    175 urgent     \n 3     3 2024-04-10    41 M         68    174 new-patient\n 4     4 2024-04-20    34 F         84    167 new-patient\n 5     5 2024-05-12    42 F         74    170 follow-up  \n 6     6 2024-04-07    38 F         76    164 urgent     \n 7     7 2024-04-12    41 M         80    174 urgent     \n 8     8 2024-08-01    34 M         66    170 urgent     \n 9     9 2024-03-30    52 F         74    159 follow-up  \n10    10 2024-11-21    51 M         68    177 new-patient\n# ℹ 991 more rows",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
-    "objectID": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
-    "href": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
-    "title": "Example pipeline",
-    "section": "Or save the cleaned dataset for later use",
-    "text": "Or save the cleaned dataset for later use\n\nsaveRDS(pop, \"cleaned_data.rds\")\n\nMaking it easy to load the dataset in at a later time without having to repeat the whole pipeline:\n\npop &lt;- readRDS(\"cleaned_data.rds\")",
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#purrr-iterate-without-explicit-loops",
+    "href": "notes/lesson-notes/07-Tidyverse.html#purrr-iterate-without-explicit-loops",
+    "title": "More Tidyverse",
+    "section": "purrr (iterate without explicit loops)",
+    "text": "purrr (iterate without explicit loops)\nPurpose: apply functions consistently. Useful functions: map(), map_dbl(), map2().\n\ndf |&gt;\n  select(weight, height) |&gt;\n  summarise(across(everything(), list(mean = mean, sd = sd)))\n\n# A tibble: 1 × 4\n  weight_mean weight_sd height_mean height_sd\n        &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;\n1        75.3      9.92        171.      8.24\n\nsplit(df$weight, df$sex) |&gt;\n  purrr::map_dbl(mean)\n\n       F        M \n74.91634 75.69136",
     "crumbs": [
       "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
+      "Lesson notes",
+      "More Tidyverse"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#stringr-string-handling",
+    "href": "notes/lesson-notes/07-Tidyverse.html#stringr-string-handling",
+    "title": "More Tidyverse",
+    "section": "stringr (string handling)",
+    "text": "stringr (string handling)\nPurpose: consistent string tools. Useful functions: str_detect(), str_replace(), str_extract().\n\ndf |&gt;\n  filter(str_detect(note, \"new|urgent\")) |&gt;\n  mutate(note_clean = str_replace(note, \"-\", \" \")) |&gt;\n  select(id, note, note_clean)\n\n# A tibble: 644 × 3\n      id note        note_clean \n   &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      \n 1     1 new-patient new patient\n 2     2 urgent      urgent     \n 3     3 new-patient new patient\n 4     4 new-patient new patient\n 5     6 urgent      urgent     \n 6     7 urgent      urgent     \n 7     8 urgent      urgent     \n 8    10 new-patient new patient\n 9    11 new-patient new patient\n10    12 urgent      urgent     \n# ℹ 634 more rows",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "More Tidyverse"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#forcats-factor-handling",
+    "href": "notes/lesson-notes/07-Tidyverse.html#forcats-factor-handling",
+    "title": "More Tidyverse",
+    "section": "forcats (factor handling)",
+    "text": "forcats (factor handling)\nPurpose: robust factor workflows. Useful functions: fct_relevel(), fct_reorder(), fct_lump().\n\ndf |&gt;\n  mutate(\n    sex = fct_lump(factor(sex), n = 1)\n  ) |&gt;\n  count(sex)\n\n# A tibble: 2 × 2\n  sex       n\n  &lt;fct&gt; &lt;int&gt;\n1 F       514\n2 Other   486",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "More Tidyverse"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/07-Tidyverse.html#lubridate-dates-and-times",
+    "href": "notes/lesson-notes/07-Tidyverse.html#lubridate-dates-and-times",
+    "title": "More Tidyverse",
+    "section": "lubridate (dates and times)",
+    "text": "lubridate (dates and times)\nPurpose: parse and manipulate dates. Useful functions: ymd(), wday(), floor_date().\n\ndf |&gt;\n  mutate(\n    weekday = wday(date, label = TRUE),\n    week_start = floor_date(date, unit = \"week\")\n  ) |&gt;\n  select(id, date, weekday, week_start)\n\n# A tibble: 1,000 × 4\n      id date       weekday week_start\n   &lt;int&gt; &lt;date&gt;     &lt;ord&gt;   &lt;date&gt;    \n 1     1 2024-10-10 Thu     2024-10-06\n 2     2 2024-12-01 Sun     2024-12-01\n 3     3 2024-04-10 Wed     2024-04-07\n 4     4 2024-04-20 Sat     2024-04-14\n 5     5 2024-05-12 Sun     2024-05-12\n 6     6 2024-04-07 Sun     2024-04-07\n 7     7 2024-04-12 Fri     2024-04-07\n 8     8 2024-08-01 Thu     2024-07-28\n 9     9 2024-03-30 Sat     2024-03-24\n10    10 2024-11-21 Thu     2024-11-17\n# ℹ 990 more rows",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "More Tidyverse"
     ]
   },
   {
@@ -348,6 +364,110 @@
       "R Coding Café",
       "Lesson notes",
       "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html",
+    "href": "notes/extra/1-example-pipeline.html",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "title": "Example pipeline",
+    "section": "Now you can start analysing the data…",
+    "text": "Now you can start analysing the data…\n\nlibrary(ggplot2)\nggplot(pop, aes(x=age, y = eGFR_val)) +\n  geom_point() +\n  geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +\n  theme_bw()\n\nWarning: Removed 753 rows containing non-finite outside the scale range\n(`stat_smooth()`).\n\n\nWarning: Removed 753 rows containing missing values or values outside the scale range\n(`geom_point()`).",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "href": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "title": "Example pipeline",
+    "section": "Or save the cleaned dataset for later use",
+    "text": "Or save the cleaned dataset for later use\n\nsaveRDS(pop, \"cleaned_data.rds\")\n\nMaking it easy to load the dataset in at a later time without having to repeat the whole pipeline:\n\npop &lt;- readRDS(\"cleaned_data.rds\")",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "General info",
+    "section": "",
+    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
+  },
+  {
+    "objectID": "index.html#format",
+    "href": "index.html#format",
+    "title": "General info",
+    "section": "Format",
+    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
+  },
+  {
+    "objectID": "index.html#schedule-and-themes",
+    "href": "index.html#schedule-and-themes",
+    "title": "General info",
+    "section": "Schedule and themes",
+    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions (and notes)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes) (notes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste (notes)\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation (notes)\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse\nZheer\n-\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}, {modelsummary}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvfit}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
+  },
+  {
+    "objectID": "notes/extra/index.html",
+    "href": "notes/extra/index.html",
+    "title": "Extra notes and tutorials",
+    "section": "",
+    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials"
+    ]
+  },
+  {
+    "objectID": "notes/extra/0-simulate-data.html",
+    "href": "notes/extra/0-simulate-data.html",
+    "title": "Simulate some data for further work",
+    "section": "",
+    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\nset.seed(123456)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Simulate some data for further work"
+    ]
+  },
+  {
+    "objectID": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
+    "href": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
+    "title": "Simulate some data for further work",
+    "section": "Let’s construct some fake data",
+    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1940-01-01\"), as.Date(\"1959-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1955-09-19\n\n\n7782085\n2\n1947-06-21\n\n\n4521300\n1\n1959-04-11\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_A &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 600\nlmdb &lt;- sample_n(ATC_select_A,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA11HA03\nTocopherol (vit e)\n2265313\n2014-10-27\n3\n20\n11\n60\n\n\nA03FA05\nAlizapride\n7571615\n2013-08-25\n3\n10\n11\n30\n\n\nA10AD06\nInsulin degludec and insulin aspart\n5854842\n2000-11-01\n3\n10\n2\n30\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n9768595\n3499773625\n2006-04-06\nS72.9\n\n\n5026141\n2430170757\n2003-05-21\nS72.0\n\n\n4377798\n3828151776\n2003-07-27\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n3499773625\nS72.9\nA\n\n\n2430170757\nS72.0\nA\n\n\n3828151776\nS72.1\nA\n\n\n3828151776\nS72.8\nB\n\n\n3499773625\nS72.1\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab)\n) |&gt;\n  left_join(bef |&gt; select(c(PNR, FOED_DAG)), by = \"PNR\") |&gt;\n  mutate(\n    VALUE = rnorm(n_lab, \n                  mean = 100 - as.numeric((as.Date(\"2000-01-01\") - as.Date(FOED_DAG))/3650)^10/(2^20) |&gt; round(2), \n                  sd = 10) |&gt; round()\n  ) |&gt;\n  select(-c(FOED_DAG))\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n4827513\n2001-02-12\neGFR\n83\n\n\n8230182\n2009-03-16\neGFR\n75\n\n\n4513978\n2002-02-28\neGFR\n68",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Simulate some data for further work"
     ]
   },
   {
@@ -487,7 +607,7 @@
     "href": "notes/lesson-notes/03-Data-Types.html",
     "title": "Data types and structures",
     "section": "",
-    "text": "library(dplyr)\nlibrary(ggplot2)",
+    "text": "library(dplyr)\nlibrary(ggplot2)\nset.seed(1234)",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
