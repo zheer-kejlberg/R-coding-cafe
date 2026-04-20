@@ -1,0 +1,112 @@
+---
+title: "More Tidyverse"
+---
+
+```{r}
+#| output: false
+
+library(tidyverse)
+library(palmerpenguins)
+```
+
+The **tidyverse** is a family of packages built to make data work in R readable, consistent, and pipe-friendly.
+
+- `dplyr`: transform and summarise tables
+- `tidyr`: reshape data between wide and long formats
+- the rest: import, clean strings/factors, iterate, and make tidy tables
+
+## `dplyr` in 2 minutes
+
+`dplyr` gives you a small set of verbs that cover most day-to-day data wrangling:
+
+- `select()` pick columns
+- `filter()` pick rows
+- `mutate()` create/change columns
+- `summarise()` reduce to summaries (often after `group_by()`)
+- `arrange()` sort rows
+
+```{r}
+penguins |>
+  select(species, island, bill_length_mm, body_mass_g) |>
+  filter(!is.na(body_mass_g)) |>
+  group_by(species, island) |>
+  summarise(mean_mass = round(mean(body_mass_g), 1), .groups = "drop") |>
+  arrange(desc(mean_mass))
+```
+
+## A couple of neat `tidyr` functions
+
+### `pivot_longer()` and `pivot_wider()`
+
+Use these when your columns should become rows (or vice versa).
+
+```{r}
+wide_penguins <- penguins |>
+  select(species, bill_length_mm, bill_depth_mm, flipper_length_mm) |>
+  slice(1:5)
+
+long_penguins <- wide_penguins |>
+  pivot_longer(
+    cols = c(bill_length_mm, bill_depth_mm, flipper_length_mm),
+    names_to = "measure",
+    values_to = "value"
+  )
+
+long_penguins
+```
+
+```{r}
+long_penguins |>
+  pivot_wider(names_from = measure, values_from = value)
+```
+
+### `separate_wider_delim()`
+
+Great when one column stores multiple pieces of information.
+
+```{r}
+tibble(id = c("A-001", "B-014", "C-120")) |>
+  separate_wider_delim(id, delim = "-", names = c("site", "participant"))
+```
+
+## Other tidyverse packages: purpose + useful functions
+
+| Package | Purpose | Useful functions |
+|---|---|---|
+| `{readr}` | Fast reading/writing tabular files | `read_csv()`, `write_csv()`, `read_tsv()` |
+| `{tibble}` | Modern data frame tools | `tibble()`, `as_tibble()`, `add_column()` |
+| `{stringr}` | Consistent string handling | `str_detect()`, `str_replace()`, `str_to_lower()` |
+| `{forcats}` | Factor cleaning/reordering | `fct_recode()`, `fct_relevel()`, `fct_lump()` |
+| `{purrr}` | Iteration without explicit loops | `map()`, `map_dbl()`, `map2()` |
+
+::: callout-tip
+For intermediate users: once your pipelines feel repetitive, wrap recurring logic in a function and use `purrr::map()` over many files or models.
+:::
+
+## `ggplot2` teaser (full lesson later)
+
+```{r}
+penguins |>
+  filter(!is.na(flipper_length_mm), !is.na(body_mass_g), !is.na(species)) |>
+  ggplot(aes(flipper_length_mm, body_mass_g, color = species)) +
+  geom_point(alpha = 0.75, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Bigger flippers, heavier penguins",
+    subtitle = "A quick taste of what ggplot2 can do",
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    color = "Species"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+```
+
+# Further reading
+
+[Tidyverse site](https://www.tidyverse.org/){.external target="_blank"}
+
+[dplyr overview](https://dplyr.tidyverse.org/){.external target="_blank"}
+
+[tidyr pivot vignette](https://tidyr.tidyverse.org/articles/pivot.html){.external target="_blank"}
