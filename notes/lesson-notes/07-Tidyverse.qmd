@@ -1,0 +1,176 @@
+---
+title: "More Tidyverse"
+---
+
+```{r}
+#| output: false
+
+library(tidyverse)
+library(lubridate)
+set.seed(1234)
+```
+
+The **tidyverse** is a collection of packages built for a common style of data analysis.
+The idea is simple: keep data in tidy columns, then solve tasks by chaining clear verbs.
+
+## Some data to work on
+
+```{r}
+patients <- tibble(
+  id = 1:8,
+  date = c("2026-04-01", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-03", "2026-04-04", "2026-04-04", "2026-04-05"),
+  sex = c("Female", "Male", "Female", "Male", "Female", "Female", "Male", "Female"),
+  ward = c("A", "A", "B", "B", "A", "B", "A", "B"),
+  systolic = c(128, 142, 135, 150, 131, 138, 145, 126),
+  note = c("follow-up in 2 weeks", "new referral", "repeat blood test", "urgent review", "exercise started", "diet plan", "new medication", "stable")
+) |>
+  mutate(date = ymd(date))
+
+patients |> gt::gt(id = "patients_tbl")
+```
+
+# `dplyr` in one minute
+
+`{dplyr}` is for data manipulation with readable verbs.
+Most common pattern: `data |> filter(...) |> mutate(...) |> summarise(...)`.
+
+```{r}
+patients |>
+  filter(systolic >= 140) |>
+  select(id, sex, ward, systolic)
+```
+
+# `tidyr`: reshape data
+
+`{tidyr}` helps move between **wide** and **long** data and fill missing values.
+
+## `pivot_longer()` and `pivot_wider()`
+
+```{r}
+vitals_wide <- patients |>
+  transmute(id, systolic, diastolic = round(systolic * 0.65))
+
+vitals_long <- vitals_wide |>
+  pivot_longer(cols = c(systolic, diastolic), names_to = "measure", values_to = "value")
+
+vitals_long
+
+vitals_long |>
+  pivot_wider(names_from = measure, values_from = value)
+```
+
+## `separate_wider_delim()`
+
+```{r}
+patients |>
+  mutate(tag = paste(ward, sex, sep = "_")) |>
+  separate_wider_delim(tag, delim = "_", names = c("ward2", "sex2")) |>
+  select(id, ward2, sex2)
+```
+
+# Other tidyverse packages (quick tour)
+
+## `readr` (import text data)
+
+Purpose: fast, friendly file import.
+Useful functions: `read_csv()`, `read_tsv()`, `write_csv()`.
+
+```{r}
+#| eval: false
+raw <- readr::read_csv("patients.csv")
+readr::write_csv(raw, "patients-clean.csv")
+```
+
+## `tibble` (modern data frame)
+
+Purpose: cleaner printing and safer column handling.
+Useful functions: `tibble()`, `add_row()`, `as_tibble()`.
+
+```{r}
+patients |>
+  add_row(id = 9, date = ymd("2026-04-06"), sex = "Male", ward = "A", systolic = 133, note = "phone follow-up") |>
+  tail(2)
+```
+
+## `purrr` (iterate without explicit loops)
+
+Purpose: apply functions consistently.
+Useful functions: `map()`, `map_dbl()`, `map2()`.
+
+```{r}
+patients |>
+  select(systolic) |>
+  summarise(across(everything(), list(mean = mean, sd = sd)))
+
+split(patients$systolic, patients$ward) |>
+  purrr::map_dbl(mean)
+```
+
+## `stringr` (string handling)
+
+Purpose: consistent string tools.
+Useful functions: `str_detect()`, `str_replace()`, `str_extract()`.
+
+```{r}
+patients |>
+  filter(str_detect(note, "new|urgent")) |>
+  mutate(note_clean = str_replace(note, "-", " ")) |>
+  select(id, note, note_clean)
+```
+
+## `forcats` (factor handling)
+
+Purpose: robust factor workflows.
+Useful functions: `fct_relevel()`, `fct_reorder()`, `fct_lump()`.
+
+```{r}
+patients |>
+  mutate(
+    ward = fct_relevel(ward, "B", "A"),
+    sex = fct_lump(factor(sex), n = 1)
+  ) |>
+  count(ward, sex)
+```
+
+## `lubridate` (dates and times)
+
+Purpose: parse and manipulate dates.
+Useful functions: `ymd()`, `wday()`, `floor_date()`.
+
+```{r}
+patients |>
+  mutate(
+    weekday = wday(date, label = TRUE),
+    week_start = floor_date(date, unit = "week")
+  ) |>
+  select(id, date, weekday, week_start)
+```
+
+# `ggplot2` teaser (full lesson later)
+
+One line summary: `{ggplot2}` builds plots by adding layers.
+
+```{r}
+patients |>
+  ggplot(aes(x = date, y = systolic, color = sex)) +
+  geom_point(size = 3, alpha = 0.9) +
+  geom_smooth(method = "loess", se = FALSE, linewidth = 1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Blood pressure over time",
+    subtitle = "Lesson 7 teaser: grammar of graphics",
+    x = NULL,
+    y = "Systolic blood pressure (mmHg)",
+    color = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+# Further reading
+
+[R for Data Science: Data transform](https://r4ds.hadley.nz/data-transform.html){.external target="_blank"}
+
+[R for Data Science: Tidy data](https://r4ds.hadley.nz/data-tidy.html){.external target="_blank"}
+
+[Tidyverse documentation](https://www.tidyverse.org/packages/){.external target="_blank"}

@@ -25,7 +25,7 @@ timeline_raw <- tribble(
   "Zheer", "Paradigms: Base R vs. Tidyverse vs. data.table", "notes/lesson-notes/06-Paradigms.html", "-", 
   
   "2026-04-21", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "More tidyverse", NA_character_, "-", 
+  "Zheer", "More tidyverse", "notes/lesson-notes/07-Tidyverse.html", "-", 
   
   "2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "Handling many packages—and cross-package workflows", NA_character_, "-", 
