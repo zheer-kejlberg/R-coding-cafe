@@ -6,7 +6,6 @@ title: "More Tidyverse"
 #| output: false
 
 library(tidyverse)
-library(lubridate)
 set.seed(1234)
 ```
 
@@ -19,12 +18,21 @@ The idea is simple: keep data in tidy columns, then solve tasks by chaining clea
 n <- 1000
 df <- tibble(
   id = 1:n,
-  date = sample(seq(ymd("2024-01-01"), ymd("2024-12-31"), by = "days"), n, replace = TRUE),
+  date = sample(
+    seq(ymd("2024-01-01"), ymd("2024-12-31"), by = "days"), 
+    n, replace = TRUE
+  ),
   age = rnorm(n, mean = 40, sd = 10) |> round(),
-  sex = sample(c("M", "F"), n, replace = TRUE),
+  sex = sample(
+    c("M", "F"), 
+    n, replace = TRUE
+  ),
   weight = rnorm(n, mean = 75, sd = 10) |> round(),
-  height = (rnorm(n, mean = 170, sd = 7) + (date - ymd("2024-01-01")) / 36.5 - (sex == "F")*7) |> as.numeric() |>round(),
-  note = sample(c("new-patient", "follow-up", "urgent"), n, replace = TRUE)
+  height = (rnorm(n, mean = 163, sd = 7) + (date - ymd("2024-01-01")) / 36.5 + (sex == "M")*7) |> as.numeric() |> round(),
+  note = sample(
+    c("new-patient", "follow-up", "urgent"), 
+    n, replace = TRUE
+  ) |> factor()
 )
 
 df |> head(10) |> gt::gt(id = "patients_tbl")
@@ -41,26 +49,54 @@ Most common pattern: `data |> filter(...) |> mutate(...) |> summarise(...)`.
 
 ## `pivot_longer()` and `pivot_wider()`
 
+These are ways of reshaping data. Let's start with a dataset in wide format:
 ```{r}
-df_wide <- df |>
-  select(id, weight, height)
+mortality_df <- tibble(
+  group = c("A", "B"),
+  mort_6mo = c(0.1,0.15),
+  mort_1yr = c(0.2,0.25),
+  mort_2yr = c(0.3,0.35),
+  mort_5yr = c(0.5,0.55)
+)
+mortality_df |> gt::gt()
+```
 
-df_long <- df_wide |>
-  pivot_longer(cols = c(weight, height), names_to = "measure", values_to = "value")
+Now let's make it long:
+```{r}
+mortality_df_long <- mortality_df |> pivot_longer(
+  cols = c(mort_6mo, mort_1yr, mort_2yr, mort_5yr),
+  names_to = "time",
+  values_to = "mortality",
+  names_pattern = "mort_(.*)"
+)
 
-df_long
+mortality_df_long |> gt::gt()
+```
 
-df_long |>
-  pivot_wider(names_from = measure, values_from = value)
+To go the other way, we can widen it back (notice, we have control over how column names are transformed into row values, and vice versa):
+```{r}
+mortality_df_long |> pivot_wider(
+  names_from = time,
+  names_glue = "{time}_{.value}",
+  values_from = mortality
+)  |> gt::gt()
+
 ```
 
 ## `separate_wider_delim()`
 
+A simple way of splitting a column into multiple columns based on a delimiter:
 ```{r}
 data.frame(
   x = c("A_1", "B_2", "C_1", "D_2", "E_2")
-) |>
-  separate_wider_delim(x, delim = "_", names = c("letter", "number"))
+) |> gt::gt()
+
+data.frame(
+  x = c("A_1", "B_2", "C_1", "D_2", "E_2")
+) |> separate_wider_delim(
+  x, delim = "_",
+  names = c("letter", "number")
+) |> gt::gt()
 ```
 
 # Other tidyverse packages (quick tour)
@@ -76,26 +112,37 @@ Other nice packages are `{readxl}` for Excel files and `{googlesheets4}` for Goo
 
 ## `tibble` (modern data frame)
 
-Purpose: cleaner printing and safer column handling.
-Useful functions: `tibble()`, `add_row()`, `as_tibble()`.
-
+Tibbles are a special type of `data.frame`, providing a few benefits; cleaner printing and safer column handling. In addition, building tibbles allow you to build the columns sequentially (i.e., you can refer to columns created earlier in the same `tibble()` call).
 ```{r}
-df |>
-  add_row(id = 9, date = ymd("2026-04-06"), sex = "Male")
+tibble(
+  x = 1:3,
+  y = x*3
+) |> gt::gt()
+```
+
+
+Also comes with `add_row()`:
+```{r}
+df |> 
+  head(5) |>
+  add_row(id = -1, date = ymd("2024-05-05"), sex = "M") |> 
+  gt::gt()
 ```
 
 ## `purrr` (iterate without explicit loops)
 
-Purpose: apply functions consistently.
+A clean way of applying functions to subsets (see <a href="05-Loops.html">previous lesson on Loops and parallelisation</a>).
 Useful functions: `map()`, `map_dbl()`, `map2()`.
 
 ```{r}
-df |>
-  select(weight, height) |>
-  summarise(across(everything(), list(mean = mean, sd = sd)))
+df |> 
+  select(weight, sex) |>
+  group_by(sex) |>
+  summarise(mean_weight = mean(weight)) |>
+  gt::gt()
 
-split(df$weight, df$sex) |>
-  purrr::map_dbl(mean)
+split(df$weight, df$sex) |> 
+  purrr::map_dfr(mean) |> gt::gt()
 ```
 
 ## `stringr` (string handling)
@@ -104,10 +151,18 @@ Purpose: consistent string tools.
 Useful functions: `str_detect()`, `str_replace()`, `str_extract()`.
 
 ```{r}
-df |>
-  filter(str_detect(note, "new|urgent")) |>
-  mutate(note_clean = str_replace(note, "-", " ")) |>
-  select(id, note, note_clean)
+c("word", "hypenated-word", "unhyphenated word") |> str_detect("-")
+
+df |> head(5) |> gt::gt()
+
+df |> 
+  filter(
+    str_detect(note, "-")
+  ) |> 
+  mutate(
+    note_clean = str_replace(note, "-", " ")
+  ) |> 
+  head(5) |> gt::gt()
 ```
 
 ## `forcats` (factor handling)
@@ -116,11 +171,12 @@ Purpose: robust factor workflows.
 Useful functions: `fct_relevel()`, `fct_reorder()`, `fct_lump()`.
 
 ```{r}
-df |>
-  mutate(
-    sex = fct_lump(factor(sex), n = 1)
-  ) |>
-  count(sex)
+df$note |> levels()
+
+z <- df |> mutate(
+  note = fct_relevel(note, "follow-up", after = 3)
+)
+z$note |> levels()
 ```
 
 ## `lubridate` (dates and times)
@@ -130,32 +186,37 @@ Useful functions: `ymd()`, `wday()`, `floor_date()`.
 
 ```{r}
 df |>
+  select(id, date) |>
   mutate(
-    weekday = wday(date, label = TRUE),
-    week_start = floor_date(date, unit = "week")
-  ) |>
-  select(id, date, weekday, week_start)
+    weekday = wday(date, label = T),
+    prior_monday = floor_date(date, "week", week_start = 1)
+  ) |> 
+  head(5) |> gt::gt()
 ```
 
-# `ggplot2` teaser (full lesson later)
-
-One line summary: `{ggplot2}` builds plots by adding layers.
+# `ggplot2`: a future lesson topic
 
 ```{r}
+library(wesanderson)
 df |>
-  ggplot(aes(x = date, y = height, color = sex)) +
-  geom_point(size = 3, alpha = 0.9) +
-  geom_smooth(method = "loess", se = FALSE, linewidth = 1) +
-  scale_color_brewer(palette = "Set1") +
+  ggplot(aes(x = date, y = height, color = sex, fill = sex)) +
+  geom_point(size = 1.5, alpha = 0.5, shape =20) +
+  geom_smooth(method = "loess", formula = y~x, linewidth = 1, alpha = 0.5) +
   labs(
-    title = "Height over time",
-    subtitle = "Lesson 7 teaser: grammar of graphics",
-    x = NULL,
+    title = "A plot of height over time",
+    subtitle = "The grammar of graphics—building plots by adding layers",
+    x = "Date",
     y = "Height (cm)",
     color = NULL
   ) +
   theme_minimal(base_size = 13) +
-  theme(legend.position = "top")
+  theme(
+    legend.position = "top",
+    axis.title.x = element_text(margin = margin(t = 20)),
+    axis.title.y = element_text(margin = margin(r = 20))
+  ) +
+  scale_color_manual(values = wes_palette("Royal1"), labels = c("F" = "Female", "M" = "Male")) +
+  scale_fill_manual(values = wes_palette("Royal1"), labels = c("F" = "Female", "M" = "Male"), name=NULL)
 ```
 
 # Further reading
