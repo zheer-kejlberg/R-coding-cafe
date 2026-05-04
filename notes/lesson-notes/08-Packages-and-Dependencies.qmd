@@ -9,7 +9,6 @@ library(dplyr)
 library(ggplot2)
 library(broom)
 library(gtsummary)
-library(conflicted)
 set.seed(1234)
 ```
 
@@ -42,14 +41,7 @@ df |> head(8) |> gt::gt(id = "patient_tbl")
 Every time you call `library(pkg)`, R **attaches** the package to the *search path* — a list of environments R looks through, left to right, when you type a name.
 
 ```{r}
-#| eval: false
 search()
-```
-
-```
- [1] ".GlobalEnv"       "package:conflicted" "package:gtsummary"
- [4] "package:broom"    "package:ggplot2"    "package:dplyr"
- [7] "package:stats"    "package:base"
 ```
 
 The last package you load sits at position 2 (just after `.GlobalEnv`), so its functions are found first.
@@ -57,26 +49,21 @@ When two packages share a function name, the one loaded *later* silently **masks
 
 ## A concrete example
 
-Both `{dplyr}` and base `{stats}` have a function called `filter()`.
-After `library(dplyr)`, typing `filter()` calls the dplyr version — the stats one is still there, just hidden.
+Both `{dplyr}` and `{MASS}` have a function called `select()`.
+After `library(MASS)`, typing `select()` calls the MASS version — the dplyr one is still there, just hidden.
 
 ```{r}
-#| eval: false
-library(MASS)    # also exports select()
-library(dplyr)   # also exports select()
-#> Attaching package: 'dplyr'
-#> The following object is masked from 'package:MASS':
-#>   select
+library(dplyr)
+library(MASS)
 ```
 
-R warns you, but only if you read the message.
-In a busy session these messages are easy to miss.
+R warns you but proceeds - there's no guarantee you will notice the warning message in a busy session.
 
-## Three solutions to masking
+## Four solutions to masking
 
 ### 1. Explicit namespacing with `::`
 
-The safest habit: always write `pkg::function()` for any function you care about.
+The safest habit: write `pkg::function()` for any function that might be ambiguous.
 
 ```{r}
 # Always unambiguous:
@@ -92,6 +79,8 @@ Load it at the top of your script and every ambiguous call will stop with a help
 
 ```{r}
 #| error: true
+
+library(conflicted)
 
 # conflicted is already loaded above; now any ambiguous call errors:
 filter(df, age > 70)
@@ -112,11 +101,31 @@ df |> filter(age > 70) |> dplyr::select(id, age, sbp) |> head(5)
 ### 3. Load packages in a deliberate order
 
 If you don't want to use `{conflicted}`, load packages in order of priority — the last one loaded wins.
-However, this is the least robust approach and is not recommended in shared code.
+Note, this is the least robust approach.
+
+### 4. `{box}`: surgical package imports
+
+An alternative to `library()` is the `{box}` package.
+Instead of loading an entire package namespace, you import only the specific functions you need.
+
+```{r}
+#| eval: false
+
+box::use(
+  dplyr[filter, select, mutate],   # only these three functions from dplyr
+  ggplot2[ggplot, aes, geom_point], # only these from ggplot2
+  MASS(mass_filter = filter) # rename MASS::filter as mass_filter to avoid conflict with dplyr
+)
+
+# Nothing else from dplyr or ggplot2 is in scope — no masking possible
+```
+
+This is especially useful in packages, larger codebases, or when you want the code to be completely explicit about where every function comes from.
 
 ::: callout-tip
-**Best practice**: use `::` for any function that might be ambiguous, and load `{conflicted}` in
-scripts you share with others. You get both safety and clarity.
+For day-to-day scripts, `library()` with explicit namespacing (`pkg::function()`) + `{conflicted}` is usually enough.
+
+`{box}` becomes attractive in package development or when you want strict, reproducible namespacing.
 :::
 
 # Cross-package workflows
@@ -132,10 +141,13 @@ Base R uses **generics** — functions like `summary()`, `print()`, and `predict
 m <- lm(sbp ~ age + sex + smoker + bmi, data = df)
 
 # summary() "knows" it has a linear model and formats accordingly:
+
 summary(m)
 ```
 
 This system — called **S3 dispatch** — means that different packages can teach the same verb new tricks, without you having to learn a different function name.
+
+Under the hood, R looks at the class of the object you pass to `summary()`, sees it's a `lm` object, and calls `summary.lm()` automatically.
 
 ## Standardised outputs: the tidy principle
 
@@ -168,44 +180,19 @@ broom::augment(m, df) |>
   head(5)
 ```
 
-Because `tidy()` always returns a tibble with the same column names (`term`, `estimate`, `std.error`, `p.value`, …), the output plugs directly into `{ggplot2}`:
+Because `tidy()` always returns a tibble with the same column names (`term`, `estimate`, `std.error`, `p.value`, …), the output easily plugs into `{ggplot2}`:
 
 ```{r}
 broom::tidy(m, conf.int = TRUE) |>
   filter(term != "(Intercept)") |>
   ggplot(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = term)) +
-  geom_pointrange() +
-  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
-  labs(
-    title = "Linear model coefficients",
-    x = "Estimate (95 % CI)",
-    y = NULL
-  ) +
-  theme_minimal(base_size = 13)
+  geom_pointrange()
 ```
 
 ## `{gtsummary}`: a complete cross-package workflow
 
 `{gtsummary}` is a good example of a package that slots into a tidy workflow seamlessly.
 It takes standard R model objects and produces publication-ready tables, using the same underlying ideas.
-
-```{r}
-# Descriptive table — takes a data frame, returns a gt table:
-df |>
-  dplyr::select(age, sex, smoker, bmi, sbp) |>
-  tbl_summary(
-    by = smoker,
-    label = list(
-      age   ~ "Age (years)",
-      sex   ~ "Sex",
-      bmi   ~ "BMI (kg/m²)",
-      sbp   ~ "Systolic BP (mmHg)"
-    )
-  ) |>
-  add_p() |>
-  add_overall() |>
-  bold_labels()
-```
 
 ```{r}
 # Regression table — takes any model object directly:
@@ -242,47 +229,32 @@ df2 <- df |> mutate(
 )
 
 cox_m <- coxph(Surv(time, event) ~ age + sex + smoker, data = df2)
-
-# broom and gtsummary work exactly the same way:
-broom::tidy(cox_m, exponentiate = TRUE, conf.int = TRUE)
 ```
 
+`{broom}` and `{gtsummary}` work exactly the same way:
 ```{r}
+cox_m |> broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+
 cox_m |>
   tbl_regression(
-    exponentiate = TRUE,
-    label = list(
-      age    ~ "Age (years)",
-      sex    ~ "Sex",
-      smoker ~ "Smoker"
-    )
-  ) |>
-  bold_p() |>
-  bold_labels()
+    exponentiate = TRUE)
 ```
 
-# `{box}`: surgical package imports
+# A more general principle: design for interoperability
 
-An alternative to `library()` is the `{box}` package.
-Instead of loading an entire package namespace, you import only the specific functions you need.
+## The tidy principle
+Functions that take and return data frames with predictable structure — is a powerful design pattern that encourages interoperability between packages.
 
-```{r}
-#| eval: false
+When you choose packages for your workflow, look for ones that follow this principle.
 
-box::use(
-  dplyr[filter, select, mutate],   # only these three functions from dplyr
-  ggplot2[ggplot, aes, geom_point] # only these from ggplot2
-)
+## Understanding function inputs and outputs
+When you use a new package, take time to understand what its functions expect as input and what they return.
 
-# Nothing else from dplyr or ggplot2 is in scope — no masking possible
-```
+Start with `?pkg::fn` to read the documentation and go to the package website / vignettes (= *user manuals*). Then experiment with simple examples to see the output structure.
 
-This is especially useful in packages, larger codebases, or when you want the code to be completely explicit about where every function comes from.
+Once you know the input requirements and the output format, try playing with the output yourself. Take you time to manually inspect and manipulate the output into different formats; e.g., tables, plots, etc.
 
-::: callout-tip
-For day-to-day scripts, `library()` + `{conflicted}` is usually enough.
-`{box}` becomes attractive in package development or when you want strict, reproducible namespacing.
-:::
+Once you understand this, it's time to see how you can use the output in your workflow, and which other packages fit well into the workflow.
 
 # Key takeaways
 
@@ -290,9 +262,10 @@ For day-to-day scripts, `library()` + `{conflicted}` is usually enough.
 |---|---|
 | Silent function masking | Use `pkg::fn()` or load `{conflicted}` |
 | Want to resolve a conflict once | `conflict_prefer("fn", "pkg")` |
+| Want zero namespace pollution | `box::use(pkg[fn1, fn2])` |
+| Understand your function inputs/outputs | `?pkg::fn` |
 | Model output hard to work with | `broom::tidy()` / `broom::glance()` |
 | Need a publication table fast | `gtsummary::tbl_regression()` |
-| Want zero namespace pollution | `box::use(pkg[fn1, fn2])` |
 
 # Further reading
 
