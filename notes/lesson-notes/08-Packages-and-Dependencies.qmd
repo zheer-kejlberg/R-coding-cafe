@@ -1,0 +1,280 @@
+---
+title: "Working with many packages"
+---
+
+```{r}
+#| output: false
+
+library(dplyr)
+library(ggplot2)
+library(broom)
+library(gtsummary)
+set.seed(1234)
+```
+
+In practice, most R analyses load a handful of packages at once.
+That's great — each package solves a specific problem — but it also creates two challenges:
+
+1. **Conflicts**: two packages may export a function with the same name.
+2. **Compatibility**: does the output of one package feed naturally into the next?
+
+This lesson covers both.
+
+## Some data to work on
+
+```{r}
+n <- 500
+df <- tibble(
+  id      = 1:n,
+  age     = rnorm(n, mean = 55, sd = 12) |> round(),
+  sex     = sample(c("Male", "Female"), n, replace = TRUE),
+  smoker  = sample(c(TRUE, FALSE), n, replace = TRUE, prob = c(0.3, 0.7)),
+  sbp     = round(120 + 0.4 * age + 8 * smoker + rnorm(n, sd = 12)),
+  bmi     = round(rnorm(n, mean = 26, sd = 4), 1)
+)
+
+df |> head(8) |> gt::gt(id = "patient_tbl")
+```
+
+# Loading order and function masking
+
+Every time you call `library(pkg)`, R **attaches** the package to the *search path* — a list of environments R looks through, left to right, when you type a name.
+
+```{r}
+search()
+```
+
+The last package you load sits at position 2 (just after `.GlobalEnv`), so its functions are found first.
+When two packages share a function name, the one loaded *later* silently **masks** the earlier one.
+
+## A concrete example
+
+Both `{dplyr}` and `{MASS}` have a function called `select()`.
+After `library(MASS)`, typing `select()` calls the MASS version — the dplyr one is still there, just hidden.
+
+```{r}
+library(dplyr)
+library(MASS)
+```
+
+R warns you but proceeds - there's no guarantee you will notice the warning message in a busy session.
+
+## Four solutions to masking
+
+### 1. Explicit namespacing with `::`
+
+The safest habit: write `pkg::function()` for any function that might be ambiguous.
+
+```{r}
+# Always unambiguous:
+df |> dplyr::select(id, age, sbp) |> head(3)
+```
+
+This works even when a function is masked, and makes code easier to read and share.
+
+### 2. The `{conflicted}` package
+
+`{conflicted}` turns silent masking into a loud error, forcing you to be explicit.
+Load it at the top of your script and every ambiguous call will stop with a helpful message.
+
+```{r}
+#| error: true
+
+library(conflicted)
+
+# conflicted is already loaded above; now any ambiguous call errors:
+filter(df, age > 70)
+```
+
+You resolve the conflict once using `conflict_prefer()`:
+
+```{r}
+conflict_prefer("filter", "dplyr")
+```
+
+Now `filter()` unambiguously refers to the dplyr version for the rest of the session.
+
+```{r}
+df |> filter(age > 70) |> dplyr::select(id, age, sbp) |> head(5)
+```
+
+### 3. Load packages in a deliberate order
+
+If you don't want to use `{conflicted}`, load packages in order of priority — the last one loaded wins.
+Note, this is the least robust approach.
+
+### 4. `{box}`: surgical package imports
+
+An alternative to `library()` is the `{box}` package.
+Instead of loading an entire package namespace, you import only the specific functions you need.
+
+```{r}
+#| eval: false
+
+box::use(
+  dplyr[filter, select, mutate],   # only these three functions from dplyr
+  ggplot2[ggplot, aes, geom_point], # only these from ggplot2
+  MASS(mass_filter = filter) # rename MASS::filter as mass_filter to avoid conflict with dplyr
+)
+
+# Nothing else from dplyr or ggplot2 is in scope — no masking possible
+```
+
+This is especially useful in packages, larger codebases, or when you want the code to be completely explicit about where every function comes from.
+
+::: callout-tip
+For day-to-day scripts, `library()` with explicit namespacing (`pkg::function()`) + `{conflicted}` is usually enough.
+
+`{box}` becomes attractive in package development or when you want strict, reproducible namespacing.
+:::
+
+# Cross-package workflows
+
+A lot of R's power comes from packages that are designed to **talk to each other**.
+The key idea: if a function always returns a standard, predictable object (like a data frame or a specific class), other packages can be written to work with it directly.
+
+## Generic functions and methods
+
+Base R uses **generics** — functions like `summary()`, `print()`, and `predict()` — that behave differently depending on what they are given.
+
+```{r}
+m <- lm(sbp ~ age + sex + smoker + bmi, data = df)
+
+# summary() "knows" it has a linear model and formats accordingly:
+
+summary(m)
+```
+
+This system — called **S3 dispatch** — means that different packages can teach the same verb new tricks, without you having to learn a different function name.
+
+Under the hood, R looks at the class of the object you pass to `summary()`, sees it's a `lm` object, and calls `summary.lm()` automatically.
+
+## Standardised outputs: the tidy principle
+
+The tidyverse is built on a simple idea: **data in, data out**.
+Each function takes a data frame and returns a data frame, making operations easy to chain.
+
+Many packages outside the core tidyverse follow the same principle.
+The key package here is `{broom}`, which converts messy model objects into tidy tibbles.
+
+```{r}
+# A linear model gives an opaque object:
+class(m)
+m   # hard to work with programmatically
+```
+
+```{r}
+# broom::tidy() extracts the coefficients as a clean tibble:
+broom::tidy(m, conf.int = TRUE)
+```
+
+```{r}
+# broom::glance() gives one-row model-level summaries:
+broom::glance(m)
+```
+
+```{r}
+# broom::augment() adds fitted values and residuals back to your data:
+broom::augment(m, df) |> 
+  dplyr::select(id, sbp, .fitted, .resid) |> 
+  head(5)
+```
+
+Because `tidy()` always returns a tibble with the same column names (`term`, `estimate`, `std.error`, `p.value`, …), the output easily plugs into `{ggplot2}`:
+
+```{r}
+broom::tidy(m, conf.int = TRUE) |>
+  filter(term != "(Intercept)") |>
+  ggplot(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = term)) +
+  geom_pointrange()
+```
+
+## `{gtsummary}`: a complete cross-package workflow
+
+`{gtsummary}` is a good example of a package that slots into a tidy workflow seamlessly.
+It takes standard R model objects and produces publication-ready tables, using the same underlying ideas.
+
+```{r}
+# Regression table — takes any model object directly:
+m |>
+  tbl_regression(
+    label = list(
+      age    ~ "Age (years)",
+      sex    ~ "Sex",
+      smoker ~ "Smoker",
+      bmi    ~ "BMI (kg/m²)"
+    )
+  ) |>
+  bold_p() |>
+  bold_labels()
+```
+
+No need to manually extract and format coefficients — `{gtsummary}` calls `broom::tidy()` internally, giving you a formatted table in two lines.
+
+::: callout-note
+`{gtsummary}` works with a wide range of model types: `lm`, `glm`, `coxph` (survival), `lme4` mixed models, and more — all using the same `tbl_regression()` call.
+:::
+
+## Another example: survival analysis
+
+The same pattern works with survival models from the `{survival}` package:
+
+```{r}
+library(survival)
+
+# Simulate a time-to-event outcome:
+df2 <- df |> mutate(
+  time  = rexp(n, rate = 0.05),
+  event = rbinom(n, 1, prob = 0.6)
+)
+
+cox_m <- coxph(Surv(time, event) ~ age + sex + smoker, data = df2)
+```
+
+`{broom}` and `{gtsummary}` work exactly the same way:
+```{r}
+cox_m |> broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+
+cox_m |>
+  tbl_regression(
+    exponentiate = TRUE)
+```
+
+# A more general principle: design for interoperability
+
+## The tidy principle
+Functions that take and return data frames with predictable structure — is a powerful design pattern that encourages interoperability between packages.
+
+When you choose packages for your workflow, look for ones that follow this principle.
+
+## Understanding function inputs and outputs
+When you use a new package, take time to understand what its functions expect as input and what they return.
+
+Start with `?pkg::fn` to read the documentation and go to the package website / vignettes (= *user manuals*). Then experiment with simple examples to see the output structure.
+
+Once you know the input requirements and the output format, try playing with the output yourself. Take you time to manually inspect and manipulate the output into different formats; e.g., tables, plots, etc.
+
+Once you understand this, it's time to see how you can use the output in your workflow, and which other packages fit well into the workflow.
+
+# Key takeaways
+
+| Problem | Solution |
+|---|---|
+| Silent function masking | Use `pkg::fn()` or load `{conflicted}` |
+| Want to resolve a conflict once | `conflict_prefer("fn", "pkg")` |
+| Want zero namespace pollution | `box::use(pkg[fn1, fn2])` |
+| Understand your function inputs/outputs | `?pkg::fn` |
+| Model output hard to work with | `broom::tidy()` / `broom::glance()` |
+| Need a publication table fast | `gtsummary::tbl_regression()` |
+
+# Further reading
+
+[`{conflicted}` package documentation](https://conflicted.r-lib.org/){.external target="_blank"}
+
+[`{broom}` package documentation](https://broom.tidymodels.org/){.external target="_blank"}
+
+[`{gtsummary}` package documentation](https://www.danieldsjoberg.com/gtsummary/){.external target="_blank"}
+
+[R for Data Science – Functions (namespacing)](https://r4ds.hadley.nz/functions.html){.external target="_blank"}
+
+[`{box}` package documentation](https://klmr.me/box/){.external target="_blank"}

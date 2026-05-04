@@ -7,147 +7,455 @@
     "text": "Things to do before asking for help\nBeing proficient in R does not equate to sitting down and writing everything free-hand. Experienced R users search online and ask LLMs. The great thing about R is that there are often multiple solutions to a coding problem. What often separates an experienced user from a new user is that the experienced user knows what to search for and where. We suggest you search on StackOverflow; this can be daunting at first but is extremely helpful once you’ve learned to find your way around.\n\n\n\n\n\n\nCautionAI-tools\n\n\n\n\n\nAs a next step, it can be useful to use AI-tools like ChatGPT; however, beware that these can make up functions, that it often still requires debugging, and that even working solutions (especially to more complex questions) can be unstable over time or across datasets.\n\n\n\n\n\nAsking a clear coding question\nSome issues are simple; e.g., “I cannot download this package”. Other times what you want to do is more complex and needs context to explain to someone on the outside. Therefore, you need to prepare and provide the context to the person you are asking for help. This includes showing the structure of your dataset, presenting the functions you’ve used, and describing what you have tried so far.\n\n\n\n\n\n\nTipMinimal, reproducible examples\n\n\n\n\n\nThe first lesson in the coding café was specifically about preparing a good question (read the notes about minimal, reproducible examples).\n\n\n\n\n\nNote about sensitive data\n\n\n\n\n\n\nWarningIf you are working on DST\n\n\n\n\n\nyou are not allowed to show the data to anyone else! This is your own responsibility, and the helpers will not check what platform you’re working on.\n\n\n\nYou may need to prepare your question a bit more. Still, the principles of the minimal, reproducible example apply."
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html",
-    "href": "notes/lesson-notes/04-Functions.html",
-    "title": "Functions",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html",
+    "title": "Working with many packages",
     "section": "",
-    "text": "library(dplyr)\nlibrary(ggplot2)\nset.seed(1234)\nFunctions are a special type of object that take some input(s) and return some output. In short, they’re a way to wrap a lot of code in a single name and then call that entire bunch of code later, whenever you need it.\nThey are extremely useful for keeping your code readable and without repetitions.",
+    "text": "library(dplyr)\nlibrary(ggplot2)\nlibrary(broom)\nlibrary(gtsummary)\nset.seed(1234)\nIn practice, most R analyses load a handful of packages at once. That’s great — each package solves a specific problem — but it also creates two challenges:\nThis lesson covers both.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
-    "href": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
-    "title": "Functions",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#some-data-to-work-on",
+    "title": "Working with many packages",
     "section": "Some data to work on",
-    "text": "Some data to work on\n\nn &lt;- 1000\ndf &lt;- tibble::tibble(\n  x = 1:n,\n  age = rnorm(n,65, 10),\n  sex = rbinom(n, 1, 0.5) +1,\n  BMI = rnorm(n, 22 - 2*sex + sex*age/15 + age/15, sd = age/40),\n  weight = BMI * rnorm(n, 1.7, 0.1)^2\n)\n\ndf |&gt; \n  mutate(sex = factor(sex, levels = c(1,2), labels = c(\"Male\", \"Female\"))) |&gt; \n  ggplot(aes(y = BMI, x = age, color = sex, fill = sex)) + \n  geom_point() + \n  geom_smooth(method = lm, \n              formula = y ~ splines::bs(x,3) )",
+    "text": "Some data to work on\n\nn &lt;- 500\ndf &lt;- tibble(\n  id      = 1:n,\n  age     = rnorm(n, mean = 55, sd = 12) |&gt; round(),\n  sex     = sample(c(\"Male\", \"Female\"), n, replace = TRUE),\n  smoker  = sample(c(TRUE, FALSE), n, replace = TRUE, prob = c(0.3, 0.7)),\n  sbp     = round(120 + 0.4 * age + 8 * smoker + rnorm(n, sd = 12)),\n  bmi     = round(rnorm(n, mean = 26, sd = 4), 1)\n)\n\ndf |&gt; head(8) |&gt; gt::gt(id = \"patient_tbl\")\n\n\n\n\n\n\n\nid\nage\nsex\nsmoker\nsbp\nbmi\n\n\n\n\n1\n41\nFemale\nFALSE\n122\n33.2\n\n\n2\n58\nMale\nFALSE\n147\n20.5\n\n\n3\n68\nFemale\nFALSE\n129\n23.2\n\n\n4\n27\nMale\nTRUE\n146\n23.8\n\n\n5\n60\nFemale\nTRUE\n160\n24.8\n\n\n6\n61\nFemale\nTRUE\n130\n24.5\n\n\n7\n48\nMale\nFALSE\n150\n27.8\n\n\n8\n48\nMale\nTRUE\n145\n21.0",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
-    "href": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
-    "title": "Functions",
-    "section": "Unnamed arguments",
-    "text": "Unnamed arguments\nYou can add an ellipsis argument to give the user flexibility to add additional arguments beyond the ones you explicitly specified.\n\nmy_function &lt;- function(data, ...) {\n  dots &lt;- list(...)\n  return(dots)\n}\nmy_function(df, stuff=2, more_stuff=3)\n\n$stuff\n[1] 2\n\n$more_stuff\n[1] 3\n\n\nThe syntax gets a bit tricky and can be difficult to understand, but this is extremely powerful. For example when you are calling other functions within your function, and you want to be able to pass on arguments down the line but without having to specify all (possibly hundreds) of them:\n\nmy_plotter &lt;- function(data, ...) {\n  do.call(plot, \n          list(data$age, data$BMI, ...))\n}\n\nCalling it without extra arguments:\n\nmy_plotter(df)\n\n\n\n\n\n\n\n\nUsing all the extra power:\n\nmy_plotter(df, type = \"p\", \n           xlim = c(20,100), ylim = c(20,40), \n           xlab = \"Age (years)\", ylab = \"BMI (kg/m^2)\", pch = \".\", \n           main = \"Distribution of BMI by age\")",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#a-concrete-example",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#a-concrete-example",
+    "title": "Working with many packages",
+    "section": "A concrete example",
+    "text": "A concrete example\nBoth {dplyr} and {MASS} have a function called select(). After library(MASS), typing select() calls the MASS version — the dplyr one is still there, just hidden.\n\nlibrary(dplyr)\nlibrary(MASS)\n\n\nAttaching package: 'MASS'\n\n\nThe following object is masked from 'package:gtsummary':\n\n    select\n\n\nThe following object is masked from 'package:dplyr':\n\n    select\n\n\nR warns you but proceeds - there’s no guarantee you will notice the warning message in a busy session.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
-    "href": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
-    "title": "Functions",
-    "section": "When to use functions",
-    "text": "When to use functions\nA fundamental tenet of coding is DRY: Don’t Repeat Yourself. If you’re repeating 1-2 lines, turning it into a function doesn’t make sense. But if you’re repeating more than 5-10 lines (and especially if you’re repeating it more than once), you need to wrap that in a function.\n\nReproducibility and robustness\nAn important benefit is that you avoid having multiple copies of the same code to try to keep up-to-date. Code often evolves over time (as errors become apparent, or you simply change your mind about previous choices). With functions, you simply have to change the code once, and every call to the function will be fixed.\n\ndata_cleaning &lt;- function(data, title = \"Height by weight\") {\n  groups &lt;- unique(data$sex)\n  cols &lt;- wesanderson::wes_palette(\"Darjeeling2\", 2)[groups+1]\n  groups &lt;- tribble(\n    ~from, ~to,\n    1, \"Male\",\n    2, \"Female\"\n  )\n  \n  data &lt;- data |&gt;\n    mutate(sex = recode_values(sex, from = groups$from, to = groups$to) |&gt; factor()) |&gt;\n    mutate(age_rank = rank(age),\n           height = (weight/BMI)^0.5) |&gt;\n    filter(height &gt; 1.7) |&gt;\n    mutate(height_quantile = ecdf(height)(height),\n           weight_quantile = ecdf(weight)(weight)) %&gt;%\n    ggplot(., aes(x = weight_quantile, y = height_quantile, color = sex)) + \n    geom_point() + \n    labs(\n      title = title, \n         y = \"Height (percentile)\", \n         x = \"Weight (percentile)\"\n    ) +\n    theme(legend.position = \"top\", legend.title = element_blank()) +\n    scale_color_manual(values = cols, label = groups) +\n    scale_y_continuous(labels = \\(x) {x*100}) +\n    scale_x_continuous(labels = \\(x) {x*100})\n  return(data)\n}\n\ndf |&gt; data_cleaning()\n\nWarning: Removed 253 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\ndf |&gt; filter(age &lt; 60) |&gt; data_cleaning(\"Height by weight in those aged &lt; 60 years\")\n\nWarning: Removed 76 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\ndf |&gt; filter(age &gt;= 60) |&gt; data_cleaning(\"Height by weight in those aged 60 years or above\")\n\nWarning: Removed 177 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\n\nOften, I’ll start by writing the code out in the open, but then wrap a function definition around it once it works and I know I’ll be reusing it. Equally importantly; don’t write functions just for the sake of writing functions. If the code is straightforward and won’t be reused, adding additional names (functions within functions within functions) only adds unnecessary complexity and obscurity.",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#four-solutions-to-masking",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#four-solutions-to-masking",
+    "title": "Working with many packages",
+    "section": "Four solutions to masking",
+    "text": "Four solutions to masking\n\n1. Explicit namespacing with ::\nThe safest habit: write pkg::function() for any function that might be ambiguous.\n\n# Always unambiguous:\ndf |&gt; dplyr::select(id, age, sbp) |&gt; head(3)\n\n# A tibble: 3 × 3\n     id   age   sbp\n  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1     1    41   122\n2     2    58   147\n3     3    68   129\n\n\nThis works even when a function is masked, and makes code easier to read and share.\n\n\n2. The {conflicted} package\n{conflicted} turns silent masking into a loud error, forcing you to be explicit. Load it at the top of your script and every ambiguous call will stop with a helpful message.\n\nlibrary(conflicted)\n\n# conflicted is already loaded above; now any ambiguous call errors:\nfilter(df, age &gt; 70)\n\nError:\n! [conflicted] filter found in 2 packages.\nEither pick the one you want with `::`:\n• dplyr::filter\n• stats::filter\nOr declare a preference with `conflicts_prefer()`:\n• `conflicts_prefer(dplyr::filter)`\n• `conflicts_prefer(stats::filter)`\n\n\nYou resolve the conflict once using conflict_prefer():\n\nconflict_prefer(\"filter\", \"dplyr\")\n\n[conflicted] Will prefer dplyr::filter over any other package.\n\n\nNow filter() unambiguously refers to the dplyr version for the rest of the session.\n\ndf |&gt; filter(age &gt; 70) |&gt; dplyr::select(id, age, sbp) |&gt; head(5)\n\n# A tibble: 5 × 3\n     id   age   sbp\n  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1    20    84   139\n2    41    72   159\n3    57    75   147\n4    59    74   151\n5    62    86   151\n\n\n\n\n3. Load packages in a deliberate order\nIf you don’t want to use {conflicted}, load packages in order of priority — the last one loaded wins. Note, this is the least robust approach.\n\n\n4. {box}: surgical package imports\nAn alternative to library() is the {box} package. Instead of loading an entire package namespace, you import only the specific functions you need.\n\nbox::use(\n  dplyr[filter, select, mutate],   # only these three functions from dplyr\n  ggplot2[ggplot, aes, geom_point], # only these from ggplot2\n  MASS(mass_filter = filter) # rename MASS::filter as mass_filter to avoid conflict with dplyr\n)\n\n# Nothing else from dplyr or ggplot2 is in scope — no masking possible\n\nThis is especially useful in packages, larger codebases, or when you want the code to be completely explicit about where every function comes from.\n\n\n\n\n\n\nTip\n\n\n\nFor day-to-day scripts, library() with explicit namespacing (pkg::function()) + {conflicted} is usually enough.\n{box} becomes attractive in package development or when you want strict, reproducible namespacing.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#the-tidy-way",
-    "href": "notes/lesson-notes/04-Functions.html#the-tidy-way",
-    "title": "Functions",
-    "section": "The tidy way",
-    "text": "The tidy way\nIf you’re familiar with {dplyr} and the wider tidyverse, you might have noticed a certain way of doing things; the tidy way. The key behind making tidyverse verbs so easy to put as pearls on a string is the data.frame-first principle; verbs will usually take the data as their first argument and return the data as their output:\n\n# Not like this\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n# Like this\nadd_col &lt;- function(data, colname = \"newcol\") {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\") |&gt;\n  head(5) |&gt; gt::gt(id = \"my_table\")\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n1\n52.92934\n1\n29.43123\n71.93419\nNA\n\n\n2\n67.77429\n1\n26.72454\n82.21106\nNA\n\n\n5\n69.29125\n1\n28.70169\n63.67831\nNA\n\n\n8\n59.53368\n1\n26.06080\n78.05817\nNA\n\n\n10\n56.09962\n1\n26.69902\n85.88806\nNA\n\n\n\n\n\n\n\nIf I insist on putting the data somewhere else in the argument list, it’s still possible to pipe, but I have to be explicit about which argument the data is being piped into (using the _ placeholder—and that’s not as elegant):\n\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\", data = _) |&gt;\n  head(5) |&gt; gt::gt(id = \"my_table2\")\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n1\n52.92934\n1\n29.43123\n71.93419\nNA\n\n\n2\n67.77429\n1\n26.72454\n82.21106\nNA\n\n\n5\n69.29125\n1\n28.70169\n63.67831\nNA\n\n\n8\n59.53368\n1\n26.06080\n78.05817\nNA\n\n\n10\n56.09962\n1\n26.69902\n85.88806\nNA",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#generic-functions-and-methods",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#generic-functions-and-methods",
+    "title": "Working with many packages",
+    "section": "Generic functions and methods",
+    "text": "Generic functions and methods\nBase R uses generics — functions like summary(), print(), and predict() — that behave differently depending on what they are given.\n\nm &lt;- lm(sbp ~ age + sex + smoker + bmi, data = df)\n\n# summary() \"knows\" it has a linear model and formats accordingly:\n\nsummary(m)\n\n\nCall:\nlm(formula = sbp ~ age + sex + smoker + bmi, data = df)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-36.063  -7.379   0.471   7.810  32.268 \n\nCoefficients:\n             Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) 116.77237    4.00266  29.174  &lt; 2e-16 ***\nage           0.47330    0.04061  11.655  &lt; 2e-16 ***\nsexMale       0.04204    1.01365   0.041    0.967    \nsmokerTRUE    8.85407    1.13957   7.770 4.58e-14 ***\nbmi          -0.02542    0.12324  -0.206    0.837    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 11.26 on 495 degrees of freedom\nMultiple R-squared:  0.2907,    Adjusted R-squared:  0.285 \nF-statistic: 50.72 on 4 and 495 DF,  p-value: &lt; 2.2e-16\n\n\nThis system — called S3 dispatch — means that different packages can teach the same verb new tricks, without you having to learn a different function name.\nUnder the hood, R looks at the class of the object you pass to summary(), sees it’s a lm object, and calls summary.lm() automatically.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#the-return-call",
-    "href": "notes/lesson-notes/04-Functions.html#the-return-call",
-    "title": "Functions",
-    "section": "The return() call",
-    "text": "The return() call\nYou want functions to have some sort of output. Whether you want the function to pass on some data that you can continue working with, to display a plot, to save something to a file, or something fourth, is up to you.\nImplicit return: if you do not write a return() call, the function will return the last object that was produced or assigned\n\nmy_function &lt;- function(input) {\n  input + 2\n  (input + 2)\n}\nmy_function(5)\n\n[1] 7\n\n\nHowever, when the last operation in a function is assignment, the value is still returned by the function but it is made invisible (not printed):\n\nmy_function &lt;- function(input) {\n  sum &lt;- input + 2\n}\n\n# Simply calling the function does not print what was returned:\nmy_function(5) \n\n# But explicitly asking for something out of the function does:\na &lt;- my_function(5) \na\n\n[1] 7\n\n\nNote, there are ways to manually ask for this so-called suppression (using the invisible() function), or to force functions not to return anything.\nIf you want to return more than one thing from a function, you probably need to use a list or a vector:\n\nmy_function &lt;- function(input) {\n  half &lt;- input/2\n  double &lt;- input * 2\n  character &lt;- as.character(input)\n  \n  return(list(half, double, character))\n}\nmy_function(10)\n\n[[1]]\n[1] 5\n\n[[2]]\n[1] 20\n\n[[3]]\n[1] \"10\"\n\n\nSomewhere you may come across something called global assignment (&lt;&lt;-), but be warned: this is almost definitely a bad idea.",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#standardised-outputs-the-tidy-principle",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#standardised-outputs-the-tidy-principle",
+    "title": "Working with many packages",
+    "section": "Standardised outputs: the tidy principle",
+    "text": "Standardised outputs: the tidy principle\nThe tidyverse is built on a simple idea: data in, data out. Each function takes a data frame and returns a data frame, making operations easy to chain.\nMany packages outside the core tidyverse follow the same principle. The key package here is {broom}, which converts messy model objects into tidy tibbles.\n\n# A linear model gives an opaque object:\nclass(m)\n\n[1] \"lm\"\n\nm   # hard to work with programmatically\n\n\nCall:\nlm(formula = sbp ~ age + sex + smoker + bmi, data = df)\n\nCoefficients:\n(Intercept)          age      sexMale   smokerTRUE          bmi  \n  116.77237      0.47330      0.04204      8.85407     -0.02542  \n\n\n\n# broom::tidy() extracts the coefficients as a clean tibble:\nbroom::tidy(m, conf.int = TRUE)\n\n# A tibble: 5 × 7\n  term        estimate std.error statistic   p.value conf.low conf.high\n  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1 (Intercept) 117.        4.00     29.2    1.32e-109  109.      125.   \n2 age           0.473     0.0406   11.7    6.58e- 28    0.394     0.553\n3 sexMale       0.0420    1.01      0.0415 9.67e-  1   -1.95      2.03 \n4 smokerTRUE    8.85      1.14      7.77   4.58e- 14    6.62     11.1  \n5 bmi          -0.0254    0.123    -0.206  8.37e-  1   -0.268     0.217\n\n\n\n# broom::glance() gives one-row model-level summaries:\nbroom::glance(m)\n\n# A tibble: 1 × 12\n  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC\n      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1     0.291         0.285  11.3      50.7 8.77e-36     4 -1918. 3847. 3873.\n# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;\n\n\n\n# broom::augment() adds fitted values and residuals back to your data:\nbroom::augment(m, df) |&gt; \n  dplyr::select(id, sbp, .fitted, .resid) |&gt; \n  head(5)\n\n# A tibble: 5 × 4\n     id   sbp .fitted .resid\n  &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;\n1     1   122    135. -13.3 \n2     2   147    144.   3.26\n3     3   129    148. -19.4 \n4     4   146    138.   8.16\n5     5   160    153.   6.61\n\n\nBecause tidy() always returns a tibble with the same column names (term, estimate, std.error, p.value, …), the output easily plugs into {ggplot2}:\n\nbroom::tidy(m, conf.int = TRUE) |&gt;\n  filter(term != \"(Intercept)\") |&gt;\n  ggplot(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = term)) +\n  geom_pointrange()",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/04-Functions.html#the-scope",
-    "href": "notes/lesson-notes/04-Functions.html#the-scope",
-    "title": "Functions",
-    "section": "The scope",
-    "text": "The scope\nIt’s important to know that different parts of your code may have access to different sets of variables. This is called scopes. Every function creates its own walled-off section where it stores variables that may be created while the function runs. These variables are accessible (by default) only within the function’s scope, and are consequently destroyed when the function exits. The only thing that remains is whatever the function was told to return() as output (unless, of course, other things were made to remain; see above).",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#gtsummary-a-complete-cross-package-workflow",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#gtsummary-a-complete-cross-package-workflow",
+    "title": "Working with many packages",
+    "section": "{gtsummary}: a complete cross-package workflow",
+    "text": "{gtsummary}: a complete cross-package workflow\n{gtsummary} is a good example of a package that slots into a tidy workflow seamlessly. It takes standard R model objects and produces publication-ready tables, using the same underlying ideas.\n\n# Regression table — takes any model object directly:\nm |&gt;\n  tbl_regression(\n    label = list(\n      age    ~ \"Age (years)\",\n      sex    ~ \"Sex\",\n      smoker ~ \"Smoker\",\n      bmi    ~ \"BMI (kg/m²)\"\n    )\n  ) |&gt;\n  bold_p() |&gt;\n  bold_labels()\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nBeta\n95% CI\np-value\n\n\n\n\nAge (years)\n0.47\n0.39, 0.55\n&lt;0.001\n\n\nSex\n\n\n\n\n\n\n\n\n    Female\n—\n—\n\n\n\n\n    Male\n0.04\n-1.9, 2.0\n&gt;0.9\n\n\nSmoker\n\n\n\n\n\n\n\n\n    FALSE\n—\n—\n\n\n\n\n    TRUE\n8.9\n6.6, 11\n&lt;0.001\n\n\nBMI (kg/m²)\n-0.03\n-0.27, 0.22\n0.8\n\n\n\nAbbreviation: CI = Confidence Interval\n\n\n\n\n\n\n\n\nNo need to manually extract and format coefficients — {gtsummary} calls broom::tidy() internally, giving you a formatted table in two lines.\n\n\n\n\n\n\nNote\n\n\n\n{gtsummary} works with a wide range of model types: lm, glm, coxph (survival), lme4 mixed models, and more — all using the same tbl_regression() call.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Functions"
+      "Working with many packages"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/05-Loops.html",
-    "href": "notes/lesson-notes/05-Loops.html",
-    "title": "Loops and parallelisation",
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#another-example-survival-analysis",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#another-example-survival-analysis",
+    "title": "Working with many packages",
+    "section": "Another example: survival analysis",
+    "text": "Another example: survival analysis\nThe same pattern works with survival models from the {survival} package:\n\nlibrary(survival)\n\n# Simulate a time-to-event outcome:\ndf2 &lt;- df |&gt; mutate(\n  time  = rexp(n, rate = 0.05),\n  event = rbinom(n, 1, prob = 0.6)\n)\n\ncox_m &lt;- coxph(Surv(time, event) ~ age + sex + smoker, data = df2)\n\n{broom} and {gtsummary} work exactly the same way:\n\ncox_m |&gt; broom::tidy(exponentiate = TRUE, conf.int = TRUE)\n\n# A tibble: 3 × 7\n  term       estimate std.error statistic p.value conf.low conf.high\n  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1 age           1.01    0.00485     1.36    0.173    0.997      1.02\n2 sexMale       1.21    0.120       1.57    0.116    0.955      1.53\n3 smokerTRUE    0.874   0.137      -0.978   0.328    0.668      1.14\n\ncox_m |&gt;\n  tbl_regression(\n    exponentiate = TRUE)\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nHR\n95% CI\np-value\n\n\n\n\nage\n1.01\n1.00, 1.02\n0.2\n\n\nsex\n\n\n\n\n\n\n\n\n    Female\n—\n—\n\n\n\n\n    Male\n1.21\n0.95, 1.53\n0.12\n\n\nsmoker\n\n\n\n\n\n\n\n\n    FALSE\n—\n—\n\n\n\n\n    TRUE\n0.87\n0.67, 1.14\n0.3\n\n\n\nAbbreviations: CI = Confidence Interval, HR = Hazard Ratio",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Working with many packages"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#the-tidy-principle",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#the-tidy-principle",
+    "title": "Working with many packages",
+    "section": "The tidy principle",
+    "text": "The tidy principle\nFunctions that take and return data frames with predictable structure — is a powerful design pattern that encourages interoperability between packages.\nWhen you choose packages for your workflow, look for ones that follow this principle.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Working with many packages"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/08-Packages-and-Dependencies.html#understanding-function-inputs-and-outputs",
+    "href": "notes/lesson-notes/08-Packages-and-Dependencies.html#understanding-function-inputs-and-outputs",
+    "title": "Working with many packages",
+    "section": "Understanding function inputs and outputs",
+    "text": "Understanding function inputs and outputs\nWhen you use a new package, take time to understand what its functions expect as input and what they return.\nStart with ?pkg::fn to read the documentation and go to the package website / vignettes (= user manuals). Then experiment with simple examples to see the output structure.\nOnce you know the input requirements and the output format, try playing with the output yourself. Take you time to manually inspect and manipulate the output into different formats; e.g., tables, plots, etc.\nOnce you understand this, it’s time to see how you can use the output in your workflow, and which other packages fit well into the workflow.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Working with many packages"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
+    "title": "Minimal, reproducible example",
     "section": "",
-    "text": "library(dplyr)\nlibrary(purrr)\nset.seed(1234)\nLoops are one of the most fundamental tools in programming. They allow you to repeat a block of code — either a fixed number of times, or until some condition is met.",
+    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Loops and parallelisation"
+      "Minimal, reproducible example"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/05-Loops.html#some-data-to-work-on",
-    "href": "notes/lesson-notes/05-Loops.html#some-data-to-work-on",
-    "title": "Loops and parallelisation",
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
+    "title": "Minimal, reproducible example",
+    "section": "Setting the random seed",
+    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a distribution",
+    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
+    "title": "Minimal, reproducible example",
+    "section": "An example dataset",
+    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
+    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
+    "title": "Minimal, reproducible example",
+    "section": "Sampling from a set of values",
+    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Minimal, reproducible example"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/06-Paradigms.html",
+    "href": "notes/lesson-notes/06-Paradigms.html",
+    "title": "Coding paradigms",
+    "section": "",
+    "text": "library(dplyr)\nlibrary(data.table)\nset.seed(12345)\nA coding paradigm is a style of coding that follows a specific set of principles; think of them like different dialects of the language. R has three common ones for data manipulation:\nWhat’s “best” depends on the use case. You’ll encounter all three in the wild, although many guides use the Tidyverse.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Coding paradigms"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/06-Paradigms.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/06-Paradigms.html#some-data-to-work-on",
+    "title": "Coding paradigms",
     "section": "Some data to work on",
-    "text": "Some data to work on\n\npatients &lt;- tibble(\n  id      = 1:8,\n  age     = c(45, 67, 53, 71, 38, 60, 55, 49),\n  systolic = c(120, 145, 132, 158, 112, 140, 128, 119)\n)\npatients |&gt; gt::gt(id = \"patients\")\n\n\n\n\n\n\n\nid\nage\nsystolic\n\n\n\n\n1\n45\n120\n\n\n2\n67\n145\n\n\n3\n53\n132\n\n\n4\n71\n158\n\n\n5\n38\n112\n\n\n6\n60\n140\n\n\n7\n55\n128\n\n\n8\n49\n119",
+    "text": "Some data to work on\n\ndf &lt;- tibble(\n  id = 1:10,\n  age = rnorm(10, mean = 40, sd = 10) |&gt; round(),\n  sex = sample(c(\"M\", \"F\"), 10, replace = TRUE),\n  weight = rnorm(10, mean = 75, sd = 10) |&gt; round(),\n  height = rnorm(10, mean = 1.66, sd = 0.1) |&gt; round(2)\n)\n\nDT &lt;- as.data.table(df)   # data.table copy\n\ndf |&gt; gt::gt(id = \"df_table\")\n\n\n\n\n\n\n\nid\nage\nsex\nweight\nheight\n\n\n\n\n1\n46\nF\n83\n1.84\n\n\n2\n47\nM\n66\n1.61\n\n\n3\n39\nF\n72\n1.72\n\n\n4\n35\nF\n86\n1.72\n\n\n5\n46\nM\n78\n1.64\n\n\n6\n22\nF\n83\n1.74\n\n\n7\n46\nF\n90\n1.88\n\n\n8\n37\nF\n69\n1.86\n\n\n9\n37\nF\n59\n1.82\n\n\n10\n31\nF\n59\n1.69",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Loops and parallelisation"
+      "Coding paradigms"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/05-Loops.html#sapply-and-lapply",
-    "href": "notes/lesson-notes/05-Loops.html#sapply-and-lapply",
-    "title": "Loops and parallelisation",
-    "section": "sapply() and lapply()",
-    "text": "sapply() and lapply()\nBoth apply a function to each element of a vector or list. The difference is the output format.\nlapply() always returns a list\n\ndf &lt;- patients |&gt; select(-id)\n\nlapply(X = df, FUN = mean)\n\n$age\n[1] 54.75\n\n$systolic\n[1] 131.75\n\n\nsapply() tries to simplify to a vector or matrix\n\nsapply(X = df, FUN = mean)\n\n     age systolic \n   54.75   131.75 \n\n\nThis is the same as manually doing lapply + unlist:\n\nlapply(X = df, FUN = mean) |&gt; unlist()\n\n     age systolic \n   54.75   131.75 \n\n\nThe apply() family also easily work with custom functions:\n\nsquared &lt;- function(x) {\n  x^2\n}\nsapply(X = c(1:5), FUN = squared)\n\n[1]  1  4  9 16 25",
+    "objectID": "notes/lesson-notes/06-Paradigms.html#base-r-3",
+    "href": "notes/lesson-notes/06-Paradigms.html#base-r-3",
+    "title": "Coding paradigms",
+    "section": "Base R",
+    "text": "Base R\nBase R uses explicit indexing and standard evaluation. What you see is what you get — there are no hidden conventions or non-standard evaluation tricks.\nPros: Zero dependencies; great for simple scripts, package development, and teaching fundamentals.\nCons: Can get messy for complex data manipulation; less efficient on large datasets due to copying.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Loops and parallelisation"
+      "Coding paradigms"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/05-Loops.html#apply-for-matricesdata-frames",
-    "href": "notes/lesson-notes/05-Loops.html#apply-for-matricesdata-frames",
-    "title": "Loops and parallelisation",
-    "section": "apply() for matrices/data frames",
-    "text": "apply() for matrices/data frames\napply() works on rows (MARGIN = 1) or columns (MARGIN = 2):\n\nmat &lt;- matrix(1:12, nrow = 3)\nmat\n\n     [,1] [,2] [,3] [,4]\n[1,]    1    4    7   10\n[2,]    2    5    8   11\n[3,]    3    6    9   12\n\nprint(\"Row sums:\")\n\n[1] \"Row sums:\"\n\napply(X = mat, MARGIN = 1, FUN = sum)\n\n[1] 22 26 30\n\nprint(\"Column sums:\")\n\n[1] \"Column sums:\"\n\napply(X = mat, MARGIN = 2, FUN = sum)\n\n[1]  6 15 24 33\n\n\nThe problem with the apply() family is that the function names and output types are different every time, which makes them hard to remember.",
+    "objectID": "notes/lesson-notes/06-Paradigms.html#tidyverse-3",
+    "href": "notes/lesson-notes/06-Paradigms.html#tidyverse-3",
+    "title": "Coding paradigms",
+    "section": "Tidyverse",
+    "text": "Tidyverse\nThe tidyverse (centred on {dplyr}) is declarative and uses non-standard evaluation — you write column names without quoting them or prefixing with $. Operations are naturally chained together with the pipe |&gt;, reading top-to-bottom like a sentence; Each so-called verb takes a data.frame as its first argument and returns a data.frame — making them easy to compose.\nPros: The most readable option; ideal for clarity/readability. Rich ecosystem of packages; everything from data manipulation to visualization.\nCons: Like base R, it can be slower than data.table for large datasets due to copying.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Loops and parallelisation"
+      "Coding paradigms"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/05-Loops.html#map2-mapping-over-two-inputs-at-once",
-    "href": "notes/lesson-notes/05-Loops.html#map2-mapping-over-two-inputs-at-once",
-    "title": "Loops and parallelisation",
-    "section": "map2() — mapping over two inputs at once",
-    "text": "map2() — mapping over two inputs at once\nThis function requires both inputs to be the same length, and element i of input .x will be mapped to element i of input .y; that is, you don’t get every possible combination of .x and .y\n\nnames &lt;- c(\"Alice\", \"Bob\", \"Carol\")\nscores &lt;- c(88, 95, 72)\n\nmyPaste &lt;- function(nm, scr) paste0(nm, \" scored \", scr)\n\nmap2_chr(.x = names, .y = scores, .f = myPaste)\n\n[1] \"Alice scored 88\" \"Bob scored 95\"   \"Carol scored 72\"\n\n\nFor all combinations, try something like:\n\nwith(\n  expand.grid(names, scores),\n  paste0(Var1, \" scored \", Var2)\n)\n\n[1] \"Alice scored 88\" \"Bob scored 88\"   \"Carol scored 88\" \"Alice scored 95\"\n[5] \"Bob scored 95\"   \"Carol scored 95\" \"Alice scored 72\" \"Bob scored 72\"  \n[9] \"Carol scored 72\"",
+    "objectID": "notes/lesson-notes/06-Paradigms.html#data.table-3",
+    "href": "notes/lesson-notes/06-Paradigms.html#data.table-3",
+    "title": "Coding paradigms",
+    "section": "data.table",
+    "text": "data.table\ndata.table is concise and fast. It brings the DT[i, j, by] syntax, allowinng you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, making it memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.\nPros: Best when working with millions of rows; in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.\nCons: The concise syntax can be less intuitive for beginners, and it has a steeper learning curve. Speed gains are often exaggerated, as base R and tidyverse have gained performance improvements in recent years.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Loops and parallelisation"
+      "Coding paradigms"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/06-Paradigms.html#section",
+    "href": "notes/lesson-notes/06-Paradigms.html#section",
+    "title": "Coding paradigms",
+    "section": "",
+    "text": "Tip\n\n\n\nMost real-world R code mixes paradigms. You might load data with base R, clean it with {dplyr}, and run a heavy aggregation with {data.table}. Pick the right tool for each job.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Coding paradigms"
+    ]
+  },
+  {
+    "objectID": "notes/extra/0-simulate-data.html",
+    "href": "notes/extra/0-simulate-data.html",
+    "title": "Simulate some data for further work",
+    "section": "",
+    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\nset.seed(123456)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Simulate some data for further work"
+    ]
+  },
+  {
+    "objectID": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
+    "href": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
+    "title": "Simulate some data for further work",
+    "section": "Let’s construct some fake data",
+    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1940-01-01\"), as.Date(\"1959-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1955-09-19\n\n\n7782085\n2\n1947-06-21\n\n\n4521300\n1\n1959-04-11\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_A &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 600\nlmdb &lt;- sample_n(ATC_select_A,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA11HA03\nTocopherol (vit e)\n2265313\n2014-10-27\n3\n20\n11\n60\n\n\nA03FA05\nAlizapride\n7571615\n2013-08-25\n3\n10\n11\n30\n\n\nA10AD06\nInsulin degludec and insulin aspart\n5854842\n2000-11-01\n3\n10\n2\n30\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n9768595\n3499773625\n2006-04-06\nS72.9\n\n\n5026141\n2430170757\n2003-05-21\nS72.0\n\n\n4377798\n3828151776\n2003-07-27\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n3499773625\nS72.9\nA\n\n\n2430170757\nS72.0\nA\n\n\n3828151776\nS72.1\nA\n\n\n3828151776\nS72.8\nB\n\n\n3499773625\nS72.1\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab)\n) |&gt;\n  left_join(bef |&gt; select(c(PNR, FOED_DAG)), by = \"PNR\") |&gt;\n  mutate(\n    VALUE = rnorm(n_lab, \n                  mean = 100 - as.numeric((as.Date(\"2000-01-01\") - as.Date(FOED_DAG))/3650)^10/(2^20) |&gt; round(2), \n                  sd = 10) |&gt; round()\n  ) |&gt;\n  select(-c(FOED_DAG))\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n4827513\n2001-02-12\neGFR\n83\n\n\n8230182\n2009-03-16\neGFR\n75\n\n\n4513978\n2002-02-28\neGFR\n68",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Simulate some data for further work"
+    ]
+  },
+  {
+    "objectID": "notes/extra/index.html",
+    "href": "notes/extra/index.html",
+    "title": "Extra notes and tutorials",
+    "section": "",
+    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "General info",
+    "section": "",
+    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
+  },
+  {
+    "objectID": "index.html#format",
+    "href": "index.html#format",
+    "title": "General info",
+    "section": "Format",
+    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
+  },
+  {
+    "objectID": "index.html#schedule-and-themes",
+    "href": "index.html#schedule-and-themes",
+    "title": "General info",
+    "section": "Schedule and themes",
+    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions (and notes)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes) (notes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste (notes)\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation (notes)\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table (notes)\nZheer\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}, {modelsummary}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvfit}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html",
+    "href": "notes/extra/1-example-pipeline.html",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
+    "title": "Example pipeline",
+    "section": "",
+    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
+    "title": "Example pipeline",
+    "section": "Now you can start analysing the data…",
+    "text": "Now you can start analysing the data…\n\nlibrary(ggplot2)\nggplot(pop, aes(x=age, y = eGFR_val)) +\n  geom_point() +\n  geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +\n  theme_bw()\n\nWarning: Removed 753 rows containing non-finite outside the scale range\n(`stat_smooth()`).\n\n\nWarning: Removed 753 rows containing missing values or values outside the scale range\n(`geom_point()`).",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "href": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
+    "title": "Example pipeline",
+    "section": "Or save the cleaned dataset for later use",
+    "text": "Or save the cleaned dataset for later use\n\nsaveRDS(pop, \"cleaned_data.rds\")\n\nMaking it easy to load the dataset in at a later time without having to repeat the whole pipeline:\n\npop &lt;- readRDS(\"cleaned_data.rds\")",
+    "crumbs": [
+      "R Coding Café",
+      "Extra notes and tutorials",
+      "Example pipeline"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html",
+    "href": "notes/lesson-notes/02-Debugging.html",
+    "title": "Writing working code—and debugging it",
+    "section": "",
+    "text": "# Get started\nset.seed(1234)\nlibrary(dplyr)",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
+    "href": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
+    "title": "Writing working code—and debugging it",
+    "section": "Two important error messages",
+    "text": "Two important error messages\n\n&gt; Error in [insert some code] : ! argument is of length zero\n\nx &lt;- c(1, 2, 3)\n\nx[0]\n\nnumeric(0)\n\nif (x[0]&gt;2) print(x)\n\nError in `if (x[0] &gt; 2) ...`:\n! argument is of length zero\n\n\nThis means that some object you tried to work with was empty; it simply didn’t exist as you thought or didn’t contain anything. In the above case, the vector x does not have an “index 0” to subset (fun fact: in most other languages, the first position of a list-like object is position 0).\n\n\n&gt; object of type ‘closure’ is not subsettable\n\nprinter &lt;- data.frame(size = c(1, 2, 3), color = c(\"red\", \"orange\", \"blue\"))\nprinter[1,] # works fine\n\n  size color\n1    1   red\n\nprint[1,] # the print function is the here object of type 'closure'\n\nError in `print[1, ]`:\n! object of type 'closure' is not subsettable\n\n\nYou wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
+    "href": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
+    "title": "Writing working code—and debugging it",
+    "section": "First steps when encountering an error message",
+    "text": "First steps when encountering an error message\nCheck the error message carefully! Sometimes the error message tells you which file and line number the error occurred on.\n\nLook it up\n\nStackOverflow.com\nList of common errors and warnings\n\nHave you tried a fresh session?\n\n\nDebugging and sanity checks - useful before errors even occur\n\nUse the scientific method\nGo through everything - line by line. For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.\n\n\nPrint debugging\nCheck intermediate results.\nUse some of the following summary functions for data structure and content:\n\n# Let's look at the mtcars dataset (and add our own categorical variable with some NAs, for good measure)\nmtcars &lt;- mtcars |&gt; \n  mutate(col = sample(c(\"orange\", \"blue\", \"white\", NA_character_),\n                      size=nrow(mtcars), \n                      replace=T)\n         )\n\nmtcars |&gt; head(4) |&gt; gt::gt()\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\ncol\n\n\n\n\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\nNA\n\n\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\nNA\n\n\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\nblue\n\n\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\nblue\n\n\n\n\n\n\n\n\n\n\nCheck for NAs\nAlways a good place to start. NAs are where good intentions in data management go to die. Make sure you always know how many NAs there are—and how many there should be.\n\n# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column 'col':\nis.na(mtcars$col) \n\n [1]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE\n[13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE\n[25]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE\n\n# Get total number of NAs in the column:\nis.na(mtcars$col) |&gt; sum()\n\n[1] 13\n\n\n\n\n\n\nSummarise a dataset\nLet’s now get summary data for every variable in the dataset.\n\n# Summarise data\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; summary()\n\n      mpg              vs             col           \n Min.   :10.40   Min.   :0.0000   Length:32         \n 1st Qu.:15.43   1st Qu.:0.0000   Class :character  \n Median :19.20   Median :0.0000   Mode  :character  \n Mean   :20.09   Mean   :0.4375                     \n 3rd Qu.:22.80   3rd Qu.:1.0000                     \n Max.   :33.90   Max.   :1.0000                     \n\n\nWhile summary() provides a decent overview, the describe() function from Harrell’s {Hmisc} package is far more detailed.\n\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; Hmisc::describe()\n\nselect(mtcars, c(mpg, vs, col)) \n\n 3  Variables      32  Observations\n--------------------------------------------------------------------------------\nmpg \n       n  missing distinct     Info     Mean  pMedian      Gmd      .05 \n      32        0       25    0.999    20.09     19.6    6.796    12.00 \n     .10      .25      .50      .75      .90      .95 \n   14.34    15.43    19.20    22.80    30.09    31.30 \n\nlowest : 10.4 13.3 14.3 14.7 15  , highest: 26   27.3 30.4 32.4 33.9\n--------------------------------------------------------------------------------\nvs \n       n  missing distinct     Info      Sum     Mean \n      32        0        2    0.739       14   0.4375 \n\n--------------------------------------------------------------------------------\ncol \n       n  missing distinct \n      19       13        3 \n                               \nValue        blue orange  white\nFrequency      11      4      4\nProportion  0.579  0.211  0.211\n--------------------------------------------------------------------------------\n\n\n\n\n\n\nRelations among variables\nNow we’ll turn our attention to looking at relations among multiple variables. A simply way is to form a contingency table (a 2x2 or, for categories with &gt;2 levels, a pxq table) using table():\n\nwith(mtcars, table(cyl, gear))\n\n   gear\ncyl  3  4  5\n  4  1  8  2\n  6  2  4  1\n  8 12  0  2\n\n\n\n\n\n\nsummarise()\nsummarise() from {dplyr} creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the dataset)\n\nmtcars |&gt; group_by(cyl) |&gt; dplyr::summarise(mpg_min = min(mpg, na.rm=T), \n                                            mpg_Q1 = quantile(mpg, 0.25),\n                                            mpg_median = median(mpg, na.rm=T),\n                                            mpg_Q3 = quantile(mpg, 0.75),\n                                            mpg_max = max(mpg, na.rm=T),\n                                            col_NAs = sum(is.na(col))\n                                            )\n\n# A tibble: 3 × 7\n    cyl mpg_min mpg_Q1 mpg_median mpg_Q3 mpg_max col_NAs\n  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;int&gt;\n1     4    21.4   22.8       26     30.4    33.9       4\n2     6    17.8   18.6       19.7   21      21.4       5\n3     8    10.4   14.4       15.2   16.2    19.2       4\n\n\n\n\n\n\nMake a Table1\nFinally, sometimes it’s nice to just get a full overview of the data, as it will look in a Table1:\n\nmtcars |&gt; select(c(mpg, cyl, disp, col)) |&gt;\n  gtsummary::tbl_summary(by = cyl,\n                         statistic = list(mpg ~ \"{mean} (SD: {sd})\"),\n                         missing_text = \"Missing\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n4\nN = 111\n6\nN = 71\n8\nN = 141\n\n\n\n\nmpg\n26.7 (SD: 4.5)\n19.7 (SD: 1.5)\n15.1 (SD: 2.6)\n\n\ndisp\n108 (79, 121)\n168 (160, 225)\n351 (301, 400)\n\n\ncol\n\n\n\n\n\n\n\n\n    blue\n3 (43%)\n2 (100%)\n6 (60%)\n\n\n    orange\n3 (43%)\n0 (0%)\n1 (10%)\n\n\n    white\n1 (14%)\n0 (0%)\n3 (30%)\n\n\n    Missing\n4\n5\n4\n\n\n\n1 Mean (SD: SD); Median (Q1, Q3); n (%)",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
+    "href": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
+    "title": "Writing working code—and debugging it",
+    "section": "Advanced functionality: when you see an error",
+    "text": "Advanced functionality: when you see an error\n\nThe call tree\nHere’s some code. The functions are irrelevant, expect make_df() takes an input, passes something on to pass_on_df(), which (conditionally) calls the return_error() function. When you use make_df(), you might not realise all of this is happening behind the scenes.\n\nmake_df &lt;- function(x) {\n  df &lt;- data.frame(y=x+10)\n  pass_on_df(df)\n}\n\npass_on_df &lt;- function(x) {\n  # ...\n  if(x$y &gt; 11) return_error(x$y)\n}\n\nreturn_error &lt;- function(x) {\n  stop(paste0(x, \" not valid input\"))\n}\n\nmake_df(10)\n\nError in `return_error()`:\n! 20 not valid input\n\n\nWhen you see this error in RStudio, it looks as follows:\n\nIf you click “Show Traceback” on the right, you’ll see:\n From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn’t make_df() directly but rather something downstream called pass_on_df(). This may not always give an obvious solution, but at least it can help you find out which package/function you should be Googling to understand the error message.\n\n\nFormal debugging tools\nBelow are a few highly related functions that can be useful for debugging. Sometimes you’ll see a button to “Rerun with Debug” right under the “Show Traceback” button we just discussed. Doing so sends you inside the working environment (‘the scope’) of the functions to “see what they see”. I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause.\n\nbrowser()\nUsing this gives a similar experience; if you wrote a function yourself, you can write browser() anywhere within it to force a break in execution. It then allows you to inspect your function’s inner workings (and contents) up to and at that point.\n\n\ndebug()\nthis is useful for inspecting other people’s functions; it adds a “browser()” statement into another function for you (undebug() removes it)\n\n\nbreakpoints\nIn .R scripts, you can click to the left of the line-numbers to add a small red dot. This is like inserting a browser() statement there.\n\n\ntrace() / untrace()\nLike debug() but can be used to insert any other code of your choosing into a function.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#warnings",
+    "href": "notes/lesson-notes/02-Debugging.html#warnings",
+    "title": "Writing working code—and debugging it",
+    "section": "Warnings",
+    "text": "Warnings\nWarnings are messages that don’t prevent your code from running. Treat these as you would errors, until you’re sure they’re harmless.\nBecause your code runs, they can be easy to miss; but usually they’re a package author’s way of letting you know you might not be using their package in the way it was intended;\nThey sometimes mean something horrible happened",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
+    "href": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
+    "title": "Writing working code—and debugging it",
+    "section": "Preparing for errors",
+    "text": "Preparing for errors\ntry() is handy when you know some code can cause an error but you don’t want it to break everything; you want to just skip over it in that case:\n\nlog_ &lt;- function(x) {\n  try(\n    return(log(x)),\n    silent=TRUE\n  )\n  x\n}\n\n\nlog_(2)\n\n[1] 0.6931472\n\nlog_(1)\n\n[1] 0\n\nlog_(0)\n\n[1] -Inf\n\nlog_(\"a\")\n\n[1] \"a\"\n\n\nThis function takes any input and tries to take its log; if unsuccessful, it simply returns the input unchanged (yes, I know this is a dumb function).",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
+    "href": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
+    "title": "Writing working code—and debugging it",
+    "section": "When code runs forever",
+    "text": "When code runs forever\n\nR code\n\nIf R never stops evaluting (e.g., stuck in an infinite loop), you can manually stop the process. This can be frustrating as you’re left with little idea of what went wrong.\n\nCompiled code\n\nIf R creashes the moment you hit “Interrupt R”, the code was probably being run in another language (C/C++). There’s no way out but to restart and get to debugging.",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/02-Debugging.html#more-reading",
+    "href": "notes/lesson-notes/02-Debugging.html#more-reading",
+    "title": "Writing working code—and debugging it",
+    "section": "More reading",
+    "text": "More reading\nHadley Wickham’s tutorial on debugging",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Writing working code—and debugging it"
     ]
   },
   {
@@ -271,335 +579,147 @@
     ]
   },
   {
-    "objectID": "notes/lesson-notes/02-Debugging.html",
-    "href": "notes/lesson-notes/02-Debugging.html",
-    "title": "Writing working code—and debugging it",
+    "objectID": "notes/lesson-notes/05-Loops.html",
+    "href": "notes/lesson-notes/05-Loops.html",
+    "title": "Loops and parallelisation",
     "section": "",
-    "text": "# Get started\nset.seed(1234)\nlibrary(dplyr)",
+    "text": "library(dplyr)\nlibrary(purrr)\nset.seed(1234)\nLoops are one of the most fundamental tools in programming. They allow you to repeat a block of code — either a fixed number of times, or until some condition is met.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Writing working code—and debugging it"
+      "Loops and parallelisation"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
-    "href": "notes/lesson-notes/02-Debugging.html#two-important-error-messages",
-    "title": "Writing working code—and debugging it",
-    "section": "Two important error messages",
-    "text": "Two important error messages\n\n&gt; Error in [insert some code] : ! argument is of length zero\n\nx &lt;- c(1, 2, 3)\n\nx[0]\n\nnumeric(0)\n\nif (x[0]&gt;2) print(x)\n\nError in `if (x[0] &gt; 2) ...`:\n! argument is of length zero\n\n\nThis means that some object you tried to work with was empty; it simply didn’t exist as you thought or didn’t contain anything. In the above case, the vector x does not have an “index 0” to subset (fun fact: in most other languages, the first position of a list-like object is position 0).\n\n\n&gt; object of type ‘closure’ is not subsettable\n\nprinter &lt;- data.frame(size = c(1, 2, 3), color = c(\"red\", \"orange\", \"blue\"))\nprinter[1,] # works fine\n\n  size color\n1    1   red\n\nprint[1,] # the print function is the here object of type 'closure'\n\nError in `print[1, ]`:\n! object of type 'closure' is not subsettable\n\n\nYou wanted to subset an object, but you accidentally tried to subset a function; in this case, the print() function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
-    "href": "notes/lesson-notes/02-Debugging.html#first-steps-when-encountering-an-error-message",
-    "title": "Writing working code—and debugging it",
-    "section": "First steps when encountering an error message",
-    "text": "First steps when encountering an error message\nCheck the error message carefully! Sometimes the error message tells you which file and line number the error occurred on.\n\nLook it up\n\nStackOverflow.com\nList of common errors and warnings\n\nHave you tried a fresh session?\n\n\nDebugging and sanity checks - useful before errors even occur\n\nUse the scientific method\nGo through everything - line by line. For each segment of code, form hypotheses as to what the output for a given input should be. This might quickly prove you wrong and expose disagreement between code purpose and function.\n\n\nPrint debugging\nCheck intermediate results.\nUse some of the following summary functions for data structure and content:\n\n# Let's look at the mtcars dataset (and add our own categorical variable with some NAs, for good measure)\nmtcars &lt;- mtcars |&gt; \n  mutate(col = sample(c(\"orange\", \"blue\", \"white\", NA_character_),\n                      size=nrow(mtcars), \n                      replace=T)\n         )\n\nmtcars |&gt; head(4) |&gt; gt::gt()\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\ncol\n\n\n\n\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\nNA\n\n\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\nNA\n\n\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\nblue\n\n\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\nblue\n\n\n\n\n\n\n\n\n\n\nCheck for NAs\nAlways a good place to start. NAs are where good intentions in data management go to die. Make sure you always know how many NAs there are—and how many there should be.\n\n# Check if NA - get a vector of TRUE/FALSE values, one for each row of the data in column 'col':\nis.na(mtcars$col) \n\n [1]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE\n[13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE\n[25]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE\n\n# Get total number of NAs in the column:\nis.na(mtcars$col) |&gt; sum()\n\n[1] 13\n\n\n\n\n\n\nSummarise a dataset\nLet’s now get summary data for every variable in the dataset.\n\n# Summarise data\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; summary()\n\n      mpg              vs             col           \n Min.   :10.40   Min.   :0.0000   Length:32         \n 1st Qu.:15.43   1st Qu.:0.0000   Class :character  \n Median :19.20   Median :0.0000   Mode  :character  \n Mean   :20.09   Mean   :0.4375                     \n 3rd Qu.:22.80   3rd Qu.:1.0000                     \n Max.   :33.90   Max.   :1.0000                     \n\n\nWhile summary() provides a decent overview, the describe() function from Harrell’s {Hmisc} package is far more detailed.\n\nmtcars |&gt; select(c(mpg, vs, col)) |&gt; Hmisc::describe()\n\nselect(mtcars, c(mpg, vs, col)) \n\n 3  Variables      32  Observations\n--------------------------------------------------------------------------------\nmpg \n       n  missing distinct     Info     Mean  pMedian      Gmd      .05 \n      32        0       25    0.999    20.09     19.6    6.796    12.00 \n     .10      .25      .50      .75      .90      .95 \n   14.34    15.43    19.20    22.80    30.09    31.30 \n\nlowest : 10.4 13.3 14.3 14.7 15  , highest: 26   27.3 30.4 32.4 33.9\n--------------------------------------------------------------------------------\nvs \n       n  missing distinct     Info      Sum     Mean \n      32        0        2    0.739       14   0.4375 \n\n--------------------------------------------------------------------------------\ncol \n       n  missing distinct \n      19       13        3 \n                               \nValue        blue orange  white\nFrequency      11      4      4\nProportion  0.579  0.211  0.211\n--------------------------------------------------------------------------------\n\n\n\n\n\n\nRelations among variables\nNow we’ll turn our attention to looking at relations among multiple variables. A simply way is to form a contingency table (a 2x2 or, for categories with &gt;2 levels, a pxq table) using table():\n\nwith(mtcars, table(cyl, gear))\n\n   gear\ncyl  3  4  5\n  4  1  8  2\n  6  2  4  1\n  8 12  0  2\n\n\n\n\n\n\nsummarise()\nsummarise() from {dplyr} creates a new dataset with variables calculated within whatever groups were provided (note: this does not retain anything else in the dataset)\n\nmtcars |&gt; group_by(cyl) |&gt; dplyr::summarise(mpg_min = min(mpg, na.rm=T), \n                                            mpg_Q1 = quantile(mpg, 0.25),\n                                            mpg_median = median(mpg, na.rm=T),\n                                            mpg_Q3 = quantile(mpg, 0.75),\n                                            mpg_max = max(mpg, na.rm=T),\n                                            col_NAs = sum(is.na(col))\n                                            )\n\n# A tibble: 3 × 7\n    cyl mpg_min mpg_Q1 mpg_median mpg_Q3 mpg_max col_NAs\n  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;int&gt;\n1     4    21.4   22.8       26     30.4    33.9       4\n2     6    17.8   18.6       19.7   21      21.4       5\n3     8    10.4   14.4       15.2   16.2    19.2       4\n\n\n\n\n\n\nMake a Table1\nFinally, sometimes it’s nice to just get a full overview of the data, as it will look in a Table1:\n\nmtcars |&gt; select(c(mpg, cyl, disp, col)) |&gt;\n  gtsummary::tbl_summary(by = cyl,\n                         statistic = list(mpg ~ \"{mean} (SD: {sd})\"),\n                         missing_text = \"Missing\")\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\n4\nN = 111\n6\nN = 71\n8\nN = 141\n\n\n\n\nmpg\n26.7 (SD: 4.5)\n19.7 (SD: 1.5)\n15.1 (SD: 2.6)\n\n\ndisp\n108 (79, 121)\n168 (160, 225)\n351 (301, 400)\n\n\ncol\n\n\n\n\n\n\n\n\n    blue\n3 (43%)\n2 (100%)\n6 (60%)\n\n\n    orange\n3 (43%)\n0 (0%)\n1 (10%)\n\n\n    white\n1 (14%)\n0 (0%)\n3 (30%)\n\n\n    Missing\n4\n5\n4\n\n\n\n1 Mean (SD: SD); Median (Q1, Q3); n (%)",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
-    "href": "notes/lesson-notes/02-Debugging.html#advanced-functionality-when-you-see-an-error",
-    "title": "Writing working code—and debugging it",
-    "section": "Advanced functionality: when you see an error",
-    "text": "Advanced functionality: when you see an error\n\nThe call tree\nHere’s some code. The functions are irrelevant, expect make_df() takes an input, passes something on to pass_on_df(), which (conditionally) calls the return_error() function. When you use make_df(), you might not realise all of this is happening behind the scenes.\n\nmake_df &lt;- function(x) {\n  df &lt;- data.frame(y=x+10)\n  pass_on_df(df)\n}\n\npass_on_df &lt;- function(x) {\n  # ...\n  if(x$y &gt; 11) return_error(x$y)\n}\n\nreturn_error &lt;- function(x) {\n  stop(paste0(x, \" not valid input\"))\n}\n\nmake_df(10)\n\nError in `return_error()`:\n! 20 not valid input\n\n\nWhen you see this error in RStudio, it looks as follows:\n\nIf you click “Show Traceback” on the right, you’ll see:\n From bottom to top, you can see the order in which functions were called, until the error occurred. Now you know it wasn’t make_df() directly but rather something downstream called pass_on_df(). This may not always give an obvious solution, but at least it can help you find out which package/function you should be Googling to understand the error message.\n\n\nFormal debugging tools\nBelow are a few highly related functions that can be useful for debugging. Sometimes you’ll see a button to “Rerun with Debug” right under the “Show Traceback” button we just discussed. Doing so sends you inside the working environment (‘the scope’) of the functions to “see what they see”. I.e., you see the data you put into the functions, and how these were manipulated at each step right until the error occurred. This can help reveal the cause.\n\nbrowser()\nUsing this gives a similar experience; if you wrote a function yourself, you can write browser() anywhere within it to force a break in execution. It then allows you to inspect your function’s inner workings (and contents) up to and at that point.\n\n\ndebug()\nthis is useful for inspecting other people’s functions; it adds a “browser()” statement into another function for you (undebug() removes it)\n\n\nbreakpoints\nIn .R scripts, you can click to the left of the line-numbers to add a small red dot. This is like inserting a browser() statement there.\n\n\ntrace() / untrace()\nLike debug() but can be used to insert any other code of your choosing into a function.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#warnings",
-    "href": "notes/lesson-notes/02-Debugging.html#warnings",
-    "title": "Writing working code—and debugging it",
-    "section": "Warnings",
-    "text": "Warnings\nWarnings are messages that don’t prevent your code from running. Treat these as you would errors, until you’re sure they’re harmless.\nBecause your code runs, they can be easy to miss; but usually they’re a package author’s way of letting you know you might not be using their package in the way it was intended;\nThey sometimes mean something horrible happened",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
-    "href": "notes/lesson-notes/02-Debugging.html#preparing-for-errors",
-    "title": "Writing working code—and debugging it",
-    "section": "Preparing for errors",
-    "text": "Preparing for errors\ntry() is handy when you know some code can cause an error but you don’t want it to break everything; you want to just skip over it in that case:\n\nlog_ &lt;- function(x) {\n  try(\n    return(log(x)),\n    silent=TRUE\n  )\n  x\n}\n\n\nlog_(2)\n\n[1] 0.6931472\n\nlog_(1)\n\n[1] 0\n\nlog_(0)\n\n[1] -Inf\n\nlog_(\"a\")\n\n[1] \"a\"\n\n\nThis function takes any input and tries to take its log; if unsuccessful, it simply returns the input unchanged (yes, I know this is a dumb function).",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
-    "href": "notes/lesson-notes/02-Debugging.html#when-code-runs-forever",
-    "title": "Writing working code—and debugging it",
-    "section": "When code runs forever",
-    "text": "When code runs forever\n\nR code\n\nIf R never stops evaluting (e.g., stuck in an infinite loop), you can manually stop the process. This can be frustrating as you’re left with little idea of what went wrong.\n\nCompiled code\n\nIf R creashes the moment you hit “Interrupt R”, the code was probably being run in another language (C/C++). There’s no way out but to restart and get to debugging.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/02-Debugging.html#more-reading",
-    "href": "notes/lesson-notes/02-Debugging.html#more-reading",
-    "title": "Writing working code—and debugging it",
-    "section": "More reading",
-    "text": "More reading\nHadley Wickham’s tutorial on debugging",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Writing working code—and debugging it"
-    ]
-  },
-  {
-    "objectID": "notes/extra/1-example-pipeline.html",
-    "href": "notes/extra/1-example-pipeline.html",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "href": "notes/extra/1-example-pipeline.html#working-with-data-from-statistics-denmark-dst",
-    "title": "Example pipeline",
-    "section": "",
-    "text": "Here, we’ll use the simulated data from the previous note to show how a full data preprocessing pipeline might look. In practice, you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.) and then follow a similar pipeline to clean and prepare the data for analysis.\n\nlibrary(dplyr)\n\nLoading in the simulated data here, but in practice you would load in the data from DST using the appropriate functions (e.g. read_dta, read_csv, etc.):\n\nload(\"simulated_data.RData\")\n\n\n\n\nlpr &lt;- left_join(lpr_adm, lpr_diag, by = \"RECNUM\") |&gt;\n  # Only care about A-diagnoses pertaining to hip fracture (S72...)\n  filter(C_DIAGTYPE == \"A\",\n         grepl(\"^S72\", C_DIAG)\n  ) |&gt;\n  # For each person, keep only first date\n  group_by(PNR) |&gt;\n  filter(D_INDDTO == min(D_INDDTO)) |&gt;\n  # Keep one row if multiple diagnoses on the same date\n  slice(1) |&gt;\n  ungroup() # Always best to ungroup in the end\n\nPreview:\n\nlpr |&gt; head(3) |&gt; gt::gt(id = \"lpr\")\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n1000746\n4520098676\n2000-08-26\nS72.7\nS72.7\nA\n\n\n1006023\n3028465586\n2000-01-13\nS72.7\nS72.7\nA\n\n\n1006164\n6616548853\n2000-02-13\nS72.1\nS72.1\nA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(lpr, bef, by = \"PNR\") |&gt;\n  # calculate age in days, divide into years, round to two decimals\n  mutate(age = ((D_INDDTO - FOED_DAG) / 365.25) |&gt; as.numeric() |&gt; round(2)) |&gt;\n  select(c(PNR, D_INDDTO, FOED_DAG, koen, age)) |&gt;\n  rename(index_date = D_INDDTO)\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n\n\n\n\n\n\n\n\n\n\n\nlast_eGFR &lt;- left_join(pop, lab_dm_forsker, by = \"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2008-10-14\neGFR\n90\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2003-04-19\neGFR\n92\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2007-07-26\neGFR\n104\n\n\n\n\n\n\n\nNote, approx 10% of individuals have never had an eGFR measured; they now have NAs for the lab values, which is realistic and something you will have to deal with in real data.\nAlso, “ANALYSISCODE” is currently just “eGFR” for all rows, but in real data you would have many different types of lab measurements, each represented not with readable names but with NPU-codes.\n\nlast_eGFR &lt;- last_eGFR |&gt;\n  # Get eGFRs prior to fracture\n  filter(SAMPLINGDATE &lt;= index_date) |&gt;\n  # keep only last eGFR for each person\n  group_by(PNR) |&gt;\n  filter(SAMPLINGDATE == max(SAMPLINGDATE)) |&gt;\n  slice(1) |&gt;\n  ungroup() |&gt;\n  # keep only necessary columns to add back onto the full pop\n  select(c(PNR, SAMPLINGDATE, VALUE)) |&gt;\n  rename(eGFR_val = VALUE, eGFR_date = SAMPLINGDATE)\n\npop &lt;- left_join(pop, last_eGFR, by =\"PNR\")\n\nPreviews:\n\nlast_eGFR |&gt; head(3) |&gt; gt::gt(id = \"last_eGFR2\")\n\n\n\n\n\n\n\nPNR\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-06-19\n67\n\n\n1006164\n2000-01-25\n71\n\n\n1010815\n2000-05-29\n79\n\n\n\n\n\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop2\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_first_gld &lt;- lmdb |&gt;\n  # only get glucose-lowering drugs (ATC code starting with A10BA02, A10BB12, A10BH0[1,2,3], A10BJ0[2,6], or A10BK0[1-4])\n  filter(grepl(\"^A10BA02|^A10BB12|^A10BH0[1,2,3]|^A10BJ0[2,6]|^A10BK0[1-4]\", ATC)) |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD))\n\nPreview:\n\nlmdb_first_gld |&gt; head(3) |&gt; gt::gt(id = \"lmdb_first_gld\")\n\n\n\n\n\n\n\nPNR\nEKSD\n\n\n\n\n1000746\n2001-04-25\n\n\n1006023\n2006-03-21\n\n\n1006164\n2000-08-04\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_first_gld, by =\"PNR\")\n\n# Only keep people with no prior glucose-lowering drug use before hip fracture\npop &lt;- pop |&gt;\n  filter(is.na(EKSD) | index_date &lt;= EKSD) |&gt;\n  select(-c(EKSD))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop3\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\n\n\n\n\n\n\n\n\n\n\n\nlmdb_metformin &lt;- lmdb |&gt;\n  filter(ATC == \"A10BA02\")\n\nlmdb_metformin &lt;- lmdb_metformin |&gt;\n  # For each person, only keep the earliest date of redemption\n  group_by(PNR) |&gt;\n  filter(EKSD == min(EKSD)) |&gt;\n  # For each prescription, multiply the pill dosage by the number of pills to get a total dose and sum it over all prescriptions for that date (in case of multiple redemptions same day) to get a grand total\n  mutate(no_of_pills = sum(APK * PACKSIZE),\n         total_dose = sum(APK * PACKSIZE * STRNUM)) |&gt;\n  # keep one line per person\n  slice(1) |&gt;\n  ungroup() |&gt;\n  select(c(PNR, EKSD, no_of_pills, total_dose)) |&gt;\n  rename(metf_date = EKSD,\n         metf_no_of_pills = no_of_pills,\n         metf_total_dose = total_dose)\n\nPreview:\n\nlmdb_metformin |&gt; head(3) |&gt; gt::gt(id = \"lmdb_metformin\")\n\n\n\n\n\n\n\nPNR\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2014-01-18\n90\n1260\n\n\n1019932\n2017-10-14\n90\n1170\n\n\n1033372\n2008-05-08\n40\n600\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- left_join(pop, lmdb_metformin, by =\"PNR\")\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop4\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\n\n\n\n\n\n\n\n\n\n\n\npop &lt;- pop |&gt;\n  mutate(tte_metf = difftime(metf_date, index_date))\n\nPreview:\n\npop |&gt; head(3) |&gt; gt::gt(id = \"pop5\")\n\n\n\n\n\n\n\nPNR\nindex_date\nFOED_DAG\nkoen\nage\neGFR_date\neGFR_val\nmetf_date\nmetf_no_of_pills\nmetf_total_dose\ntte_metf\n\n\n\n\n1000746\n2000-08-26\n1947-04-20\n1\n53.35\n2000-06-19\n67\n2014-01-18\n90\n1260\n4893\n\n\n1006023\n2000-01-13\n1957-02-07\n1\n42.93\nNA\nNA\nNA\nNA\nNA\nNA\n\n\n1006164\n2000-02-13\n1947-04-19\n2\n52.82\n2000-01-25\n71\nNA\nNA\nNA\nNA",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "href": "notes/extra/1-example-pipeline.html#now-you-can-start-analysing-the-data",
-    "title": "Example pipeline",
-    "section": "Now you can start analysing the data…",
-    "text": "Now you can start analysing the data…\n\nlibrary(ggplot2)\nggplot(pop, aes(x=age, y = eGFR_val)) +\n  geom_point() +\n  geom_smooth(method = lm, formula = y ~ splines::bs(x, 3)) +\n  theme_bw()\n\nWarning: Removed 753 rows containing non-finite outside the scale range\n(`stat_smooth()`).\n\n\nWarning: Removed 753 rows containing missing values or values outside the scale range\n(`geom_point()`).",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
-    "href": "notes/extra/1-example-pipeline.html#or-save-the-cleaned-dataset-for-later-use",
-    "title": "Example pipeline",
-    "section": "Or save the cleaned dataset for later use",
-    "text": "Or save the cleaned dataset for later use\n\nsaveRDS(pop, \"cleaned_data.rds\")\n\nMaking it easy to load the dataset in at a later time without having to repeat the whole pipeline:\n\npop &lt;- readRDS(\"cleaned_data.rds\")",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Example pipeline"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "General info",
-    "section": "",
-    "text": "We’re a bi-weekly open coding café for anyone working at Steno Aarhus (SDCA), Dept. of Endocrinology (HoK), AU-Public Health, AU-Clinical Medicine and AU-Biomedicine to come and get help with their code."
-  },
-  {
-    "objectID": "index.html#format",
-    "href": "index.html#format",
-    "title": "General info",
-    "section": "Format",
-    "text": "Format\nBelow are the planned dates; you can arrive and leave at any time.\nThere will be a ~15 minute presentation at the beginning of each session, tackling a relevant topic (a general R concept, workflows, helpful packages, etc.)\nSubsequently, 1-2 experienced instructors will help with your specific challenges and questions. But please interact with each other—maybe someone in the group has the solution to your exact problem.\n\n\n\n\n\n\nTipPrerequisites\n\n\n\n\n\nYou’re expected to have an introductory knowledge of R and RStudio; consider\n\na course such as this offered by the Danish Diabetes and Endocrinology Academy\nan online course such as this one at Datacamp.com\nthe fantastic online book R for Data Science"
-  },
-  {
-    "objectID": "index.html#schedule-and-themes",
-    "href": "index.html#schedule-and-themes",
-    "title": "General info",
-    "section": "Schedule and themes",
-    "text": "Schedule and themes\n\n\n\n\n\n\nNotePrevious sessions (and notes)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics.\n\n\n \n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, Jan 13, 2026\n03\n10:00-12:00\nHjørnerummet (A401-109)\nIntroduction and planning of format  \nZheer\n-\n\n\nTue, Jan 27, 2026\n05\n10:00-11:30\nHjørnerummet (A401-109)\nHow to ask for help: The minimal reproducible example and making simulated data (notes)\nZheer\n-\n\n\nWed, Feb 18, 2026\n08\n10:00-11:30\nHjørnerummet (A401-109)\nPrevention and diagnosis of errors in R (notes)\nZheer\n-\n\n\nTue, Feb 24, 2026\n09\n10:00-11:30\nHjørnerummet (A401-109)\nTypes of data (object, classes) (notes)\nZheer\n-\n\n\nTue, Mar 10, 2026\n11\n10:00-11:30\nHjørnerummet (A401-109)\nWriting functions instead of copy/paste (notes)\nZheer\n-\n\n\nTue, Mar 24, 2026\n13\n10:00-11:30\nHjørnerummet (A401-109)\nLoops, recursion, parallelisation (notes)\nZheer\n-\n\n\nTue, Apr 7, 2026\n15\n10:00-11:30\nHjørnerummet (A401-109)\nParadigms: Base R vs. Tidyverse vs. data.table (notes)\nZheer\n-\n\n\nTue, Apr 21, 2026\n17\n10:00-11:30\nHjørnerummet (A401-109)\nMore tidyverse (notes)\nZheer\n-\n\n\n\n\n\n\n\n\n\n\n\n\n\nUpcoming sessions\nAdd to your calendar to receive automatic updates.\nJoin future sessions in person or via the Zoom link\n\n\n\n\n\n\n\n\nDates, times, locations, and lesson topics\n\n\nNote, the schedule may be subject to change\n\n\n\nWeek\nTime\nLocation\nTopic\nPresenter\nHelpers\n\n\n\n\nTue, May 5, 2026\n19\n10:00-11:30\nHjørnerummet (A401-109)\nHandling many packages—and cross-package workflows\nZheer\n-\n\n\nTue, May 19, 2026\n21\n10:00-11:30\nHjørnerummet (A401-109)\nMoving between R and Stata\nZheer\n-\n\n\nTue, Jun 2, 2026\n23\n10:00-11:30\nHjørnerummet (A401-109)\nMarkdown basics: Using Quarto and Rmarkdown\nZheer\n-\n\n\nTue, Jun 16, 2026\n25\n10:00-11:30\nHjørnerummet (A401-109)\nDatabase formats (parquet and more)\nZheer\n-\n\n\n\n\n\nIntermezzo\n\n\n\n\n\nTue, Aug 11, 2026\n33\n10:00-11:30\n\nTBA\n\n\n\n\n\n\n\n\n\n\n\nOther planned topics are:\n\nPublication-ready plots with the grammar of graphics: {ggplot2} and {patchwork}\nInteractive dashboards: {shiny}, {bslib}, {ggvis}\nNice-to-know packages\n\nData cleaning: {janitor}\nData summaries: {Hmisc}, {skimr}, {modelsummary}\nData presentation: {tinytable}, {kable}, {gt}, {gtsummary}\n\nMatching and Weighting (using {MatchIt} and {WeightIt} packages)\nMissing data: relevant packages, including imputation via {mice} and combining this with {MatchThem}/{WeightThem}\nSurvival analysis: {Epi}, {survival}, {ggsurvfit}\nPreregistration as a means to improved workflows in R\nWorking with AI/LLMs (large language models)—the right way\nReproducible pipelines: {renv}, {targets}\n\nReach out to me if you want anything added to the list.\n\n\n\nThis website was made in Quarto: see how here"
-  },
-  {
-    "objectID": "notes/extra/index.html",
-    "href": "notes/extra/index.html",
-    "title": "Extra notes and tutorials",
-    "section": "",
-    "text": "This section will contain miscellaneous notes curated or written for other causes but which may be useful here as well.",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials"
-    ]
-  },
-  {
-    "objectID": "notes/extra/0-simulate-data.html",
-    "href": "notes/extra/0-simulate-data.html",
-    "title": "Simulate some data for further work",
-    "section": "",
-    "text": "Below I will construct some DST-like datasets and show how a full data preprocessing pipeline might look.\nset.seed(123456)\nlibrary(dplyr)",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Simulate some data for further work"
-    ]
-  },
-  {
-    "objectID": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
-    "href": "notes/extra/0-simulate-data.html#lets-construct-some-fake-data",
-    "title": "Simulate some data for further work",
-    "section": "Let’s construct some fake data",
-    "text": "Let’s construct some fake data\n\nPopulation\n\nn &lt;- 2000\nbef &lt;- data.frame(\n  PNR = runif(n, min = 1e6, max = 1e7-1) |&gt; floor() |&gt; as.character(),\n  koen = rbinom(n, size = 1, prob = 0.49) + 1,\n  FOED_DAG = runif(n, as.Date(\"1940-01-01\"), as.Date(\"1959-12-31\")) |&gt; floor()  |&gt; as.Date()\n)\n\nPreview:\n\nbef |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nkoen\nFOED_DAG\n\n\n\n\n8180058\n2\n1955-09-19\n\n\n7782085\n2\n1947-06-21\n\n\n4521300\n1\n1959-04-11\n\n\n\n\n\n\n\n\n\nLMDB\n\n# Making an API call to a website that sends back all existing ATC-codes + corresponding drug names.\nATC_codes &lt;- httr2::request(\"https://pgx-db.org/rest-api/atc/atc_code/CS/\") |&gt;\n  httr2::req_headers(\n    accept = \"application/json\",\n    `X-CSRFToken`= \"3T14DJ7uB6gqdVnsbPclbAonNeAAiP4rAA47TXe3lsagl9PGOlPM9BKNhIFughWy\"\n  ) |&gt;\n  httr2::req_perform() |&gt;\n  httr2::resp_body_json() |&gt; \n  dplyr::bind_rows()\n\n# Select a subset\nATC_select_A &lt;- ATC_codes |&gt; \n  rename(ATC = `ATC code`) |&gt;\n  filter(grepl(\"^A\", ATC))\n\n# Simulate prescriptions\nn_lmdb &lt;- n * 600\nlmdb &lt;- sample_n(ATC_select_A,\n               size = n_lmdb,\n               replace=T) |&gt;\n  mutate(PNR = sample(bef$PNR, size = n_lmdb, replace=T),\n         EKSD = runif(n_lmdb, as.Date(\"2000-01-01\"), as.Date(\"2020-12-31\")) |&gt; floor()  |&gt; as.Date(),\n         APK = runif(n_lmdb, 1, 4) |&gt; floor(),\n         PACKSIZE = runif(n_lmdb, 1, 4) |&gt; floor() * 10,\n         STRNUM = round(rnorm(n_lmdb, 15, 4)),\n         VOLUME = PACKSIZE * APK)\n\nPreview:\n\nlmdb |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nATC\nDescription\nPNR\nEKSD\nAPK\nPACKSIZE\nSTRNUM\nVOLUME\n\n\n\n\nA11HA03\nTocopherol (vit e)\n2265313\n2014-10-27\n3\n20\n11\n60\n\n\nA03FA05\nAlizapride\n7571615\n2013-08-25\n3\n10\n11\n30\n\n\nA10AD06\nInsulin degludec and insulin aspart\n5854842\n2000-11-01\n3\n10\n2\n30\n\n\n\n\n\n\n\n\n\nLPR2\n\nn_lpr &lt;- n * 30\nhip_injury_icd &lt;- c(\"S70.0\", \"S71.0\", \"S72.0\", \"S72.1\", \"S72.2\", \"S72.3\", \"S72.4\", \"S72.7\", \"S72.8\", \"S72.9\")\nlpr_adm &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n_lpr, replace = T),\n  RECNUM = runif(n_lpr, min = 1e9, max = 1e10-1) |&gt; floor() |&gt; unique(),\n  D_INDDTO = runif(n_lpr, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor() |&gt; as.Date(),\n  C_ADIAG = sample(hip_injury_icd, n_lpr, replace=T)\n)\n\nlpr_diag &lt;- lpr_adm |&gt; \n  select(RECNUM, C_ADIAG) |&gt;\n  rename(C_DIAG = C_ADIAG) |&gt;\n  mutate(C_DIAGTYPE = \"A\") |&gt;\n  # Add in a B-diagnosis for a third of people\n  rbind(\n    data.frame(\n      RECNUM = sample(lpr_adm$RECNUM, n_lpr/3),\n      C_DIAG = sample(hip_injury_icd, n_lpr/3, replace=T),\n      C_DIAGTYPE = \"B\"\n    )\n  )\n\nPreviews:\n\nlpr_subset &lt;- lpr_adm$RECNUM |&gt; head(3)\nlpr_adm |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nRECNUM\nD_INDDTO\nC_ADIAG\n\n\n\n\n9768595\n3499773625\n2006-04-06\nS72.9\n\n\n5026141\n2430170757\n2003-05-21\nS72.0\n\n\n4377798\n3828151776\n2003-07-27\nS72.1\n\n\n\n\n\n\nlpr_diag |&gt; filter(RECNUM %in% lpr_subset) |&gt; gt::gt()\n\n\n\n\n\n\n\nRECNUM\nC_DIAG\nC_DIAGTYPE\n\n\n\n\n3499773625\nS72.9\nA\n\n\n2430170757\nS72.0\nA\n\n\n3828151776\nS72.1\nA\n\n\n3828151776\nS72.8\nB\n\n\n3499773625\nS72.1\nB\n\n\n\n\n\n\n\n\n\nLAB\n\nn_lab &lt;- n * 40\nn_lab_missing &lt;- floor(n / 10)\nlab_dm_forsker &lt;- data.frame(\n  PNR = sample(bef$PNR, size = n - n_lab_missing) |&gt; sample(size = n_lab, replace = T),\n  SAMPLINGDATE = runif(n_lab, as.Date(\"2000-01-01\"), as.Date(\"2009-12-31\")) |&gt; floor()  |&gt; as.Date(),\n  ANALYSISCODE = rep(\"eGFR\", n_lab)\n) |&gt;\n  left_join(bef |&gt; select(c(PNR, FOED_DAG)), by = \"PNR\") |&gt;\n  mutate(\n    VALUE = rnorm(n_lab, \n                  mean = 100 - as.numeric((as.Date(\"2000-01-01\") - as.Date(FOED_DAG))/3650)^10/(2^20) |&gt; round(2), \n                  sd = 10) |&gt; round()\n  ) |&gt;\n  select(-c(FOED_DAG))\n\nPreview:\n\nlab_dm_forsker |&gt; head(3) |&gt; gt::gt()\n\n\n\n\n\n\n\nPNR\nSAMPLINGDATE\nANALYSISCODE\nVALUE\n\n\n\n\n4827513\n2001-02-12\neGFR\n83\n\n\n8230182\n2009-03-16\neGFR\n75\n\n\n4513978\n2002-02-28\neGFR\n68",
-    "crumbs": [
-      "R Coding Café",
-      "Extra notes and tutorials",
-      "Simulate some data for further work"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/06-Paradigms.html",
-    "href": "notes/lesson-notes/06-Paradigms.html",
-    "title": "Coding paradigms",
-    "section": "",
-    "text": "library(dplyr)\nlibrary(data.table)\nset.seed(12345)\nA coding paradigm is a style of coding that follows a specific set of principles; think of them like different dialects of the language. R has three common ones for data manipulation:\nWhat’s “best” depends on the use case. You’ll encounter all three in the wild, although many guides use the Tidyverse.",
-    "crumbs": [
-      "R Coding Café",
-      "Lesson notes",
-      "Coding paradigms"
-    ]
-  },
-  {
-    "objectID": "notes/lesson-notes/06-Paradigms.html#some-data-to-work-on",
-    "href": "notes/lesson-notes/06-Paradigms.html#some-data-to-work-on",
-    "title": "Coding paradigms",
+    "objectID": "notes/lesson-notes/05-Loops.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/05-Loops.html#some-data-to-work-on",
+    "title": "Loops and parallelisation",
     "section": "Some data to work on",
-    "text": "Some data to work on\n\ndf &lt;- tibble(\n  id = 1:10,\n  age = rnorm(10, mean = 40, sd = 10) |&gt; round(),\n  sex = sample(c(\"M\", \"F\"), 10, replace = TRUE),\n  weight = rnorm(10, mean = 75, sd = 10) |&gt; round(),\n  height = rnorm(10, mean = 1.66, sd = 0.1) |&gt; round(2)\n)\n\nDT &lt;- as.data.table(df)   # data.table copy\n\ndf |&gt; gt::gt(id = \"df_table\")\n\n\n\n\n\n\n\nid\nage\nsex\nweight\nheight\n\n\n\n\n1\n46\nF\n83\n1.84\n\n\n2\n47\nM\n66\n1.61\n\n\n3\n39\nF\n72\n1.72\n\n\n4\n35\nF\n86\n1.72\n\n\n5\n46\nM\n78\n1.64\n\n\n6\n22\nF\n83\n1.74\n\n\n7\n46\nF\n90\n1.88\n\n\n8\n37\nF\n69\n1.86\n\n\n9\n37\nF\n59\n1.82\n\n\n10\n31\nF\n59\n1.69",
+    "text": "Some data to work on\n\npatients &lt;- tibble(\n  id      = 1:8,\n  age     = c(45, 67, 53, 71, 38, 60, 55, 49),\n  systolic = c(120, 145, 132, 158, 112, 140, 128, 119)\n)\npatients |&gt; gt::gt(id = \"patients\")\n\n\n\n\n\n\n\nid\nage\nsystolic\n\n\n\n\n1\n45\n120\n\n\n2\n67\n145\n\n\n3\n53\n132\n\n\n4\n71\n158\n\n\n5\n38\n112\n\n\n6\n60\n140\n\n\n7\n55\n128\n\n\n8\n49\n119",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Coding paradigms"
+      "Loops and parallelisation"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/06-Paradigms.html#base-r-3",
-    "href": "notes/lesson-notes/06-Paradigms.html#base-r-3",
-    "title": "Coding paradigms",
-    "section": "Base R",
-    "text": "Base R\nBase R uses explicit indexing and standard evaluation. What you see is what you get — there are no hidden conventions or non-standard evaluation tricks.\nPros: Zero dependencies; great for simple scripts, package development, and teaching fundamentals.\nCons: Can get messy for complex data manipulation; less efficient on large datasets due to copying.",
+    "objectID": "notes/lesson-notes/05-Loops.html#sapply-and-lapply",
+    "href": "notes/lesson-notes/05-Loops.html#sapply-and-lapply",
+    "title": "Loops and parallelisation",
+    "section": "sapply() and lapply()",
+    "text": "sapply() and lapply()\nBoth apply a function to each element of a vector or list. The difference is the output format.\nlapply() always returns a list\n\ndf &lt;- patients |&gt; select(-id)\n\nlapply(X = df, FUN = mean)\n\n$age\n[1] 54.75\n\n$systolic\n[1] 131.75\n\n\nsapply() tries to simplify to a vector or matrix\n\nsapply(X = df, FUN = mean)\n\n     age systolic \n   54.75   131.75 \n\n\nThis is the same as manually doing lapply + unlist:\n\nlapply(X = df, FUN = mean) |&gt; unlist()\n\n     age systolic \n   54.75   131.75 \n\n\nThe apply() family also easily work with custom functions:\n\nsquared &lt;- function(x) {\n  x^2\n}\nsapply(X = c(1:5), FUN = squared)\n\n[1]  1  4  9 16 25",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Coding paradigms"
+      "Loops and parallelisation"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/06-Paradigms.html#tidyverse-3",
-    "href": "notes/lesson-notes/06-Paradigms.html#tidyverse-3",
-    "title": "Coding paradigms",
-    "section": "Tidyverse",
-    "text": "Tidyverse\nThe tidyverse (centred on {dplyr}) is declarative and uses non-standard evaluation — you write column names without quoting them or prefixing with $. Operations are naturally chained together with the pipe |&gt;, reading top-to-bottom like a sentence; Each so-called verb takes a data.frame as its first argument and returns a data.frame — making them easy to compose.\nPros: The most readable option; ideal for clarity/readability. Rich ecosystem of packages; everything from data manipulation to visualization.\nCons: Like base R, it can be slower than data.table for large datasets due to copying.",
+    "objectID": "notes/lesson-notes/05-Loops.html#apply-for-matricesdata-frames",
+    "href": "notes/lesson-notes/05-Loops.html#apply-for-matricesdata-frames",
+    "title": "Loops and parallelisation",
+    "section": "apply() for matrices/data frames",
+    "text": "apply() for matrices/data frames\napply() works on rows (MARGIN = 1) or columns (MARGIN = 2):\n\nmat &lt;- matrix(1:12, nrow = 3)\nmat\n\n     [,1] [,2] [,3] [,4]\n[1,]    1    4    7   10\n[2,]    2    5    8   11\n[3,]    3    6    9   12\n\nprint(\"Row sums:\")\n\n[1] \"Row sums:\"\n\napply(X = mat, MARGIN = 1, FUN = sum)\n\n[1] 22 26 30\n\nprint(\"Column sums:\")\n\n[1] \"Column sums:\"\n\napply(X = mat, MARGIN = 2, FUN = sum)\n\n[1]  6 15 24 33\n\n\nThe problem with the apply() family is that the function names and output types are different every time, which makes them hard to remember.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Coding paradigms"
+      "Loops and parallelisation"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/06-Paradigms.html#data.table-3",
-    "href": "notes/lesson-notes/06-Paradigms.html#data.table-3",
-    "title": "Coding paradigms",
-    "section": "data.table",
-    "text": "data.table\ndata.table is concise and fast. It brings the DT[i, j, by] syntax, allowinng you to filter rows, operate on columns, and group by variables all in one place. It modifies data in place, making it memory-efficient. It also uses non-standard evaluation, so you can write column names directly without quoting.\nPros: Best when working with millions of rows; in-place modification and optimised grouping make it the fastest and most memory-efficient option for large datasets. It also has powerful features for complex data manipulation.\nCons: The concise syntax can be less intuitive for beginners, and it has a steeper learning curve. Speed gains are often exaggerated, as base R and tidyverse have gained performance improvements in recent years.",
+    "objectID": "notes/lesson-notes/05-Loops.html#map2-mapping-over-two-inputs-at-once",
+    "href": "notes/lesson-notes/05-Loops.html#map2-mapping-over-two-inputs-at-once",
+    "title": "Loops and parallelisation",
+    "section": "map2() — mapping over two inputs at once",
+    "text": "map2() — mapping over two inputs at once\nThis function requires both inputs to be the same length, and element i of input .x will be mapped to element i of input .y; that is, you don’t get every possible combination of .x and .y\n\nnames &lt;- c(\"Alice\", \"Bob\", \"Carol\")\nscores &lt;- c(88, 95, 72)\n\nmyPaste &lt;- function(nm, scr) paste0(nm, \" scored \", scr)\n\nmap2_chr(.x = names, .y = scores, .f = myPaste)\n\n[1] \"Alice scored 88\" \"Bob scored 95\"   \"Carol scored 72\"\n\n\nFor all combinations, try something like:\n\nwith(\n  expand.grid(names, scores),\n  paste0(Var1, \" scored \", Var2)\n)\n\n[1] \"Alice scored 88\" \"Bob scored 88\"   \"Carol scored 88\" \"Alice scored 95\"\n[5] \"Bob scored 95\"   \"Carol scored 95\" \"Alice scored 72\" \"Bob scored 72\"  \n[9] \"Carol scored 72\"",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Coding paradigms"
+      "Loops and parallelisation"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/06-Paradigms.html#section",
-    "href": "notes/lesson-notes/06-Paradigms.html#section",
-    "title": "Coding paradigms",
+    "objectID": "notes/lesson-notes/04-Functions.html",
+    "href": "notes/lesson-notes/04-Functions.html",
+    "title": "Functions",
     "section": "",
-    "text": "Tip\n\n\n\nMost real-world R code mixes paradigms. You might load data with base R, clean it with {dplyr}, and run a heavy aggregation with {data.table}. Pick the right tool for each job.",
+    "text": "library(dplyr)\nlibrary(ggplot2)\nset.seed(1234)\nFunctions are a special type of object that take some input(s) and return some output. In short, they’re a way to wrap a lot of code in a single name and then call that entire bunch of code later, whenever you need it.\nThey are extremely useful for keeping your code readable and without repetitions.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Coding paradigms"
+      "Functions"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
-    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html",
-    "title": "Minimal, reproducible example",
-    "section": "",
-    "text": "Consider StackOverflow! Always look for extisting answers to your question first, then post! AI (LLMs) can be a good help for simple cases but for more complex things will often give you code that breaks easily. Can also at times be esoteric and difficult to debug.\nThere is no shame in using LLMs as long as one is aware of these issues. In fact, LLMs can be a great way of turning your headache into a well-formed question.",
+    "objectID": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
+    "href": "notes/lesson-notes/04-Functions.html#some-data-to-work-on",
+    "title": "Functions",
+    "section": "Some data to work on",
+    "text": "Some data to work on\n\nn &lt;- 1000\ndf &lt;- tibble::tibble(\n  x = 1:n,\n  age = rnorm(n,65, 10),\n  sex = rbinom(n, 1, 0.5) +1,\n  BMI = rnorm(n, 22 - 2*sex + sex*age/15 + age/15, sd = age/40),\n  weight = BMI * rnorm(n, 1.7, 0.1)^2\n)\n\ndf |&gt; \n  mutate(sex = factor(sex, levels = c(1,2), labels = c(\"Male\", \"Female\"))) |&gt; \n  ggplot(aes(y = BMI, x = age, color = sex, fill = sex)) + \n  geom_point() + \n  geom_smooth(method = lm, \n              formula = y ~ splines::bs(x,3) )",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Minimal, reproducible example"
+      "Functions"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
-    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#setting-the-random-seed",
-    "title": "Minimal, reproducible example",
-    "section": "Setting the random seed",
-    "text": "Setting the random seed\nBefore doing any random operations, setting the seed to a fixed value will ensure that the code produces exactly the same output every time:\n\nset.seed(12345)\nrpois(5, 10)\n\n[1] 11 12  9  8 11\n\nset.seed(12345)\nrpois(5, 10) \n\n[1] 11 12  9  8 11\n\nset.seed(23)\nrpois(5, 10)\n\n[1] 10  8 12 15 13",
+    "objectID": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
+    "href": "notes/lesson-notes/04-Functions.html#unnamed-arguments",
+    "title": "Functions",
+    "section": "Unnamed arguments",
+    "text": "Unnamed arguments\nYou can add an ellipsis argument to give the user flexibility to add additional arguments beyond the ones you explicitly specified.\n\nmy_function &lt;- function(data, ...) {\n  dots &lt;- list(...)\n  return(dots)\n}\nmy_function(df, stuff=2, more_stuff=3)\n\n$stuff\n[1] 2\n\n$more_stuff\n[1] 3\n\n\nThe syntax gets a bit tricky and can be difficult to understand, but this is extremely powerful. For example when you are calling other functions within your function, and you want to be able to pass on arguments down the line but without having to specify all (possibly hundreds) of them:\n\nmy_plotter &lt;- function(data, ...) {\n  do.call(plot, \n          list(data$age, data$BMI, ...))\n}\n\nCalling it without extra arguments:\n\nmy_plotter(df)\n\n\n\n\n\n\n\n\nUsing all the extra power:\n\nmy_plotter(df, type = \"p\", \n           xlim = c(20,100), ylim = c(20,40), \n           xlab = \"Age (years)\", ylab = \"BMI (kg/m^2)\", pch = \".\", \n           main = \"Distribution of BMI by age\")",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Minimal, reproducible example"
+      "Functions"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
-    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-distribution",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a distribution",
-    "text": "Sampling from a distribution\n\nN &lt;- 20\n\n\nThe normal distribution\n\n# The normal distribution\nrnorm(n = N, mean = 65, sd = 7)\n\n [1] 72.75243 63.05340 72.13444 65.31806 76.03046 66.52802 57.67425 62.97918\n [9] 68.37085 56.48537 67.15696 61.35875 61.90380 60.80481 74.06204 70.84774\n[17] 61.03789 70.51894 56.83849 61.28426\n\n\n\n\nThe binomial distribution\n\n# size = number of flips of the coin. E.g., size=1 and prob = 0.3 gives you a binary variable, where approx. 60% of values are 1, the remaining 0.\nrbinom(n = N, size = 1, prob = 0.6)\n\n [1] 1 0 1 0 0 1 1 0 1 0 1 1 1 1 1 1 1 0 1 0\n\n# size = 3, prob = 0.5 counts how many heads you'd get if you flipped a fair count thrice (1/8 = 0, 3/8 = 1, 3/8 = 2, 1/8 = 3)\nrbinom(n = N, size = 3, prob = 0.5)\n\n [1] 2 2 3 2 0 1 2 1 2 3 2 0 3 2 2 0 1 3 0 1\n\n\n\n\nThe poisson distribution\n\nrpois(n = N, lambda = 15)\n\n [1]  8 15 13 15 10 14  7 17 13 15 15 16 13 16 18 12 15 22 10 16\n\n\n\n\nAnd whatever else\nRead about other distributions using e.g., ?rnorm, and notice the other ways of extracting info about a distribution (dnorm, pnorm, qnorm for the normal density function, cumulative distribution function and quantile function, respectively).\n\n?rweibull\n?rcauchy\n?rchisq\n# ...",
+    "objectID": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
+    "href": "notes/lesson-notes/04-Functions.html#when-to-use-functions",
+    "title": "Functions",
+    "section": "When to use functions",
+    "text": "When to use functions\nA fundamental tenet of coding is DRY: Don’t Repeat Yourself. If you’re repeating 1-2 lines, turning it into a function doesn’t make sense. But if you’re repeating more than 5-10 lines (and especially if you’re repeating it more than once), you need to wrap that in a function.\n\nReproducibility and robustness\nAn important benefit is that you avoid having multiple copies of the same code to try to keep up-to-date. Code often evolves over time (as errors become apparent, or you simply change your mind about previous choices). With functions, you simply have to change the code once, and every call to the function will be fixed.\n\ndata_cleaning &lt;- function(data, title = \"Height by weight\") {\n  groups &lt;- unique(data$sex)\n  cols &lt;- wesanderson::wes_palette(\"Darjeeling2\", 2)[groups+1]\n  groups &lt;- tribble(\n    ~from, ~to,\n    1, \"Male\",\n    2, \"Female\"\n  )\n  \n  data &lt;- data |&gt;\n    mutate(sex = recode_values(sex, from = groups$from, to = groups$to) |&gt; factor()) |&gt;\n    mutate(age_rank = rank(age),\n           height = (weight/BMI)^0.5) |&gt;\n    filter(height &gt; 1.7) |&gt;\n    mutate(height_quantile = ecdf(height)(height),\n           weight_quantile = ecdf(weight)(weight)) %&gt;%\n    ggplot(., aes(x = weight_quantile, y = height_quantile, color = sex)) + \n    geom_point() + \n    labs(\n      title = title, \n         y = \"Height (percentile)\", \n         x = \"Weight (percentile)\"\n    ) +\n    theme(legend.position = \"top\", legend.title = element_blank()) +\n    scale_color_manual(values = cols, label = groups) +\n    scale_y_continuous(labels = \\(x) {x*100}) +\n    scale_x_continuous(labels = \\(x) {x*100})\n  return(data)\n}\n\ndf |&gt; data_cleaning()\n\nWarning: Removed 253 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\ndf |&gt; filter(age &lt; 60) |&gt; data_cleaning(\"Height by weight in those aged &lt; 60 years\")\n\nWarning: Removed 76 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\ndf |&gt; filter(age &gt;= 60) |&gt; data_cleaning(\"Height by weight in those aged 60 years or above\")\n\nWarning: Removed 177 rows containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\n\nOften, I’ll start by writing the code out in the open, but then wrap a function definition around it once it works and I know I’ll be reusing it. Equally importantly; don’t write functions just for the sake of writing functions. If the code is straightforward and won’t be reused, adding additional names (functions within functions within functions) only adds unnecessary complexity and obscurity.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Minimal, reproducible example"
+      "Functions"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
-    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#an-example-dataset",
-    "title": "Minimal, reproducible example",
-    "section": "An example dataset",
-    "text": "An example dataset\nThe simple way:\n\ndf &lt;- data.frame(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte = rpois(n = 5, 15)\n)\ndf |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte\n\n\n\n\n0\n70.1\n16\n\n\n1\n62.0\n19\n\n\n1\n64.1\n20\n\n\n0\n72.2\n18\n\n\n0\n65.0\n14\n\n\n\n\n\n\n\nTibbles allow you to build up columns sequentially; i.e. use info from one column in building the next:\n\nlibrary(tibble)\n\n\ndf_tibble &lt;- tibble::tibble(\n  trt = rbinom(n = 5, size = 1, prob = 0.5),\n  age = rnorm(n = 5, mean = 65, sd = 7) |&gt; round(1),\n  tte_death = rpois(n = 5, lambda = 15+trt),\n  tte_censor = rpois(n = 5, lambda = 13),\n  tte = pmin(tte_death, tte_censor),\n  event = ifelse(tte_death &lt;= tte_censor, 1, 0)\n)\ndf_tibble |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n69.8\n13\n14\n13\n1\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n1\n76.8\n12\n6\n6\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0",
+    "objectID": "notes/lesson-notes/04-Functions.html#the-tidy-way",
+    "href": "notes/lesson-notes/04-Functions.html#the-tidy-way",
+    "title": "Functions",
+    "section": "The tidy way",
+    "text": "The tidy way\nIf you’re familiar with {dplyr} and the wider tidyverse, you might have noticed a certain way of doing things; the tidy way. The key behind making tidyverse verbs so easy to put as pearls on a string is the data.frame-first principle; verbs will usually take the data as their first argument and return the data as their output:\n\n# Not like this\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n# Like this\nadd_col &lt;- function(data, colname = \"newcol\") {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\") |&gt;\n  head(5) |&gt; gt::gt(id = \"my_table\")\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n1\n52.92934\n1\n29.43123\n71.93419\nNA\n\n\n2\n67.77429\n1\n26.72454\n82.21106\nNA\n\n\n5\n69.29125\n1\n28.70169\n63.67831\nNA\n\n\n8\n59.53368\n1\n26.06080\n78.05817\nNA\n\n\n10\n56.09962\n1\n26.69902\n85.88806\nNA\n\n\n\n\n\n\n\nIf I insist on putting the data somewhere else in the argument list, it’s still possible to pipe, but I have to be explicit about which argument the data is being piped into (using the _ placeholder—and that’s not as elegant):\n\nadd_col &lt;- function(colname = \"newcol\", data) {\n  data[,colname] &lt;- NA\n  return(data)\n}\n\ndf |&gt;\n  filter(sex == 1) |&gt;\n  add_col(colname = \"my_col\", data = _) |&gt;\n  head(5) |&gt; gt::gt(id = \"my_table2\")\n\n\n\n\n\n\n\nx\nage\nsex\nBMI\nweight\nmy_col\n\n\n\n\n1\n52.92934\n1\n29.43123\n71.93419\nNA\n\n\n2\n67.77429\n1\n26.72454\n82.21106\nNA\n\n\n5\n69.29125\n1\n28.70169\n63.67831\nNA\n\n\n8\n59.53368\n1\n26.06080\n78.05817\nNA\n\n\n10\n56.09962\n1\n26.69902\n85.88806\nNA",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Minimal, reproducible example"
+      "Functions"
     ]
   },
   {
-    "objectID": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
-    "href": "notes/lesson-notes/01-Minimal-Reproducible-Example.html#sampling-from-a-set-of-values",
-    "title": "Minimal, reproducible example",
-    "section": "Sampling from a set of values",
-    "text": "Sampling from a set of values\nSample from a vector (a form of list in R) of values, using sample().\n\nvec &lt;- c(1,5,8)\nsample(\n  x = vec,\n  size = 10,\n  replace = TRUE,\n  prob = c(0.2,0.3,0.5)\n)\n\n [1] 5 5 8 5 8 8 5 5 8 8\n\n\nThis can also be used to sample row-indices to extract entire rows from a dataset.\n\nrow_indices &lt;- sample(\n  x = 1:nrow(df_tibble),\n  size = 3\n)\nrow_indices\n\n[1] 2 4 5\n\ndf_tibble[row_indices,] |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n74.4\n13\n16\n13\n1\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n\n\n\n\n\nOr use the {dplyr} function sample_n() to sample rows from a table directly:\n\ndplyr::sample_n(df_tibble, size = 3) |&gt; gt::gt()\n\n\n\n\n\n\n\ntrt\nage\ntte_death\ntte_censor\ntte\nevent\n\n\n\n\n0\n57.9\n17\n11\n11\n0\n\n\n0\n69.4\n17\n14\n14\n0\n\n\n0\n74.4\n13\n16\n13\n1",
+    "objectID": "notes/lesson-notes/04-Functions.html#the-return-call",
+    "href": "notes/lesson-notes/04-Functions.html#the-return-call",
+    "title": "Functions",
+    "section": "The return() call",
+    "text": "The return() call\nYou want functions to have some sort of output. Whether you want the function to pass on some data that you can continue working with, to display a plot, to save something to a file, or something fourth, is up to you.\nImplicit return: if you do not write a return() call, the function will return the last object that was produced or assigned\n\nmy_function &lt;- function(input) {\n  input + 2\n  (input + 2)\n}\nmy_function(5)\n\n[1] 7\n\n\nHowever, when the last operation in a function is assignment, the value is still returned by the function but it is made invisible (not printed):\n\nmy_function &lt;- function(input) {\n  sum &lt;- input + 2\n}\n\n# Simply calling the function does not print what was returned:\nmy_function(5) \n\n# But explicitly asking for something out of the function does:\na &lt;- my_function(5) \na\n\n[1] 7\n\n\nNote, there are ways to manually ask for this so-called suppression (using the invisible() function), or to force functions not to return anything.\nIf you want to return more than one thing from a function, you probably need to use a list or a vector:\n\nmy_function &lt;- function(input) {\n  half &lt;- input/2\n  double &lt;- input * 2\n  character &lt;- as.character(input)\n  \n  return(list(half, double, character))\n}\nmy_function(10)\n\n[[1]]\n[1] 5\n\n[[2]]\n[1] 20\n\n[[3]]\n[1] \"10\"\n\n\nSomewhere you may come across something called global assignment (&lt;&lt;-), but be warned: this is almost definitely a bad idea.",
     "crumbs": [
       "R Coding Café",
       "Lesson notes",
-      "Minimal, reproducible example"
+      "Functions"
+    ]
+  },
+  {
+    "objectID": "notes/lesson-notes/04-Functions.html#the-scope",
+    "href": "notes/lesson-notes/04-Functions.html#the-scope",
+    "title": "Functions",
+    "section": "The scope",
+    "text": "The scope\nIt’s important to know that different parts of your code may have access to different sets of variables. This is called scopes. Every function creates its own walled-off section where it stores variables that may be created while the function runs. These variables are accessible (by default) only within the function’s scope, and are consequently destroyed when the function exits. The only thing that remains is whatever the function was told to return() as output (unless, of course, other things were made to remain; see above).",
+    "crumbs": [
+      "R Coding Café",
+      "Lesson notes",
+      "Functions"
     ]
   },
   {
