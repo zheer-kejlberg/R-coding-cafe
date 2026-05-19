@@ -31,7 +31,7 @@ timeline_raw <- tribble(
   "Zheer", "Handling many packages—and cross-package workflows", NA_character_, "-", 
   
   "2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Moving between R and Stata", NA_character_, "-", 
+  "Zheer", "Moving between R and Stata", "notes/lesson-notes/09-Stata-to-R.html", "-",
   
   "2026-06-02", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "Markdown basics: Using Quarto and Rmarkdown", NA_character_, "-", 
