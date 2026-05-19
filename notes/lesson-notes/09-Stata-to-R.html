@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moving between Stata and R – ZKA</title>
+  <link href="../../site_libs/bootstrap/bootstrap-58be809aee9e352d4cbc710845b6c930.min.css" rel="stylesheet">
+  <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+  <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-bca81f4a44bdcac9f2ea5a7007c52c72.css" rel="stylesheet">
+  <style>
+    body { max-width: 980px; margin: 0 auto; padding: 0 1rem 3rem; }
+    .topbar { border-bottom: 1px solid #dee2e6; margin-bottom: 2rem; }
+    .topbar a { text-decoration: none; }
+    .lead { font-size: 1.15rem; }
+    pre { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: .5rem; padding: 1rem; }
+    code { color: inherit; }
+    table { margin-bottom: 1.5rem; }
+    .toc a { text-decoration: none; }
+  </style>
+</head>
+<body>
+  <nav class="topbar py-3 d-flex gap-3 flex-wrap align-items-center">
+    <a href="../../index.html" class="fw-semibold">R Coding Café</a>
+    <a href="../../practical-info.html">Practical info</a>
+    <a href="../../notes/lesson-notes/index.html">Lesson notes</a>
+  </nav>
+
+  <header class="mb-4">
+    <p class="text-body-secondary mb-2"><a href="../../notes/lesson-notes/index.html">Lesson notes</a></p>
+    <h1>Moving between Stata and R</h1>
+    <p class="lead">A short guide to import/export, labelled data, dates, defaults, and safe cross-language workflows.</p>
+  </header>
+
+  <nav class="toc alert alert-light" aria-label="Table of contents">
+    <strong>On this page:</strong>
+    <ul class="mb-0 mt-2">
+      <li><a href="#mental-model">A quick mental model</a></li>
+      <li><a href="#import-export">Import and export</a></li>
+      <li><a href="#practices">General differences in practice</a></li>
+      <li><a href="#structures">Data structures and how to unite them</a></li>
+      <li><a href="#defaults">Differences in defaults that can change results</a></li>
+      <li><a href="#workflow">Rules for splitting work across the two languages</a></li>
+    </ul>
+  </nav>
+
+  <p>If you move between <strong>Stata</strong> and <strong>R</strong>, the big challenge is rarely syntax alone. The real issue is that the two languages make different assumptions about <strong>data structures</strong>, <strong>metadata</strong>, and <strong>defaults</strong>.</p>
+  <p>This note is about moving safely between them without silently changing your data or results.</p>
+
+  <section id="mental-model">
+    <h2>A quick mental model</h2>
+    <table class="table table-striped">
+      <thead><tr><th>Topic</th><th>Stata</th><th>R</th></tr></thead>
+      <tbody>
+        <tr><td>Main unit of work</td><td>Usually one active dataset in memory</td><td>Many objects can exist at once</td></tr>
+        <tr><td>Typical workflow</td><td>Interactive, command-by-command</td><td>Scripted, object-based, package-based</td></tr>
+        <tr><td>Categorical variables</td><td>Often numeric with value labels</td><td>Often <code>factor</code>, <code>character</code>, or <code>labelled</code></td></tr>
+        <tr><td>Dates</td><td>Counted from 1960-01-01</td><td>Usually counted from 1970-01-01</td></tr>
+        <tr><td>Missing values</td><td><code>.</code>, <code>.a</code>-<code>.z</code>, ordered above numbers</td><td><code>NA</code>, typed missing values</td></tr>
+        <tr><td>Iteration style</td><td>Loops are common and normal</td><td>Vectorisation and split-apply-combine are often preferred</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="import-export">
+    <h2>Import and export</h2>
+    <p>If you want to preserve as much Stata metadata as possible, a Stata file is usually the safest handoff format.</p>
+    <table class="table table-striped">
+      <thead><tr><th>Goal</th><th>Recommended format</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Move data between Stata and R while keeping labels</td><td><code>.dta</code></td><td>Keeps variable labels and value labels better than plain text</td></tr>
+        <tr><td>Share a simple rectangular file</td><td><code>.csv</code></td><td>Portable, but loses labels, formats, and richer metadata</td></tr>
+        <tr><td>Store a frozen analysis dataset for R-heavy work</td><td><code>.rds</code></td><td>Best for R-only work, but Stata cannot read it</td></tr>
+      </tbody>
+    </table>
+<pre><code class="language-stata">use "analysis_data.dta", clear
+export delimited using "analysis_data.csv", replace
+import delimited using "analysis_data.csv", clear
+save "analysis_data.dta", replace</code></pre>
+<pre><code class="language-r">library(haven)
+library(readr)
+
+df &lt;- read_dta("analysis_data.dta")
+write_dta(df, "analysis_data.dta")
+
+df_csv &lt;- read_csv("analysis_data.csv")
+write_csv(df_csv, "analysis_data.csv")</code></pre>
+    <div class="alert alert-success"><strong>Rule of thumb:</strong> If labels matter, prefer <code>.dta</code>. If you use <code>.csv</code>, assume you must rebuild labels, date formats, and missing-value logic explicitly.</div>
+  </section>
+
+  <section id="practices">
+    <h2>General differences in practice</h2>
+    <h3>1. Loops are not the first tool in R</h3>
+    <p>Stata users often reach for a loop early. In R, loops are valid, but many tasks are easier with vectorised code or with verbs such as <code>mutate()</code>, <code>summarise()</code>, and <code>across()</code>.</p>
+<pre><code class="language-stata">foreach var of varlist bmi sbp dbp {
+    replace `var' = . if `var' &lt; 0
+}</code></pre>
+<pre><code class="language-r">df |&gt;
+  dplyr::mutate(
+    dplyr::across(c(bmi, sbp, dbp), \(x) dplyr::if_else(x &lt; 0, NA_real_, x))
+  )</code></pre>
+    <h3>2. R encourages reusable objects</h3>
+    <p>In Stata, you often transform the active dataset in place. In R, it is common to keep several versions around: <code>raw_data</code>, <code>clean_data</code>, <code>analysis_data</code>, and <code>plot_data</code>.</p>
+    <h3>3. Packages matter more in R</h3>
+    <p>In Stata, most workflows feel like one integrated environment. In R, package choice matters a great deal: <code>{haven}</code>, <code>{dplyr}</code>, <code>{labelled}</code>, <code>{lubridate}</code>, <code>{ggplot2}</code>, and others.</p>
+  </section>
+
+  <section id="structures">
+    <h2>Data structures and how to unite them</h2>
+    <table class="table table-striped">
+      <thead><tr><th>Stata concept</th><th>Common R equivalent</th><th>What to watch</th></tr></thead>
+      <tbody>
+        <tr><td>dataset</td><td><code>data.frame</code> / <code>tibble</code></td><td>R can keep many datasets in memory</td></tr>
+        <tr><td>numeric with value label</td><td><code>haven_labelled</code> or <code>factor</code></td><td>Imported labels are not always immediately analysis-ready</td></tr>
+        <tr><td>string variable</td><td><code>character</code></td><td>R does not automatically treat it as categorical</td></tr>
+        <tr><td>matrix-like result table</td><td><code>matrix</code>, <code>data.frame</code>, or <code>tibble</code></td><td>Different functions return different classes</td></tr>
+      </tbody>
+    </table>
+    <h3>Factor variables and labels</h3>
+    <p>After <code>haven::read_dta()</code>, a categorical Stata variable often arrives as a labelled vector rather than a plain factor. That preserves codes and labels, but many models and plots behave more naturally with factors.</p>
+<pre><code class="language-r">library(haven)
+
+x &lt;- read_dta("analysis_data.dta")
+str(x$sex)
+
+x$sex_factor &lt;- as_factor(x$sex)</code></pre>
+    <ul>
+      <li>keep as labelled if you still need the original numeric codes</li>
+      <li>convert with <code>haven::as_factor()</code> if you want category labels used in models, tables, or plots</li>
+      <li>remove labels deliberately if the variable is actually continuous metadata with labels attached by habit</li>
+    </ul>
+    <h3>Missing values</h3>
+    <p>Stata has multiple extended missing values, and they sort above ordinary numbers. R uses <code>NA</code>, and comparisons with <code>NA</code> usually return <code>NA</code>, not <code>TRUE</code> or <code>FALSE</code>.</p>
+    <h3>Dates and origins</h3>
+    <ul>
+      <li>Stata daily dates: days since <strong>1960-01-01</strong></li>
+      <li>R <code>Date</code>: days since <strong>1970-01-01</strong></li>
+      <li>Stata datetimes: usually milliseconds since <strong>1960-01-01 00:00:00</strong></li>
+      <li>R <code>POSIXct</code>: usually seconds since <strong>1970-01-01 00:00:00 UTC</strong></li>
+    </ul>
+<pre><code class="language-r">as.Date(stata_days, origin = "1960-01-01")
+as.POSIXct(stata_ms / 1000, origin = "1960-01-01", tz = "UTC")</code></pre>
+    <div class="alert alert-warning"><strong>Never trust raw imported date numbers.</strong> Always check a few known dates after import/export.</div>
+  </section>
+
+  <section id="defaults">
+    <h2>Differences in defaults that can change results</h2>
+    <p>The dangerous cases are the ones where both programs run successfully but answer slightly different questions.</p>
+    <ul>
+      <li><strong>Factor/reference handling:</strong> in R, coefficients depend on the current factor coding and reference level.</li>
+      <li><strong>Missing-data handling:</strong> different R functions and packages can use different missing-data rules.</li>
+      <li><strong>Joins and merges:</strong> R joins are concise, but duplicate keys can silently expand rows.</li>
+      <li><strong>Model fitting defaults:</strong> be explicit about robust or clustered SEs, weights, starting values, optimizer settings, and convergence tolerances when matching Stata and R.</li>
+    </ul>
+  </section>
+
+  <section id="workflow">
+    <h2>Rules for splitting work across the two languages</h2>
+    <ol>
+      <li><strong>Pick one canonical source file for each stage.</strong></li>
+      <li><strong>Do not hand-edit the same dataset in both languages.</strong></li>
+      <li><strong>Keep identifiers stable.</strong></li>
+      <li><strong>Freeze variable names before handoff.</strong></li>
+      <li><strong>Export metadata intentionally.</strong></li>
+      <li><strong>Check the handoff with a tiny audit.</strong></li>
+      <li><strong>Write scripts, not manual clicks.</strong></li>
+      <li><strong>Decide where models are fitted and where plots are made.</strong></li>
+    </ol>
+    <p>A safe bridge is usually: clean in one language, export an analysis-ready dataset, import in the other language, verify dimensions/missingness/labels/dates, and only then start modelling or plotting.</p>
+  </section>
+
+  <section>
+    <h2>Further reading</h2>
+    <ul>
+      <li><a href="https://haven.tidyverse.org/" target="_blank" rel="noopener noreferrer"><code>{haven}</code> documentation</a></li>
+      <li><a href="https://r4ds.hadley.nz/" target="_blank" rel="noopener noreferrer">R for Data Science</a></li>
+      <li><a href="https://www.stata.com/help.cgi?datetime" target="_blank" rel="noopener noreferrer">Stata dates and times</a></li>
+    </ul>
+  </section>
+</body>
+</html>

@@ -1,0 +1,242 @@
+---
+title: "Moving between Stata and R"
+---
+
+If you move between **Stata** and **R**, the big challenge is rarely syntax alone. The real issue is that the two languages make different assumptions about **data structures**, **metadata**, and **defaults**.
+
+This note is about moving safely between them without silently changing your data or results.
+
+## A quick mental model
+
+| Topic | Stata | R |
+|---|---|---|
+| Main unit of work | Usually one active dataset in memory | Many objects can exist at once |
+| Typical workflow | Interactive, command-by-command | Scripted, object-based, package-based |
+| Categorical variables | Often numeric with value labels | Often `factor`, `character`, or `labelled` |
+| Dates | Counted from 1960-01-01 | Usually counted from 1970-01-01 |
+| Missing values | `.`, `.a`-`.z`, ordered above numbers | `NA`, typed missing values |
+| Iteration style | Loops are common and normal | Vectorisation and split-apply-combine are often preferred |
+
+Neither system is "more correct". But they reward different habits.
+
+## Import and export
+
+If you want to preserve as much Stata metadata as possible, a Stata file is usually the safest handoff format.
+
+### Common file choices
+
+| Goal | Recommended format | Why |
+|---|---|---|
+| Move data between Stata and R while keeping labels | `.dta` | Keeps variable labels and value labels better than plain text |
+| Share a simple rectangular file | `.csv` | Portable, but loses labels, formats, and richer metadata |
+| Store a frozen analysis dataset for R-heavy work | `.rds` | Best for R-only work, but Stata cannot read it |
+
+### Typical import/export commands
+
+```stata
+use "analysis_data.dta", clear
+export delimited using "analysis_data.csv", replace
+import delimited using "analysis_data.csv", clear
+save "analysis_data.dta", replace
+```
+
+```r
+library(haven)
+library(readr)
+
+df <- read_dta("analysis_data.dta")
+write_dta(df, "analysis_data.dta")
+
+df_csv <- read_csv("analysis_data.csv")
+write_csv(df_csv, "analysis_data.csv")
+```
+
+::: {.callout-tip}
+## Rule of thumb
+If labels matter, prefer `.dta`. If you use `.csv`, assume you must rebuild labels, date formats, and missing-value logic explicitly.
+:::
+
+## General differences in practice
+
+### 1. Loops are not the first tool in R
+
+Stata users often reach for a loop early. In R, loops are valid, but many tasks are easier with vectorised code or with verbs such as `mutate()`, `summarise()`, and `across()`.
+
+```stata
+foreach var of varlist bmi sbp dbp {
+    replace `var' = . if `var' < 0
+}
+```
+
+```r
+df |>
+  dplyr::mutate(
+    dplyr::across(c(bmi, sbp, dbp), \(x) dplyr::if_else(x < 0, NA_real_, x))
+  )
+```
+
+The R version is not "better" because it avoids a loop; it is better because it applies a vectorised rule directly to whole columns.
+
+### 2. R encourages reusable objects
+
+In Stata, you often transform the active dataset in place. In R, it is common to keep several versions around:
+
+- `raw_data`
+- `clean_data`
+- `analysis_data`
+- `plot_data`
+
+This can make workflows clearer, but it also means you must name objects carefully and avoid losing track of which one is the current truth.
+
+### 3. Packages matter more in R
+
+In Stata, most workflows feel like one integrated environment. In R, package choice matters a great deal:
+
+- import: `{haven}`, `{readr}`, `{readxl}`
+- data management: base R, `{dplyr}`, `{data.table}`
+- labelled data: `{haven}`, `{labelled}`
+- dates: base R or `{lubridate}`
+- plotting: `{ggplot2}`
+
+That flexibility is powerful, but it means two R users may solve the same task in quite different ways.
+
+## Data structures and how to unite them
+
+### Stata datasets vs. R objects
+
+A Stata dataset is closest to an R `data.frame` or `tibble`, but R also has vectors, lists, matrices, factors, labelled vectors, and many other classes.
+
+| Stata concept | Common R equivalent | What to watch |
+|---|---|---|
+| dataset | `data.frame` / `tibble` | R can keep many datasets in memory |
+| numeric with value label | `haven_labelled` or `factor` | Imported labels are not always immediately analysis-ready |
+| string variable | `character` | R does not automatically treat it as categorical |
+| matrix-like result table | `matrix`, `data.frame`, or `tibble` | Different functions return different classes |
+
+### Factor variables and labels
+
+A common source of confusion is that labelled Stata variables do not automatically become the exact R type you expected.
+
+After `haven::read_dta()`, a categorical Stata variable often arrives as a **labelled vector** rather than a plain `factor`.
+
+That is useful because you keep the underlying codes and labels, but many modelling and plotting functions in R work more naturally with factors.
+
+```r
+library(haven)
+
+x <- read_dta("analysis_data.dta")
+str(x$sex)
+
+x$sex_factor <- as_factor(x$sex)
+```
+
+Useful choices after import:
+
+- keep as labelled if you still need the original numeric codes
+- convert with `haven::as_factor()` if you want category labels used in models/tables/plots
+- remove labels deliberately if the variable is actually continuous metadata with labels attached by habit
+
+### Missing values
+
+Stata has multiple extended missing values (`.`, `.a`, ..., `.z`), and they sort above ordinary numbers.
+
+R uses `NA`, and comparisons with `NA` usually return `NA`, not `TRUE` or `FALSE`.
+
+That means logic such as filters and recodes may need rewriting rather than direct translation.
+
+### Dates and origins
+
+This is the classic trap.
+
+- Stata daily dates: days since **1960-01-01**
+- R `Date`: days since **1970-01-01**
+- Stata datetimes: usually milliseconds since **1960-01-01 00:00:00**
+- R `POSIXct`: usually seconds since **1970-01-01 00:00:00 UTC**
+
+If you move raw date numbers without telling the receiving language the origin, the values will be wrong.
+
+```r
+as.Date(stata_days, origin = "1960-01-01")
+as.POSIXct(stata_ms / 1000, origin = "1960-01-01", tz = "UTC")
+```
+
+::: {.callout-warning}
+## Never trust raw imported date numbers
+Always check a few known dates after import/export. Dates can look numeric and still be completely wrong.
+:::
+
+## Differences in defaults that can change results
+
+The dangerous cases are the ones where both programs run successfully but answer slightly different questions.
+
+### Factor/reference handling
+
+In Stata, factor notation such as `i.group` is explicit. In R, a model formula will use the current factor coding and the current reference level.
+
+So if a variable is imported as `character`, `numeric`, `labelled`, or a factor with a different first level than you expected, coefficients can change interpretation.
+
+### Missing-data handling
+
+Both languages may drop incomplete observations during modelling, but the exact behavior depends on the function and package. In R especially, different packages can use different defaults for `na.action`, weights, convergence settings, or contrast coding.
+
+### Joins and merges
+
+Stata's `merge` makes you think carefully about match types and gives you `_merge` by default. In R, joins are often concise, but that also makes it easy to create unintended row duplication if keys are not unique.
+
+### Model fitting defaults
+
+Equivalent-looking models do not guarantee equivalent estimates.
+
+Be explicit about at least these when matching Stata and R results:
+
+- reference categories
+- robust or clustered standard errors
+- weights
+- missing-data rules
+- optimizer / convergence tolerances
+- starting values when relevant
+- whether a variable should be treated as numeric, labelled, or factor
+
+This matters both in base R and in packages. For example, two packages may fit the same model class but start from different initial values or expose different optimizer settings.
+
+## Rules for splitting work across the two languages
+
+If you do data management in one language and analysis or plotting in the other, make the handoff boring and explicit.
+
+1. **Pick one canonical source file for each stage.**
+   - e.g. `raw -> cleaned -> analysis-ready`
+2. **Do not hand-edit the same dataset in both languages.**
+   - choose one direction for each stage
+3. **Keep identifiers stable.**
+   - subject IDs, visit IDs, and row-level keys must survive every export
+4. **Freeze variable names before handoff.**
+   - renaming in both places is an easy route to mistakes
+5. **Export metadata intentionally.**
+   - if labels matter, use `.dta` or export a codebook alongside `.csv`
+6. **Check the handoff with a tiny audit.**
+   - compare row count, key uniqueness, missingness, a few labels, and a few known dates
+7. **Write scripts, not manual clicks.**
+   - if the step matters, it should be reproducible
+8. **Decide where models are fitted and where plots are made.**
+   - avoid refitting the same model twice unless you are validating equivalence
+
+## A practical bridge workflow
+
+A safe workflow often looks like this:
+
+1. Clean and document the source data in **one** language.
+2. Export an analysis-ready dataset with stable names and IDs.
+3. Import it into the other language.
+4. Immediately verify:
+   - dimensions
+   - missingness
+   - factor/label handling
+   - date conversion
+   - a few summary statistics
+5. Only then start modelling or plotting.
+
+## Further reading
+
+- [`{haven}` documentation](https://haven.tidyverse.org/){.external target="_blank"}
+- [R for Data Science](https://r4ds.hadley.nz/){.external target="_blank"}
+- [Stata dates and times](https://www.stata.com/help.cgi?datetime){.external target="_blank"}
