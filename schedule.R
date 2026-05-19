@@ -28,7 +28,7 @@ timeline_raw <- tribble(
   "Zheer", "More tidyverse", "notes/lesson-notes/07-Tidyverse.html", "-", 
   
   "2026-05-05", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
-  "Zheer", "Handling many packages—and cross-package workflows", NA_character_, "-", 
+  "Zheer", "Handling many packages—and cross-package workflows", "notes/lesson-notes/08-Packages-and-Dependencies.html", "-", 
   
   "2026-05-19", "10:00:00 AM", "11:30:00 AM", "Hjørnerummet (A401-109)", 
   "Zheer", "Moving between R and Stata", NA_character_, "-", 

@@ -4,11 +4,6 @@ title: "Working with many packages"
 
 ```{r}
 #| output: false
-
-library(dplyr)
-library(ggplot2)
-library(broom)
-library(gtsummary)
 set.seed(1234)
 ```
 
@@ -23,6 +18,8 @@ This lesson covers both.
 ## Some data to work on
 
 ```{r}
+library(tibble)
+
 n <- 500
 df <- tibble(
   id      = 1:n,
@@ -57,16 +54,23 @@ library(dplyr)
 library(MASS)
 ```
 
-R warns you but proceeds - there's no guarantee you will notice the warning message in a busy session.
+R warns you but proceeds - there's no guarantee you will notice the warning message in a busy session. But once you try to use it, you may see the function isn't working:
 
-## Four solutions to masking
+```{r}
+#| error: true
+
+df |> select(id, age, sbp) |> head(3)
+```
+In the case of `select()` here, you find out eventually. However, in some cases you might not notice the problem, because the function runs but just outputs something other than what you intended. These are the real errors that can cause silent bugs in your code.
+
+## Three solutions to masking
 
 ### 1. Explicit namespacing with `::`
 
-The safest habit: write `pkg::function()` for any function that might be ambiguous.
+A safe but potentially arduous habit: write `pkg::function()` for any function that might be ambiguous.
 
 ```{r}
-
+df |> dplyr::select(id, age, sbp) |> head(3)
 ```
 
 This works even when a function is masked, and makes code easier to read and share.
@@ -79,27 +83,24 @@ Load it at the top of your script and every ambiguous call will stop with a help
 ```{r}
 #| error: true
 
+library(conflicted)
 
+df |> filter(age > 70) |> head(5)
 ```
 
 You resolve the conflict once using `conflict_prefer(name, winner, losers = NULL)`:
 
 ```{r}
-
+conflict_prefer("filter", "dplyr")
 ```
 
 Now `filter()` unambiguously refers to the dplyr version for the rest of the session.
 
 ```{r}
-
+df |> filter(age > 70) |> head(5)
 ```
 
-### 3. Load packages in a deliberate order
-
-If you don't want to use `{conflicted}`, load packages in order of priority — the last one loaded wins.
-Note, this is the least robust approach.
-
-### 4. `{box}`: surgical package imports
+### 3. `{box}`: surgical package imports
 
 An alternative to `library()` is the `{box}` package.
 Instead of loading an entire package namespace, you import only the specific functions you need.
@@ -107,7 +108,11 @@ Instead of loading an entire package namespace, you import only the specific fun
 ```{r}
 #| eval: false
 
-
+box::use(
+  dplyr[filter, select, mutate],   # only these three functions from dplyr
+  ggplot2[ggplot, aes, geom_point], # only these from ggplot2
+  MASS[mass_select = select] # rename MASS::select to mass_select to avoid conflict with dplyr
+)
 ```
 
 This is especially useful in packages, larger codebases, or when you want the code to be completely explicit about where every function comes from.
@@ -127,15 +132,25 @@ The key idea: if a function always returns a standard, predictable object (like 
 
 Base R uses **generics** — functions like `summary()`, `print()`, and `predict()` — that behave differently depending on what they are given.
 
+Let's set up a linear model:
 ```{r}
 m <- lm(sbp ~ age + sex + smoker + bmi, data = df)
+class(m)
+```
 
+The native print output:
+```{r}
+m
+```
 
+`summary()` recognises it as a linear model and formats accordingly:
+```{r}
+summary(m)
 ```
 
 This system — called **S3 dispatch** — means that different packages can teach the same verb new tricks, without you having to learn a different function name.
 
-Under the hood, R looks at the class of the object you pass to `summary()`, sees it's a `lm` object, and calls `summary.lm()` automatically.
+Under the hood, R looks at the class of the object you pass to `summary()`, sees it's a `lm` object, and calls the specialised `summary.lm()` automatically.
 
 ## Standardised outputs: the tidy principle
 
@@ -146,29 +161,31 @@ Many packages outside the core tidyverse follow the same principle.
 The key package here is `{broom}`, which converts messy model objects into tidy tibbles.
 
 ```{r}
-# A linear model gives an opaque object:
-class(m)
-m   # hard to work with programmatically
+library(broom)
 ```
 
 `broom::tidy()` extracts the coefficients as a clean tibble:
 ```{r}
-
+broom::tidy(m, conf.int = TRUE)
 ```
 
 `broom::glance()` gives one-row model-level summaries:
 ```{r}
-
+broom::glance(m)
 ```
 
 `broom::augment()` adds fitted values and residuals back to your data:
 ```{r}
-
+broom::augment(m, df) |> 
+  dplyr::select(id, sbp, .fitted, .resid) |> 
+  head(5)
 ```
 
 Because `tidy()` always returns a tibble with the same column names (`term`, `estimate`, `std.error`, `p.value`, …), the output easily plugs into `{ggplot2}`:
 
 ```{r}
+library(ggplot2)
+
 broom::tidy(m, conf.int = TRUE) |>
   filter(term != "(Intercept)") |>
   ggplot(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = term)) +
@@ -178,11 +195,22 @@ broom::tidy(m, conf.int = TRUE) |>
 ## `{gtsummary}`: a complete cross-package workflow
 
 `{gtsummary}` is a good example of a package that slots into a tidy workflow seamlessly.
-It takes standard R model objects and produces publication-ready tables, using the same underlying ideas.
+It takes standard R model objects and produces publication-ready tables, using the same underlying ideas. Here, using `tbl_regression()`:
 
-Here, using `tbl_regression()`:
 ```{r}
+library(gtsummary)
 
+m |>
+  tbl_regression(
+    label = list(
+      age    ~ "Age (years)",
+      sex    ~ "Sex",
+      smoker ~ "Smoker",
+      bmi    ~ "BMI (kg/m²)"
+    )
+  ) |>
+  bold_p() |>
+  bold_labels()
 ```
 
 No need to manually extract and format coefficients — `{gtsummary}` calls `broom::tidy()` internally, giving you a formatted table in two lines.
